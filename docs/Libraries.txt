@@ -1,0 +1,8 @@
+- Web reference
+https://daugianhanh.vn/listing-category/san-pham-nghe-thuat/
+
+- bootstrap 4
+https://getbootstrap.com/docs/4.3/getting-started/introduction/#community
+
+- sweetalert 2
+https://sweetalert2.github.io/
