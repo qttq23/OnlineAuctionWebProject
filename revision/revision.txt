@@ -1,0 +1,11 @@
+# revision:
+- 25/11/2019, v1.0
+initialize, first layout of home page: nav menu, side bar menu, footer,...
+
+- 26/11/2019, v1.1
+make the page more responsive
+add icon, add product card list,...
+
+- 27/11/2019, v1.2
+product details page: details, image, related products,...
+make the page responsive

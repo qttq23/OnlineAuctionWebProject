@@ -59,7 +59,6 @@ footer{
 #productListCard{
 	min-height: 100vh;
 	/*background-color: #329AD6;*/
-	/*display: none;*/
 
 }
 
@@ -79,3 +78,6 @@ footer{
 	/*background-color: red;*/
 }
 
+#searchBoxHeader{
+	min-width: 100vw;
+}
