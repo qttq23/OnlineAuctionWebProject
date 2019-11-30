@@ -17,9 +17,6 @@
 
 	<!-- font awesome -->
 	<script src="https://kit.fontawesome.com/8341edf21a.js" crossorigin="anonymous"></script>
-
-	<!-- sweet alert -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 </head>
 
 
@@ -45,12 +42,8 @@
 
 		<div class="userStatusDiv" >
 			<ul class="list-inline">
-				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()">Login</a>
-				</li>
-				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="signuppage.html">Sign up</a>
-				</li>
+				<li class="list-inline-item"><a class="social-icon text-xs-center" target="_blank" href="#">Login</a></li>
+				<li class="list-inline-item"><a class="social-icon text-xs-center" target="_blank" href="#">Sign up</a></li>
 
 			</ul>
 		</div>
@@ -92,14 +85,14 @@
 
 
 					</ul>
-
+					
 
 					<div class="menuHeader card-header">
 						Bid & Like
 					</div>
 					<ul class="list-group list-group-flush">
-						<a class="list-group-item list-group-item-action" href="likedProductsPage.html">Liked products</a>
-						<a class="list-group-item list-group-item-action" href="biddedProductsPage.html">Bidded products</a>
+						<a class="list-group-item list-group-item-action" href="#js">Liked products</a>
+						<a class="list-group-item list-group-item-action" href="#js">Bidded products</a>
 
 						<a class="list-group-item list-group-item-action" id="moreLink" href="#js" data-toggle="collapse" data-target="#collapseOne2" aria-expanded="false" aria-controls="collapseOne2">
 							more...
@@ -117,8 +110,8 @@
 						Sale management
 					</div>
 					<ul class="list-group list-group-flush">
-						<a class="list-group-item list-group-item-action" href="postedProductsPage.html">Posted products</a>
-						<a class="list-group-item list-group-item-action" href="commentsAndRatesPage.html">Comments and rates</a>
+						<a class="list-group-item list-group-item-action" href="#js">Posted products</a>
+						<a class="list-group-item list-group-item-action" href="#js">Comments and rates</a>
 
 						<a class="list-group-item list-group-item-action" id="moreLink" href="javascript:;" data-toggle="collapse" data-target="#collapseOne3" aria-expanded="false" aria-controls="collapseOne3">
 							more...
@@ -131,19 +124,6 @@
 
 
 					</ul>
-
-					<div class="menuHeader card-header">
-						Admin functions
-					</div>
-					<ul class="list-group list-group-flush">
-						<a class="list-group-item list-group-item-action" href="manageCatagoriesPage.html">Manage catagories</a>
-						<a class="list-group-item list-group-item-action" href="managePostsPage.html">Manage Posts</a>
-						<a class="list-group-item list-group-item-action" href="manageUsersPage.html">Manage users</a>
-
-	
-
-
-					</ul>
 				</div>
 
 			</div>
@@ -151,14 +131,12 @@
 			<!-- main -->
 			<div class="main col ">
 
-				<!-- product list card -->
-				<div class="card"  id="productListCard">
-					<div class="card-body d-flex flex-column-reverse justify-content-between">
+				<div class="card">
 
-						<!-- pagination -->
-						<div class="pagination d-flex justify-content-start"></div>
+					<!-- posted product list -->
+					<div class="card-body d-flex flex-column justify-content-around">
+						<h4 class="card-title">Posted products</h4>
 
-						<!-- product list -->
 						<div class="productList d-flex flex-row flex-wrap justify-content-between">
 							<div class="card mb-2" style="width: 15rem;">
 								<a href="detailpage.html" title="go to product details"><img src="./images/image1.jpg" class="card-img-top" alt="..."></a>
@@ -205,14 +183,15 @@
 							</div>
 						</div>
 
-
-
+						<!-- pagination -->
+						<div class="pagination d-flex justify-content-start mt-3"></div>
 					</div>
-
 				</div>
 
+				
 
 
+				
 			</div>
 
 		</div>	
@@ -270,49 +249,6 @@
 				cssStyle: 'light-theme'
 			});
 		});
-	</script>
-
-	<script type="text/javascript">
-		function showLoginDialog () {
-
-			Swal.fire({
-				
-				// title: 'Log in',
-				html:
-				'<i class="fab fa-autoprefixer" style="color: #329AD6; font-size:70px;"></i>'+
-				'<h1>Log in</h1>'+
-
-				'<div class="d-flex flex-column align-items-start">' +
-
-				'<div>Username</div>'+
-				'<input id="swal-input1" class="swal2-input">' +
-
-				'<div>Password</div>'+
-				'<input id="swal-input2" class="swal2-input" type="password">' +
-				
-				'<a href="signuppage.html">Not have an account? Sign up...</a>'+
-				'<a href="javascript:;">Forget password</a>'+
-				'</div>',
-				focusConfirm: false,
-				showCancelButton: true,
-				confirmButtonText:
-				'<i class="fa fa-thumbs-up"></i> Log in',
-
-				preConfirm: () => {
-					return [
-					document.getElementById('swal-input1').value,
-					document.getElementById('swal-input2').value
-					]
-				}
-			}).then((result) => {
-				Swal.fire(JSON.stringify(result.value));
-			})
-
-
-		};
-
-
-		
 	</script>
 </body>
 </html>

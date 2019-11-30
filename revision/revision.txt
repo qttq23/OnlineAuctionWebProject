@@ -9,3 +9,9 @@ add icon, add product card list,...
 - 27/11/2019, v1.2
 product details page: details, image, related products,...
 make the page responsive
+
+- 1/12/2019, v1.3
+(bidder) bid & like & posted product list
+(seller) comments and rates list
+(admin) manage catagories, users, posts
+log in, sign up
