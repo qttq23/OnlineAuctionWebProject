@@ -18,8 +18,13 @@
 	<!-- font awesome -->
 	<script src="https://kit.fontawesome.com/8341edf21a.js" crossorigin="anonymous"></script>
 
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
 	<!-- sweet alert -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+	<!-- animate.cs -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
 </head>
 
 
@@ -34,10 +39,10 @@
 		<!-- Search form -->
 		<form class="form-inline w-50">
 			<div class="input-group w-100">
-				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search">
+				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search" value="iphone">
 
 				<div class="btn-group">
-					<button class="btn btn-secondary input-group-append" type="submit" onclick="location.href='searchResultPage.html';">
+					<button class="btn btn-secondary input-group-append" type="submit">
 						<i class="fas fa-search"></i>
 					</button>
 
@@ -185,166 +190,42 @@
 			<div class="main col ">
 
 				<!-- product list card -->
-				<div class="card"  id="productListCard">
-					<div class="card-body d-flex flex-column justify-content-between">
+				<div class="card d-flex justify-content-center">
 
-						<!-- related products list -->
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
-
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
-								</div>
-							</div>
-						</div>
-
-
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
-							
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
-								</div>
-							</div>
-						</div>
-
-
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
-							
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
-								</div>
-							</div>
-						</div>
-
-
-
-
+					<div class="card-header">
+						11 results for 'iphone'
 					</div>
+					<!-- related products list -->
+					<div class="card-body d-flex flex-column justify-content-around">
+						
+						<!-- sort by -->
+						<div class="dropdown">
+
+							sort by 
+							<button type="button" class="sortSelected btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								
+							</button>
+
+							<div class="dropdown-menu">
+								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort1"><i class="fas fa-arrow-up"></i> Finish time </a>
+
+								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort2"><i class="fas fa-arrow-down"></i> Price </a>
+
+							</div>
+						</div>
+
+						<div class="itemContainer d-flex flex-row flex-wrap justify-content-start">
+
+							
+						</div>
+
+						<!-- pagination -->
+						<div class="pagination d-flex justify-content-start mt-3"></div>
+
+						<div id="content"></div>
+					</div>
+
+
 
 				</div>
 
@@ -390,30 +271,173 @@
 	<!-- Footer -->
 
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
+	<script
+	src="https://code.jquery.com/jquery-3.4.1.js"
+	integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+	crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+	<!-- recapcha -->
+	<script src='https://www.google.com/recaptcha/api.js'></script>
 
 
 	<!-- pagination -->
 	<!-- https://flaviusmatis.github.io/simplePagination.js/#page-6 -->
 	<script type="text/javascript" src="./flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
 
+
+	<!-- functions about item products -->
 	<script type="text/javascript">
-		$(function() {
-			$('.pagination').pagination({
-				items: 20,
-				itemsOnPage: 5,
-				cssStyle: 'light-theme'
+
+		const itemNum = 11;
+		const itemNumOnPage = 6;
+		const titles = ['iphone1','iphone2','iphone3','iphone4','iphone5',
+		'iphone6','iphone6S','iphone7S','iphoneXS','iphoneXsMax', 'Samsung'];
+
+		const prices = ['100','100','100','100','100',
+		'100','100','100','100','100', '400'];
+
+		const bidders = ['Alex','Peter','Diana','Alex','Peter','Diana','iphone6S','Alex','Peter','Diana', 'Alex'];
+
+		const winPrices = ['200','200','200','200','200','200','200','200','200$','200', '500'];
+
+		const startDates = ['03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019', '03/12/2019'];
+
+		const timeRemains = ['6d2h','300s','6d2h','300s','6d2h','300s','6d2h','300s','6d2h','300s', '6d2h'];
+
+		const bidTurns = ['3','3','3','3','3','3','3','3','3','3', '3'];
+
+
+		
+
+		function createItems(){
+
+
+			// create Number of item divs
+			var itemHtml = '';
+			for(var i = 0; i < itemNum; i++){
+				itemHtml += 
+				`<div class="item card mt-2 mr-3 mb-2" style="width: 15rem;">
+
+				<a href="detailpage.html" title="go to product details"><img src="./images/image1.jpg" class="card-img-top" alt="..."></a>
+
+				<div class="card-body">
+
+				<a class="linkToItemDetails" href="detailpage.html" title="go to product details">
+				<h5 class="card-title">${titles[i]}</h5>
+				</a>
+
+				<dl class="row">
+
+				<dd class="col-sm-8" title="Price to win instantly">
+				<i class="fas fa-shopping-cart"></i> Win price
+				</dd>
+				<dd class="col-sm-4 text-sm-right"title="Price to win instantly">${winPrices[i]}$</dd>
+
+				<dd class="col-sm-6" title="The highest price paying bidder">
+				<i class="far fa-user"></i> ${bidders[i]}
+				</dd>
+				<dd class="col-sm-6 text-sm-right" title="The highest price made">${prices[i]}$</dd>
+
+
+				<dd class="col-sm-6">
+				<div class="badge badge-secondary" title="The date product was uploaded">
+				<i class="fas fa-play"></i> ${startDates[i]}
+				</div>
+				</dd>
+				<dd class="col-sm-6  text-sm-right">
+				<div class="badge badge-primary" title="Time left">
+				<i class="fas fa-hourglass-start"></i> ${timeRemains[i]} left
+				</div>
+				</dd>
+
+
+				<dd class="col-12">
+				<div class="badge badge-light badge-lg" title="Number of turns made">
+				${bidTurns[i]} turns
+				</div>
+				</dd>
+				</dl>
+
+
+				</div>
+				</div>`;
+
+
+			}
+
+			// assign divs to their container
+			$('.itemContainer').html(itemHtml);
+		}
+
+		function setItemIdVisible(id){
+			// set items not have id invisible
+			$('.item').css('display', 'none');
+
+			// set items visible
+			$(`.item${id}`).css('display', 'block');
+
+		}
+
+		function createPaginationAndArrangeItems(){
+
+			// calculate and set id for items
+			var count = 0;
+			var pageId = 1;
+			$('.item').each(function(idx, item){
+				count++;
+				if(count > itemNumOnPage){
+					count = 1;
+					pageId++;
+				}
+
+				var classToAdd = 'item' + pageId;
+				
+				// $(item).addClass(classToAdd);
+				$(item).addClass(classToAdd);
+				console.log($(item).attr('id'));
 			});
-		});
+
+			
+			setItemIdVisible(1);
+
+			// pagination
+			$('.pagination').pagination({
+				items: `${itemNum}`,
+				itemsOnPage: `${itemNumOnPage}`,
+				cssStyle: 'light-theme',
+				onPageClick: function(pageNumber, event) {
+					// Callback triggered when a page is clicked
+					// Page number is given as an optional parameter
+					setItemIdVisible(pageNumber);
+				}
+
+			});
+		}
+
+
+		$(()=>{
+
+			createItems();
+
+			createPaginationAndArrangeItems();
+			
+		}
+
+		);
 	</script>
 
+
+
+
+	<!-- show login -->
 	<script type="text/javascript">
 		function showLoginDialog () {
 
 			Swal.fire({
-				
+
 				// title: 'Log in',
 				html:
 				'<i class="fab fa-autoprefixer" style="color: #329AD6; font-size:70px;"></i>'+
@@ -448,8 +472,6 @@
 
 		};
 
-
-		
 	</script>
 
 	<!-- show request upgrade dialog -->
@@ -479,11 +501,23 @@
 		};
 	</script>
 
+	<!-- onload -->
+	<script type="text/javascript">
+		$(() => {
+			// alert('loaded');
+			$('.laptopCata').addClass('laptopCataOn');
 
+		});
+	</script>
+
+
+	<!-- search options -->
 	<script type="text/javascript">
 		$(()=>{
 			$('.searchOpt i').css('display', 'none');
 			$('#opt1 i').css('display', 'inline');
+
+
 		});
 
 		function setChecked(btnId){
@@ -491,6 +525,54 @@
 			$('.searchOpt i').css('display', 'none');
 			$(`#${btnId} i`).css('display', 'inline');
 		}
+
+
 	</script>
+
+	<!-- sort options -->
+	<script type="text/javascript">
+		$(()=>{
+			var html = $('#sort1').html();
+			$('.sortSelected').html(html);
+		})
+
+		function setSortSelected(btnId){
+			// alert(btnId);
+			$('.itemContainer').hide();
+
+			// set sort selected
+			var html = $(`#${btnId}`).html();
+			$('.sortSelected').html(html);
+
+			// sort search results
+			// get first and last item
+			let lastIndex = $('.item').length - 1;
+			var itemFirst, itemLast;
+			$('.item').each(function(idx, item){
+				if(idx % 2 === 0){
+					itemFirst = item;
+				}
+
+				if(idx % 2 === 1){
+					itemLast = item;
+
+					// swap first and last
+					let htmlFirst = $(itemFirst).html();
+					$(itemFirst).html($(itemLast).html());
+					$(itemLast).html(htmlFirst);
+				}
+
+			});
+			
+			// reset item container
+			
+			$('.itemContainer').show(1000);
+			// $('.itemContainer').css('display', 'block');
+
+
+
+		}
+	</script>
+
 </body>
 </html>

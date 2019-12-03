@@ -36,22 +36,9 @@
 			<div class="input-group w-100">
 				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search">
 
-				<div class="btn-group">
-					<button class="btn btn-secondary input-group-append" type="submit" onclick="location.href='searchResultPage.html';">
-						<i class="fas fa-search"></i>
-					</button>
-
-					<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<span class="sr-only">Toggle Dropdown</span>
-					</button>
-					<div class="dropdown-menu">
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt1"><i class="fas fa-check"></i> Search by product name</a>
-
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt2"><i class="fas fa-check"></i> Search by catagory</a>
-						
-					</div>
-				</div>
-				
+				<button class="btn btn-secondary input-group-append" type="submit">
+					<i class="fas fa-search"></i>
+				</button>
 			</div>
 		</form>
 		
@@ -111,8 +98,8 @@
 						Catagories
 					</div>
 					<ul class="list-group list-group-flush">
-						<a class="list-group-item list-group-item-action" href="#js">Laptop</a>
-						<a class="list-group-item list-group-item-action" href="#js">Mobile Phone</a>
+						<a class="laptopCata list-group-item list-group-item-action" href="#js">Laptop</a>
+						<a class="phoneCata list-group-item list-group-item-action" href="#js">Mobile Phone</a>
 
 						<a class="list-group-item list-group-item-action" id="moreLink" href="#js" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 							more...
@@ -185,166 +172,64 @@
 			<div class="main col ">
 
 				<!-- product list card -->
-				<div class="card"  id="productListCard">
-					<div class="card-body d-flex flex-column justify-content-between">
+				<div class="card">
+					
 
-						<!-- related products list -->
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
+					<!-- related products list -->
+					<div class="card-body d-flex flex-column justify-content-around">
+						<h4 class="card-title">List of Laptops</h4>
 
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
+						<div class="productList d-flex flex-row flex-wrap justify-content-between">
+							<div class="card mb-2" style="width: 15rem;">
+								<a href="detailpage.html" title="go to product details"><img src="./images/image1.jpg" class="card-img-top" alt="..."></a>
+								<div class="card-body">
+									<h5 class="card-title">Card title</h5>
+									<p class="card-text">Some quick </p>
+									<a href="#" class="btn btn-primary">Like</a>
+									<a href="#" class="btn btn-primary">Bid</a>
+									<a href="#" class="btn btn-primary">Report</a>
+								</div>
+							</div>
 
-									</div>
+							<div class="card mb-2" style="width: 15rem;">
+								<img src="./images/image1.jpg" class="card-img-top" alt="...">
+								<div class="card-body">
+									<h5 class="card-title">Card title</h5>
+									<p class="card-text">Some quick </p>
+									<a href="#" class="btn btn-primary">Like</a>
+									<a href="#" class="btn btn-primary">Bid</a>
+									<a href="#" class="btn btn-primary">Report</a>
+								</div>
+							</div>
 
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
+							<div class="card mb-2" style="width: 15rem;">
+								<img src="./images/image1.jpg" class="card-img-top" alt="...">
+								<div class="card-body">
+									<h5 class="card-title">Card title</h5>
+									<p class="card-text">Some quick </p>
+									<a href="#" class="btn btn-primary">Like</a>
+									<a href="#" class="btn btn-primary">Bid</a>
+									<a href="#" class="btn btn-primary">Report</a>
+								</div>
+							</div>
 
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
+							<div class="card mb-2" style="width: 15rem;">
+								<img src="./images/image1.jpg" class="card-img-top" alt="...">
+								<div class="card-body">
+									<h5 class="card-title">Card title</h5>
+									<p class="card-text">Some quick </p>
+									<a href="#" class="btn btn-primary">Like</a>
+									<a href="#" class="btn btn-primary">Bid</a>
+									<a href="#" class="btn btn-primary">Report</a>
 								</div>
 							</div>
 						</div>
 
-
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
-							
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
-								</div>
-							</div>
-						</div>
-
-
-						<div class="card-body">
-							<h4 class="card-title">5 related products</h4>
-							
-							<div class="container-fluid">
-								<div class="row flex-row flex-nowrap" style="overflow-x: auto; overflow-y: auto; height: 200px">
-									<div class="card col-12 col-sm-3">
-										<a class ="w-100 h-100" href="detailpage.html" title=""><img class="img-fluid w-100 h-100"
-											src="./images/image1.jpg" alt="Los Angeles">
-										</a>
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-									<div class="card col-12 col-sm-3">
-										<img class="img-fluid w-100 h-75"
-										src="./images/image1.jpg" alt="Los Angeles">
-
-										<div class="card-footer">product 1</div>
-
-									</div>
-
-
-								</div>
-							</div>
-						</div>
-
-
-
-
+						<!-- pagination -->
+						<div class="pagination d-flex justify-content-start mt-3"></div>
 					</div>
+
+					
 
 				</div>
 
@@ -448,8 +333,6 @@
 
 		};
 
-
-		
 	</script>
 
 	<!-- show request upgrade dialog -->
@@ -479,18 +362,17 @@
 		};
 	</script>
 
-
+	<!-- onload -->
 	<script type="text/javascript">
-		$(()=>{
-			$('.searchOpt i').css('display', 'none');
-			$('#opt1 i').css('display', 'inline');
-		});
+		$(() => {
+			// alert('loaded');
+			$('.phoneCata').addClass('phoneCataOn');
 
-		function setChecked(btnId){
-			// alert(btnId);
-			$('.searchOpt i').css('display', 'none');
-			$(`#${btnId} i`).css('display', 'inline');
-		}
+		});
 	</script>
+
+
+
+
 </body>
 </html>
