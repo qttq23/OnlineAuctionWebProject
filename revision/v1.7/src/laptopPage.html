@@ -15,16 +15,15 @@
 	<!-- pagination -->
 	<link type="text/css" rel="stylesheet" href="./flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/simplePagination.css"/>
 
+	<!-- other pagination -->
+
+
+
 	<!-- font awesome -->
 	<script src="https://kit.fontawesome.com/8341edf21a.js" crossorigin="anonymous"></script>
 
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-
 	<!-- sweet alert -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
-	<!-- animate.cs -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
 </head>
 
 
@@ -39,24 +38,11 @@
 		<!-- Search form -->
 		<form class="form-inline w-50">
 			<div class="input-group w-100">
-				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search" value="iphone">
+				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search">
 
-				<div class="btn-group">
-					<button class="btn btn-secondary input-group-append" type="submit">
-						<i class="fas fa-search"></i>
-					</button>
-
-					<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<span class="sr-only">Toggle Dropdown</span>
-					</button>
-					<div class="dropdown-menu">
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt1"><i class="fas fa-check"></i> Search by product name</a>
-
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt2"><i class="fas fa-check"></i> Search by catagory</a>
-						
-					</div>
-				</div>
-				
+				<button class="btn btn-secondary input-group-append" type="submit">
+					<i class="fas fa-search"></i>
+				</button>
 			</div>
 		</form>
 		
@@ -116,8 +102,8 @@
 						Catagories
 					</div>
 					<ul class="list-group list-group-flush">
-						<a class="list-group-item list-group-item-action" href="#js">Laptop</a>
-						<a class="list-group-item list-group-item-action" href="#js">Mobile Phone</a>
+						<a class="laptopCata list-group-item list-group-item-action" href="#js">Laptop</a>
+						<a class="phoneCata list-group-item list-group-item-action" href="#js">Mobile Phone</a>
 
 						<a class="list-group-item list-group-item-action" id="moreLink" href="#js" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 							more...
@@ -193,29 +179,27 @@
 				<div class="card d-flex justify-content-center">
 
 					<div class="card-header">
-						11 results for 'iphone'
+						List of Laptops
 					</div>
 					<!-- related products list -->
 					<div class="card-body d-flex flex-column justify-content-around">
-						
-						<!-- sort by -->
-						<div class="dropdown">
-
-							sort by 
-							<button type="button" class="sortSelected btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								
-							</button>
-
-							<div class="dropdown-menu">
-								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort1"><i class="fas fa-arrow-up"></i> Finish time </a>
-
-								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort2"><i class="fas fa-arrow-down"></i> Price </a>
-
-							</div>
-						</div>
+						<!-- <h4 class="card-title">List of Laptops</h4> -->
 
 						<div class="itemContainer d-flex flex-row flex-wrap justify-content-start">
 
+							<!-- <div class="item card" style="width: 15rem;">
+								<a href="detailpage.html" title="go to product details"><img src="./images/image1.jpg" class="card-img-top" alt="..."></a>
+								<div class="card-body">
+									<h5 class="card-title">Card title1</h5>
+									<p class="card-text">Some quick </p>
+									<a href="#" class="btn btn-primary">Like</a>
+									<a href="#" class="btn btn-primary">Bid</a>
+									<a href="#" class="btn btn-primary">Report</a>
+								</div>
+							</div> -->
+
+
+							
 							
 						</div>
 
@@ -271,17 +255,9 @@
 	<!-- Footer -->
 
 
-
-	<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
-	<script
-	src="https://code.jquery.com/jquery-3.4.1.js"
-	integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-	crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-	<!-- recapcha -->
-	<script src='https://www.google.com/recaptcha/api.js'></script>
 
 
 	<!-- pagination -->
@@ -298,11 +274,11 @@
 		'iphone6','iphone6S','iphone7S','iphoneXS','iphoneXsMax', 'Samsung'];
 
 		const prices = ['100','100','100','100','100',
-		'100','100','100','100','100', '400'];
+		'100','100','100','100','100', '100'];
 
 		const bidders = ['Alex','Peter','Diana','Alex','Peter','Diana','iphone6S','Alex','Peter','Diana', 'Alex'];
 
-		const winPrices = ['200','200','200','200','200','200','200','200','200$','200', '500'];
+		const winPrices = ['200','200','200','200','200','200','200','200','200$','200', '200'];
 
 		const startDates = ['03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019', '03/12/2019'];
 
@@ -327,54 +303,59 @@
 				<div class="card-body">
 
 				<a class="linkToItemDetails" href="detailpage.html" title="go to product details">
-				<h5 class="card-title">${titles[i]}</h5>
+					<h5 class="card-title">${titles[i]}</h5>
 				</a>
 
 				<dl class="row">
 
 				<dd class="col-sm-8" title="Price to win instantly">
-				<i class="fas fa-shopping-cart"></i> Win price
+					<i class="fas fa-shopping-cart"></i> Win price
 				</dd>
 				<dd class="col-sm-4 text-sm-right"title="Price to win instantly">${winPrices[i]}$</dd>
 
 				<dd class="col-sm-6" title="The highest price paying bidder">
-				<i class="far fa-user"></i> ${bidders[i]}
+					<i class="far fa-user"></i> ${bidders[i]}
 				</dd>
 				<dd class="col-sm-6 text-sm-right" title="The highest price made">${prices[i]}$</dd>
 
 
 				<dd class="col-sm-6">
-				<div class="badge badge-secondary" title="The date product was uploaded">
-				<i class="fas fa-play"></i> ${startDates[i]}
-				</div>
+					<div class="badge badge-secondary" title="The date product was uploaded">
+					<i class="fas fa-play"></i> ${startDates[i]}
+					</div>
 				</dd>
 				<dd class="col-sm-6  text-sm-right">
-				<div class="badge badge-primary" title="Time left">
-				<i class="fas fa-hourglass-start"></i> ${timeRemains[i]} left
-				</div>
+					<div class="badge badge-primary" title="Time left">
+					<i class="fas fa-hourglass-start"></i> ${timeRemains[i]} left
+					</div>
 				</dd>
 
 
 				<dd class="col-12">
-				<div class="badge badge-light badge-lg" title="Number of turns made">
-				${bidTurns[i]} turns
-				</div>
+					<div class="badge badge-light badge-lg" title="Number of turns made">
+					${bidTurns[i]} turns
+					</div>
 				</dd>
 				</dl>
 
 
 				</div>
-
-				<!-- list of buttons -->
-				<div class="buttons">
-				<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i></button>
-
-				<a href="#" class="btn btn-light">Report</a>
-				</div>
-
-
 				</div>`;
+				// <p class="card-text">Some quick </p>
+				// <a href="#" class="btn btn-primary">Like</a>
+				// <a href="#" class="btn btn-primary">Bid</a>
+				// <a href="#" class="btn btn-primary">Report</a>
 
+				// <dd class="col-sm-6">
+				// 	<div class="badge badge-primary" title="The date product was uploaded">
+				// 	<i class="fas fa-play"></i> ${startDates[i]}
+				// 	</div>
+				// </dd>
+				// <dd class="col-sm-6  text-sm-right">
+				// 	<div class="badge badge-success" title="Time left">
+				// 	<i class="fas fa-hourglass-start"></i> ${timeRemains[i]} left
+				// 	</div>
+				// </dd>
 
 			}
 
@@ -384,11 +365,14 @@
 
 		function setItemIdVisible(id){
 			// set items not have id invisible
-			$('.item').css('display', 'none');
+			$('.item').each(function(idx, item){
+				$(item).css('display', 'none');
+			});
 
 			// set items visible
-			$(`.item${id}`).css('display', 'block');
-
+			$('.item' + id).each(function(idx, item){
+				$(item).css('display', 'block');
+			});
 		}
 
 		function createPaginationAndArrangeItems(){
@@ -404,10 +388,8 @@
 				}
 
 				var classToAdd = 'item' + pageId;
-				
-				// $(item).addClass(classToAdd);
+				console.log(classToAdd);
 				$(item).addClass(classToAdd);
-				console.log($(item).attr('id'));
 			});
 
 			
@@ -426,7 +408,6 @@
 
 			});
 		}
-
 
 		$(()=>{
 
@@ -520,110 +501,5 @@
 		});
 	</script>
 
-
-	<!-- search options -->
-	<script type="text/javascript">
-		$(()=>{
-			$('.searchOpt i').css('display', 'none');
-			$('#opt1 i').css('display', 'inline');
-
-
-		});
-
-		function setChecked(btnId){
-			// alert(btnId);
-			$('.searchOpt i').css('display', 'none');
-			$(`#${btnId} i`).css('display', 'inline');
-		}
-
-
-	</script>
-
-	<!-- sort options -->
-	<script type="text/javascript">
-		$(()=>{
-			var html = $('#sort1').html();
-			$('.sortSelected').html(html);
-		})
-
-		function setSortSelected(btnId){
-			// alert(btnId);
-			$('.itemContainer').hide();
-
-			// set sort selected
-			var html = $(`#${btnId}`).html();
-			$('.sortSelected').html(html);
-
-			// sort search results
-			// get first and last item
-			let lastIndex = $('.item').length - 1;
-			var itemFirst, itemLast;
-			$('.item').each(function(idx, item){
-				if(idx % 2 === 0){
-					itemFirst = item;
-				}
-
-				if(idx % 2 === 1){
-					itemLast = item;
-
-					// swap first and last
-					let htmlFirst = $(itemFirst).html();
-					$(itemFirst).html($(itemLast).html());
-					$(itemLast).html(htmlFirst);
-				}
-
-			});
-			
-			// reset item container
-			
-			$('.itemContainer').show(1000);
-			// $('.itemContainer').css('display', 'block');
-
-
-
-		}
-	</script>
-
-
-	<!-- add to watch list -->
-	<script type="text/javascript">
-
-		function addToWatchList(button){
-			
-
-			if($(button).attr('value') === '0'){
-				btn = button;
-
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'success',
-					title: 'Product is added to your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
-
-				$(button).css('color', 'red');
-				$(button).attr('title', 'Remove from watch list');
-				$(button).attr('value', '1');
-			}
-			else{
-				btn = null;
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'error',
-					title: 'Product is removed from your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
-
-				$(button).css('color', 'black');
-				$(button).attr('title', 'Add to watch list');
-				$(button).attr('value', '0');
-			}
-
-		}
-	</script>
 </body>
 </html>
