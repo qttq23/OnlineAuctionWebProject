@@ -18,13 +18,8 @@
 	<!-- font awesome -->
 	<script src="https://kit.fontawesome.com/8341edf21a.js" crossorigin="anonymous"></script>
 
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-
 	<!-- sweet alert -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
-	<!-- animate.cs -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
 </head>
 
 
@@ -39,10 +34,10 @@
 		<!-- Search form -->
 		<form class="form-inline w-50">
 			<div class="input-group w-100">
-				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search" value="iphone">
+				<input class="form-control w-75" type="search" placeholder="Search product..." aria-label="Search">
 
 				<div class="btn-group">
-					<button class="btn btn-secondary input-group-append" type="submit">
+					<button class="btn btn-secondary input-group-append" type="submit" onclick="location.href='searchResultPage.html';">
 						<i class="fas fa-search"></i>
 					</button>
 
@@ -65,9 +60,9 @@
 			<ul class="list-inline">
 				<li class="list-inline-item">
 					<div class="dropdown">
-						<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<i class="fa-autoprefixer"></i>
-							User
+						<button class="btn btn-link" title="Upload new product" style="color: white;"><i class="fas fa-upload"></i></button>
+						<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
+							<i class="far fa-user"></i>	User
 						</button>
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							<a class="dropdown-item" href="userProfilePage.html">Profile</a>
@@ -79,15 +74,15 @@
 
 							<div class="dropdown-divider"></div>
 
-							<a class="dropdown-item" href="#">Log out</a>
+							<a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Log out</a>
 						</div>
 					</div>
 				</li>
 				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()">Login</a>
+					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()" title="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
 				</li>
 				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="signuppage.html">Sign up</a>
+					<a class="social-icon text-xs-center" href="signuppage.html" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
 				</li>
 
 			</ul>
@@ -187,46 +182,128 @@
 			</div>
 
 			<!-- main -->
-			<div class="main col ">
+			<div class="main col">
 
-				<!-- product list card -->
-				<div class="card d-flex justify-content-center">
+				<div class="card">
+					<div class="card-body">
+						<h5>User details</h5>
 
-					<div class="card-header">
-						11 results for 'iphone'
-					</div>
-					<!-- related products list -->
-					<div class="card-body d-flex flex-column justify-content-around">
-						
-						<!-- sort by -->
-						<div class="dropdown">
+						<button type="button" class="editButton btn btn-primary " onclick="switchToEditMode(true)"><i class="fas fa-edit"></i> Edit</button>
 
-							sort by 
-							<button type="button" class="sortSelected btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<form class="profileForm">
+							<small id="overalError"></small>
+							<div class="d-flex flex-column flex-sm-row mt-2 mb-2">
+								<div class="card col col-sm-6 mr-2 mb-2">
+									<h5 class="card-title">Account</h5>
+
+									<div class="card-body">
+										<div class="editableForm usernameDiv form-group">
+											<label class="boldLabel" for="exampleName">Username</label>
+
+											<input type="text" class="toEditInput  form-control" id="exampleName" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
+										<div class="editableForm idDiv form-group">
+											<label class="boldLabel" for="exampleAddress">User Id</label>
+
+											<input type="text" class="toEditInput  form-control" id="exampleAddress" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
 								
-							</button>
 
-							<div class="dropdown-menu">
-								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort1"><i class="fas fa-arrow-up"></i> Finish time </a>
+										<div class="editableForm userTypeDiv form-group">
+											<label class="boldLabel" for="exampleFormControlSelect1">User type</label>
 
-								<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort2"><i class="fas fa-arrow-down"></i> Price </a>
+											<select class="form-control toEditInput" id="exampleFormControlSelect1" disabled>
+												<option value="Guest">Guest</option>
+												<option value="Bidder">Bidder</option>
+												<option value="Seller">Seller</option>
+												
+											</select>
+											<p class="editablePara"></p>
 
+											<small class="errorPrompt"></small>
+										</div>
+									</div>
+								</div>
+
+								<div class="card col col-sm-6 mr-2 mb-2">
+									<h5 class="card-title">Personal</h5>
+									<div class="card-body">
+
+
+										<div class="editableForm fullnameDiv form-group">
+											<label class="boldLabel" for="exampleEmail">Full name</label>
+
+											<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
+										<div class="editableForm emailDiv form-group">
+											<label class="boldLabel" for="exampleEmail">Email</label>
+
+											<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
+										<div class="editableForm addressDiv form-group">
+											<label class="boldLabel" for="exampleEmail">Address</label>
+
+											<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
+										<div class="editableForm birthdayDiv form-group">
+											<label class="boldLabel" for="exampleEmail">Birthday</label>
+
+											<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+											<p class="editablePara"></p>
+											<small class="errorPrompt"></small>
+										</div>
+
+									</div>
+								</div>
 							</div>
-						</div>
-
-						<div class="itemContainer d-flex flex-row flex-wrap justify-content-start">
+							
 
 							
-						</div>
 
-						<!-- pagination -->
-						<div class="pagination d-flex justify-content-start mt-3"></div>
 
-						<div id="content"></div>
+
+
+							<div class="listConfirmButtons">
+								<div class=" d-flex flex-row justify-content-between">
+									<button type="button" class="btn btn-primary" onclick="saveProfile()">
+										<i class="fas fa-check"></i>
+									Save</button>
+
+									<button type="button" class="btn btn-secondary" onclick="discardProfile()">
+										<i class="fas fa-times"></i>
+									Cancel</button>
+
+								</div>
+								
+							</div>
+							
+						</form>
+
+						<a class="btn btn-secondary mt-3" href="manageusersPage.html"><i class="fas fa-chevron-left"></i> Return to catagory list</a>
+
+
 					</div>
-
-
-
 				</div>
 
 
@@ -271,15 +348,9 @@
 	<!-- Footer -->
 
 
-
-	<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
-	<script
-	src="https://code.jquery.com/jquery-3.4.1.js"
-	integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-	crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 
 
 	<!-- pagination -->
@@ -287,165 +358,136 @@
 	<script type="text/javascript" src="./flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
 
 
-	<!-- functions about item products -->
+	<!-- switch EditableInput -->
 	<script type="text/javascript">
+		$(()=>{
+			initEditableForm();
+		});
 
-		const itemNum = 11;
-		const itemNumOnPage = 6;
-		const titles = ['iphone1','iphone2','iphone3','iphone4','iphone5',
-		'iphone6','iphone6S','iphone7S','iphoneXS','iphoneXsMax', 'Samsung'];
+		var profileText = ['Bthang', 
+		'1259', 'Bidder',
+		'Bùi Quang Thắng', 'bthang@gmail.com', '228 Tran Phu', '2.3.2000'];
 
-		const prices = ['100','100','100','100','100',
-		'100','100','100','100','100', '400'];
+		function initEditableForm(){
 
-		const bidders = ['Alex','Peter','Diana','Alex','Peter','Diana','iphone6S','Alex','Peter','Diana', 'Alex'];
+			$('.profileForm .editableForm').each(function(idx, item){
+				var para = $(item).find( '.editablePara');
+				para.html(profileText[idx]);
+			});
+		}
 
-		const winPrices = ['200','200','200','200','200','200','200','200','200$','200', '500'];
+		function switchToEditMode(isEditable){
+			// alert('flag');
 
-		const startDates = ['03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019','03/12/2019', '03/12/2019'];
+			let paraDisplay = 'block';
+			let inputDisplay = 'none';
+			let buttonsDisplay  = 'none';
+			let editBtnDisabled = false;
+			let selectDisabled = true;
+			if(isEditable){
+				paraDisplay = 'none';
+				inputDisplay = 'block';
+				buttonsDisplay = 'block';
+				editBtnDisabled = true;
+				selectDisabled = false;
+			}
 
-		const timeRemains = ['6d2h','300s','6d2h','300s','6d2h','300s','6d2h','300s','6d2h','300s', '6d2h'];
+			// set paragraph invisiable
+			$('.editablePara').each(function(idx, item) {
+				$(item).css('display', paraDisplay);
+			});
+			
+			// set input visible
+			$('.toEditInput').each(function(idx, item){
+				$(item).css('display', inputDisplay);
+				// $(item).attr('value', profileText[idx]);
+				$(item).val(profileText[idx]);
+			});
 
-		const bidTurns = ['3','3','3','3','3','3','3','3','3','3', '3'];
+			// set type select enabled
+			$('.userTypeDiv select').attr('disabled', selectDisabled);
 
+			// set save button visisble
+			$('.listConfirmButtons').each(function(idx, item){
+				$(item).css('display', buttonsDisplay);
+			});
 
-		
-
-		function createItems(){
-
-
-			// create Number of item divs
-			var itemHtml = '';
-			for(var i = 0; i < itemNum; i++){
-				itemHtml += 
-				`<div class="item card mt-2 mr-3 mb-2" style="width: 15rem;">
-
-				<a href="detailpage.html" title="go to product details"><img src="./images/image1.jpg" class="card-img-top" alt="..."></a>
-
-				<div class="card-body">
-
-				<a class="linkToItemDetails" href="detailpage.html" title="go to product details">
-				<h5 class="card-title">${titles[i]}</h5>
-				</a>
-
-				<dl class="row">
-
-				<dd class="col-sm-8" title="Price to win instantly">
-				<i class="fas fa-shopping-cart"></i> Win price
-				</dd>
-				<dd class="col-sm-4 text-sm-right"title="Price to win instantly">${winPrices[i]}$</dd>
-
-				<dd class="col-sm-6" title="The highest price paying bidder">
-				<i class="far fa-user"></i> ${bidders[i]}
-				</dd>
-				<dd class="col-sm-6 text-sm-right" title="The highest price made">${prices[i]}$</dd>
-
-
-				<dd class="col-sm-6">
-				<div class="badge badge-secondary" title="The date product was uploaded">
-				<i class="fas fa-play"></i> ${startDates[i]}
-				</div>
-				</dd>
-				<dd class="col-sm-6  text-sm-right">
-				<div class="badge badge-primary" title="Time left">
-				<i class="fas fa-hourglass-start"></i> ${timeRemains[i]} left
-				</div>
-				</dd>
+			// set edit button disabled
+			$('.editButton').each(function(idx, item){
+				$(item).attr("disabled", editBtnDisabled);
+			});
+		}
 
 
-				<dd class="col-12">
-				<div class="badge badge-light badge-lg" title="Number of turns made">
-				${bidTurns[i]} turns
-				</div>
-				</dd>
-				</dl>
 
 
-				</div>
 
-				<!-- list of buttons -->
-				<div class="buttons">
-				<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i></button>
+	</script>
 
-				<a href="#" class="btn btn-light">Report</a>
-				</div>
+	<!-- save/discard profile -->
+	<script type="text/javascript">
+		function saveProfile(){
+
+			$('.profileForm .editableForm').each(function(idx, item){
+				var input = $(item).find('.toEditInput');
+				profileText[idx] = input.val();
 
 
-				</div>`;
+				var para = $(item).find( '.editablePara');
+				para.html(profileText[idx]);
+			});
+
+				// switch to no-editable mode
+				switchToEditMode(false);
+
+				// show notification
+				Swal.fire({
+					position: 'center',
+					icon: 'success',
+					title: 'Your profile is saved',
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
 
 
 			}
 
-			// assign divs to their container
-			$('.itemContainer').html(itemHtml);
-		}
+			function discardProfile(){
 
-		function setItemIdVisible(id){
-			// set items not have id invisible
-			$('.item').css('display', 'none');
 
-			// set items visible
-			$(`.item${id}`).css('display', 'block');
+				$('.profileForm .editableForm').each(function(idx, item){
+					var input = $(item).find('.toEditInput');
+					input.val(profileText[idx]);
 
-		}
+					var para = $(item).find( '.editablePara');
+					para.html(profileText[idx]);
+				});
 
-		function createPaginationAndArrangeItems(){
-
-			// calculate and set id for items
-			var count = 0;
-			var pageId = 1;
-			$('.item').each(function(idx, item){
-				count++;
-				if(count > itemNumOnPage){
-					count = 1;
-					pageId++;
-				}
-
-				var classToAdd = 'item' + pageId;
 				
-				// $(item).addClass(classToAdd);
-				$(item).addClass(classToAdd);
-				console.log($(item).attr('id'));
-			});
 
-			
-			setItemIdVisible(1);
+			// switch to no-editable mode
+			switchToEditMode(false);
 
-			// pagination
-			$('.pagination').pagination({
-				items: `${itemNum}`,
-				itemsOnPage: `${itemNumOnPage}`,
-				cssStyle: 'light-theme',
-				onPageClick: function(pageNumber, event) {
-					// Callback triggered when a page is clicked
-					// Page number is given as an optional parameter
-					setItemIdVisible(pageNumber);
-				}
-
+			// show notification
+			Swal.fire({
+				position: 'center',
+				icon: 'info',
+				title: 'Canceled editting',
+				showConfirmButton: false,
+				timer: 1300,
+				toast: true
 			});
 		}
-
-
-		$(()=>{
-
-			createItems();
-
-			createPaginationAndArrangeItems();
-			
-		}
-
-		);
 	</script>
 
 
-
-
-	<!-- show login -->
+	<!-- login -->
 	<script type="text/javascript">
 		function showLoginDialog () {
 
 			Swal.fire({
-
+				
 				// title: 'Log in',
 				html:
 				'<i class="fab fa-autoprefixer" style="color: #329AD6; font-size:70px;"></i>'+
@@ -480,6 +522,8 @@
 
 		};
 
+
+		
 	</script>
 
 	<!-- show request upgrade dialog -->
@@ -509,118 +553,18 @@
 		};
 	</script>
 
-	<!-- onload -->
-	<script type="text/javascript">
-		$(() => {
-			// alert('loaded');
-			$('.laptopCata').addClass('laptopCataOn');
 
-		});
-	</script>
-
-
-	<!-- search options -->
+	<!-- search option -->
 	<script type="text/javascript">
 		$(()=>{
 			$('.searchOpt i').css('display', 'none');
 			$('#opt1 i').css('display', 'inline');
-
-
 		});
 
 		function setChecked(btnId){
 			// alert(btnId);
 			$('.searchOpt i').css('display', 'none');
 			$(`#${btnId} i`).css('display', 'inline');
-		}
-
-
-	</script>
-
-	<!-- sort options -->
-	<script type="text/javascript">
-		$(()=>{
-			var html = $('#sort1').html();
-			$('.sortSelected').html(html);
-		})
-
-		function setSortSelected(btnId){
-			// alert(btnId);
-			$('.itemContainer').hide();
-
-			// set sort selected
-			var html = $(`#${btnId}`).html();
-			$('.sortSelected').html(html);
-
-			// sort search results
-			// get first and last item
-			let lastIndex = $('.item').length - 1;
-			var itemFirst, itemLast;
-			$('.item').each(function(idx, item){
-				if(idx % 2 === 0){
-					itemFirst = item;
-				}
-
-				if(idx % 2 === 1){
-					itemLast = item;
-
-					// swap first and last
-					let htmlFirst = $(itemFirst).html();
-					$(itemFirst).html($(itemLast).html());
-					$(itemLast).html(htmlFirst);
-				}
-
-			});
-			
-			// reset item container
-			
-			$('.itemContainer').show(1000);
-			// $('.itemContainer').css('display', 'block');
-
-
-
-		}
-	</script>
-
-
-	<!-- add to watch list -->
-	<script type="text/javascript">
-
-		function addToWatchList(button){
-			
-
-			if($(button).attr('value') === '0'){
-				btn = button;
-
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'success',
-					title: 'Product is added to your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
-
-				$(button).css('color', 'red');
-				$(button).attr('title', 'Remove from watch list');
-				$(button).attr('value', '1');
-			}
-			else{
-				btn = null;
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'error',
-					title: 'Product is removed from your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
-
-				$(button).css('color', 'black');
-				$(button).attr('title', 'Add to watch list');
-				$(button).attr('value', '0');
-			}
-
 		}
 	</script>
 </body>

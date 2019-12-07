@@ -23,7 +23,10 @@ log in, sign up
 (account) request upgrade
 
 - 3/12/2019, v1.5
-(guest) almost requirement 1 (1.4 search box and 1.6 not done yet)
+(guest) almost requirement 1&2 (1.4 search box and 1.6 not done yet)
 
 - 6/12/2019, v1.8
-(bidder) done requirement 2 (bidded products, comment and rate, change password, liked products,...)
+(bidder) done requirement 3 (bidded products, comment and rate, change password, liked products,...)
+
+- 8/12/2019, v1.9
+(admin) done requirement 4 (admin)
