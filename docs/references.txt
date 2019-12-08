@@ -6,3 +6,12 @@ https://getbootstrap.com/docs/4.3/getting-started/introduction/#community
 
 - sweetalert 2
 https://sweetalert2.github.io/
+
+- fontawesome
+https://fontawesome.com/
+
+- jQuery
+https://hackmd.io/@nndkhoa9/jquery#/2/4
+https://jquery.com/
+
+- ...

@@ -30,3 +30,7 @@ log in, sign up
 
 - 8/12/2019, v1.9
 (admin) done requirement 4 (admin)
+
+
+- 8/12/2019, v2.0
+done: guest, bidder, seller, admin, some other features,...
