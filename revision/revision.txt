@@ -1,4 +1,6 @@
-# revision:
+# revision: (full revision on github)
+
+
 - 25/11/2019, v1.0
 initialize, first layout of home page: nav menu, side bar menu, footer,...
 

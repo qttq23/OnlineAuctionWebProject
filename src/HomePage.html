@@ -53,7 +53,7 @@
 						
 					</div>
 				</div>
-				
+
 			</div>
 		</form>
 		
@@ -188,7 +188,7 @@
 			</div>
 
 			<!-- main -->
-			<div class="main col col-sm-9">
+			<div class="main col">
 
 				<!-- product list card -->
 				<div class="card">
@@ -246,7 +246,12 @@
 
 				<!-- Content -->
 				<h5 class="text-uppercase font-weight-bold">Online Auction Web</h5>
-				<p>This is online auction web from Phát Triển Ứng Dụng Web course's project.<br>Bùi Quang Thắng<br>8/12/2019</p>
+				<p>This is online auction web from Phát Triển Ứng Dụng Web course's project.
+					<br/>
+					Group 15 - 1753102 - Bùi Quang Thắng
+					<br/>
+					24/12/2019
+				</p>
 
 			</div>
 			<!-- Grid row -->
@@ -473,7 +478,46 @@
 		}
 	</script>
 
+	<!-- add to watch list -->
+	<script type="text/javascript">
 
+		function addToWatchList(button){
+			
+
+			if($(button).attr('value') === '0'){
+				btn = button;
+
+				Swal.fire({
+					position: 'bottom-start',
+					icon: 'success',
+					title: 'Product is added to your watch list',
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+				$(button).css('color', 'red');
+				$(button).attr('title', 'Remove from watch list');
+				$(button).attr('value', '1');
+			}
+			else{
+				btn = null;
+				Swal.fire({
+					position: 'bottom-start',
+					icon: 'error',
+					title: 'Product is removed from your watch list',
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+				$(button).css('color', 'black');
+				$(button).attr('title', 'Add to watch list');
+				$(button).attr('value', '0');
+			}
+
+		}
+	</script>
 
 </body>
 </html>
