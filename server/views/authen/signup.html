@@ -1,6 +1,6 @@
 
 {{#section 'css'}}
-
+<script src='https://www.google.com/recaptcha/api.js'></script>
 {{/section}}
 
 <!-- body -->
@@ -16,8 +16,8 @@
 				<div class="card-body">
 					<h1>Create account</h1>
 
-					<form action="/authen/signup" method="post" onsubmit="return validateForm()">
-						
+					<!-- onsubmit="return validateForm()" -->
+					<form id="signupForm" action="/authen/signup" method="post" >
 
 						<div class="usernameDiv form-group">
 							<label for="inUsername">Username</label>
@@ -57,14 +57,16 @@
 
 
 
-						<div class="captchaDiv form-group">
+						<!-- <div class="captchaDiv form-group">
 							<div class="form-check">
 								<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1">
 								<label class="form-check-label" for="exampleRadios1">
 									I'm not a robot
 								</label>
 							</div>
-						</div>
+						</div> -->
+
+						<div class="g-recaptcha" data-sitekey="6LernMoUAAAAACyZiOOLr5lUBa10YvVBLrfe168J"></div><br>
 
 						<small class="errorPrompt" id="overalError"></small>
 
@@ -197,15 +199,16 @@
 		var input3 = $('.emailDiv input').val();
 		var input4 = $('.nameDiv input').val();
 		// var input5 = $('.addressDiv input').val();
-		var input6 = $('.captchaDiv input').get(0);
+		// var input6 = $('.captchaDiv input').get(0);
 		var input7 = $('.birthdayDiv input').val();
 
 		if(input1.length === 0 || 
 			input2.length === 0 || 
 			input3.length === 0 || 
-			input4.length === 0 || 
+			input4.length === 0 
 			// input5.length === 0 || 
-			input6.checked === false )
+			// input6.checked === false 
+			)
 		{
 
 			// not satisfied
@@ -234,5 +237,42 @@
 
 	}
 </script>
+
+<!-- google recaptcha -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+
+<script>
+	$(document).ready(function() {
+		$('#signupForm').submit(function() {
+
+			// check abcxyz
+			if(validateForm()){
+
+				// submit
+				$(this).ajaxSubmit({
+					error: function(xhr) {
+						status('Error: ' + xhr.status);
+					},
+					success: function(response) {
+						console.log(response);
+
+						if(response.isError === true){
+							$('#overalError').html(response.msg);
+						}
+						else{
+							window.location.href = response.url;
+						}
+					}
+				});	
+			}
+
+			
+			//Very important line, it disable the page refresh.
+			return false;
+		});
+	});
+</script>
+
 
 {{/section}}

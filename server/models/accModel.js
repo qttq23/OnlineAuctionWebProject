@@ -3,7 +3,10 @@ const db = require('../utils/db');
 const bcrypt = require('bcryptjs');
 const table = 'account';
 
+
+
 module.exports = {
+
 	single: async (userpass)=>{
 
 		let result = null;

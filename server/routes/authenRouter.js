@@ -5,7 +5,9 @@ const accModel = require('../models/accModel');
 const config = require('../config.json');
 const bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
-
+var request = require('request');
+const util = require('util');
+const requestPromise = util.promisify(request);
 
 
 const router = express.Router();
@@ -68,8 +70,9 @@ router.post('/login', async function(req, res){
 			isErr = false;
 			userName = result.Name;
 			userType = result.AccType;
-			returnTo = req.session.returnTo || '/home/';
+			returnTo = req.session.returnTo || '/home';
 
+			lg(returnTo);
 			
 		}
 		else{
@@ -86,13 +89,20 @@ router.post('/login', async function(req, res){
 
 
 
+		// let obj = { 
+		// 	msg: await (()=>msg)(),
+		// 	isErr: await (()=>isErr)(),
+		// 	userName: await(()=>userName)(),
+		// 	userType: await(()=>userType)(),
+		// 	returnTo: await(()=>returnTo)(),
+		// };
 		let obj = { 
-			msg: await (()=>msg)(),
-			isErr: await (()=>isErr)(),
-			userName: await(()=>userName)(),
-			userType: await(()=>userType)(),
-			returnTo: await(()=>returnTo)(),
-		};
+			msg: msg,
+			isErr: isErr,
+			userName: userName,
+			userType: userType,
+			returnTo: returnTo,
+		};		
 		res.json(obj);
 	}
 	
@@ -124,10 +134,41 @@ router.get('/signup', function(req, res){
 
 router.post('/signup', async function(req, res){
 	lg('POST sign up');
-
-	// check
 	lg(req.body);
 
+	// check recaptcha
+	if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+		return res.json({
+			isError: true,
+			msg: 'Please select captcha',
+			"responseCode" : 1,
+			"responseDesc" : "Please select captcha"
+		});
+	}
+
+	// Hitting GET request to the URL, Google will respond with success or error scenario.
+	var secretKey = "6LernMoUAAAAALGsNfGg0ZvKfYUy2_vibI1HINaK";
+	var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+	
+	const response = await requestPromise(verificationUrl);
+	// console.log('response', response.body);
+	lg('google request done');
+	lg(response.body);
+	let body = JSON.parse(response.body);
+
+	// Success will be true or false depending upon captcha validation.
+	if(body.success !== undefined && !body.success) {
+		return res.json({
+			isError: true,
+			msg: 'Captcha validation failed. Please reload this page and try again.',
+			"responseCode" : 1,
+			"responseDesc" : "Failed captcha verification"
+		});
+	}
+
+	lg('checkCaptcha done');
+
+	// check account
 	const account = {
 		// Id: String(-1),
 		Username: req.body.inUsername,
@@ -185,19 +226,32 @@ router.post('/signup', async function(req, res){
 		});
 
 		// show user
-		res.render(
-			'authen/signupActive.html',
-			{
-				layout: 'simple.html'
-			});
+		res.json({
+			isError: false,
+			msg: 'redirect',
+			url: '/authen/signupActive'
+		});
+
 
 	}
 	else{
-		res.send(result.msg);
+		// res.send(result.msg);
+		res.json({
+			isError: true,
+			msg: result.msg
+		});
 	}
+
+	
 
 })
 
+
+router.get('/signupActive', function(req, res){
+	lg('GET active');
+
+	res.render('authen/signupActive.html',{layout: 'simple.html'});
+})
 
 router.post('/signupActive', async function(req, res){
 	lg('POST active');
