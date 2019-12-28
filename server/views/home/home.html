@@ -320,45 +320,45 @@
 </script>
 
 <!-- add to watch list -->
-	<script type="text/javascript">
+<script type="text/javascript">
 
-		function addToWatchList(button){
-			
+	function addToWatchList(button){
+		
 
-			if($(button).attr('value') === '0'){
-				btn = button;
+		if($(button).attr('value') === '0'){
+			btn = button;
 
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'success',
-					title: 'Product is added to your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
+			Swal.fire({
+				position: 'bottom-start',
+				icon: 'success',
+				title: 'Product is added to your watch list',
+				showConfirmButton: false,
+				timer: 1300,
+				toast: true
+			});
 
-				$(button).css('color', 'red');
-				$(button).attr('title', 'Remove from watch list');
-				$(button).attr('value', '1');
-			}
-			else{
-				btn = null;
-				Swal.fire({
-					position: 'bottom-start',
-					icon: 'error',
-					title: 'Product is removed from your watch list',
-					showConfirmButton: false,
-					timer: 1300,
-					toast: true
-				});
-
-				$(button).css('color', 'black');
-				$(button).attr('title', 'Add to watch list');
-				$(button).attr('value', '0');
-			}
-
+			$(button).css('color', 'red');
+			$(button).attr('title', 'Remove from watch list');
+			$(button).attr('value', '1');
 		}
-	</script>
+		else{
+			btn = null;
+			Swal.fire({
+				position: 'bottom-start',
+				icon: 'error',
+				title: 'Product is removed from your watch list',
+				showConfirmButton: false,
+				timer: 1300,
+				toast: true
+			});
+
+			$(button).css('color', 'black');
+			$(button).attr('title', 'Add to watch list');
+			$(button).attr('value', '0');
+		}
+
+	}
+</script>
 {{/section}}
 
 

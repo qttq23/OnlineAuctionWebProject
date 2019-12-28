@@ -1,0 +1,104 @@
+
+{{#section 'css'}}
+
+{{/section}}
+
+<!-- body -->
+<div class=" container">
+
+
+	<div class="body row justify-content-center">
+
+		<!-- main -->
+		<div class="main col-sm-6">
+
+			<div class="card">
+				<div class="notSuccessDiv card-body">
+					<h4>Create account successfully! We sent you a verification email. Please enter verification number.</h4>
+
+
+					<form>
+						
+
+						<div class="otpDiv form-group">
+							<label for="inOtp">Enter verification number</label>
+							<input type="number" class="form-control" id="inOtp" name="inOtp">
+						</div>
+
+
+
+						<small class="errorPrompt" id="overalError"></small>
+
+
+						<div class="d-flex flex-row justify-content-between">
+							<button type="button" class="btn btn-primary" onclick="submitOtp();">
+								<i class="fas fa-plus"></i>
+							Active</button>
+
+							<a class="btn btn-secondary" href="/home">
+								<i class="fas fa-chevron-left"></i>
+							Cancel and Return to home</a>
+
+						</div>
+
+					</form>
+
+
+				</div>
+				<div class="successDiv card-body">
+					<h4>Active account successfully! You can now login using your account and use more features. Thank you!</h4>
+
+					<button type="button" class="btn btn-primary" onclick="location.href='/home';">
+						<i class="fas fa-chevron-left"></i>
+					Ok and Return to home</button>
+
+
+				</div>
+
+			</div>
+
+
+
+		</div>
+
+	</div>	
+
+
+</div>
+
+
+{{#section 'js'}}
+
+<!-- on load -->
+<script type="text/javascript">
+	$(()=>{
+		$('.successDiv').css('display', 'none');
+	})
+</script>
+
+<!-- submit otp -->
+<script type="text/javascript">
+	const submitOtp = ()=>{
+		const value = $('.otpDiv input').val();
+
+		// post to server
+		$.ajax({
+			method: "post",
+			url: '/authen/signupActive',
+			data: { otp: value},
+
+		})
+		.done(function(json){
+			if(json.isError === true){
+				$('#overalError').html(json.msg);
+			}
+			else{
+				// success
+				$('.notSuccessDiv').css('display', 'none');
+				$('.successDiv').css('display', 'block');
+			}
+		});
+	}
+</script>
+
+{{/section}}

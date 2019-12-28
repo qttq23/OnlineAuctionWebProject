@@ -89,7 +89,7 @@ app.set('view engine', 'html');
 
 // client get, post
 app.get('/', function(req, res){
-	res.end('hello');
+	res.redirect('/home/');
 })
 
 

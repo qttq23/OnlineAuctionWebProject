@@ -98,7 +98,7 @@
 					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()" title="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
 				</li>
 				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="signuppage.html" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
+					<a class="social-icon text-xs-center" href="/authen/signup" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
 				</li>
 				{{/if}}
 
@@ -359,7 +359,7 @@
 					// post to server
 					$.ajax({
 						method: "post",
-						url: 'authen/login',
+						url: '/authen/login',
 						data: { username: result.value[0], password: result.value[1]},
 						
 

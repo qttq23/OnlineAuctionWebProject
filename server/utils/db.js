@@ -46,6 +46,12 @@ module.exports = {
 			return poolQuery(`select * from ${table} where ?`, condition);
 		}
 	},
+
+	save: (table, record)=>{
+		return poolQuery(`insert into ${table} set ?`, [record]);
+	},
+
+	update: (table, id, record) => poolQuery(`update ${table} set ? where ?`, [record, id]),
 	
 };
 
