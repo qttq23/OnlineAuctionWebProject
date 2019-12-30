@@ -25,7 +25,7 @@ router.get('/login', function(req, res){
 	}
 	else{
 		// already login
-		let url = req.headers.referer || '../home/';
+		let url = req.headers.referer || '../home';
 		res.redirect(url);
 
 	}

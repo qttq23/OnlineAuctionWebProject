@@ -118,7 +118,7 @@
 			Menu
 		</a>
 
-		<div class="body row justify-content-start">
+		<div class="body row justify-content-around">
 
 			<!-- side bar menu -->
 			<div class="menu collapse show col col-sm-3 mb-2" id="collapseExample">
@@ -130,13 +130,13 @@
 					</div>
 					<ul class="cataMenu list-group list-group-flush">
 
-						{{#each this.cata}}
-						<a class="cataMenuItem list-group-item list-group-item-action" href="laptoppage.html">{{Name}} 
+						{{#each this.cataList}}
+						<a class="cataMenuItem list-group-item list-group-item-action" href="/product?catId={{Id}}&page=1">{{Name}} 
 							{{#if NumPro}}
 							<span class="badge badge-pill badge-warning float-right">{{NumPro}}</span>
 							{{/if}}
-							{{/each}}
 						</a>
+						{{/each}}
 
 						
 
@@ -215,7 +215,7 @@
 			</div>
 
 			<!-- main -->
-			<div class="main col">
+			<div class="main col col-sm-9">
 
 				{{{body}}}
 
@@ -370,66 +370,66 @@
 							if(json.isAlreadyLogin){
 								// already login
 								Swal.fire(
-								'Log in failed!',
-								json.msg,
-								'info'
-								).then(()=>{
-									window.location.href = window.location;
-								});	
-							}
-							else{
+									'Log in failed!',
+									json.msg,
+									'info'
+									).then(()=>{
+										window.location.href = window.location;
+									});	
+								}
+								else{
 
-							// login failed
-							Swal.fire(
-								'Log in failed!',
-								json.msg,
-								'error'
-								).then(()=>{
-									showLoginDialog();
-								});	
-							}
-						}
-						else{
-							// login success
-							// update user div
-							let userHtml = `
-							<li class="list-inline-item">
-							<div class="dropdown">
-							<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
+									// login failed
+									Swal.fire(
+										'Log in failed!',
+										json.msg,
+										'error'
+										).then(()=>{
+											showLoginDialog();
+										});	
+									}
+								}
+								else{
+									// login success
+									// update user div
+									let userHtml = `
+									<li class="list-inline-item">
+									<div class="dropdown">
+									<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
 
-							<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
-							<i class="far fa-user"></i>	${json.userName}
-							</button>
+									<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
+									<i class="far fa-user"></i>	${json.userName}
+									</button>
 
-							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-							<a class="dropdown-item" href="userProfilePage.html">Profile</a>
-							<a class="dropdown-item" href="changePasswordPage.html">Change password</a>
+									<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" href="userProfilePage.html">Profile</a>
+									<a class="dropdown-item" href="changePasswordPage.html">Change password</a>
 
-							<div class="dropdown-divider"></div>
+									<div class="dropdown-divider"></div>
 
-							<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
+									<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
 
-							<div class="dropdown-divider"></div>
+									<div class="dropdown-divider"></div>
 
-							<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
-							<i class="fas fa-sign-out-alt"></i> Log out
-							</a>
-							<form id="userLogoutForm" method="post" action="authen/logout" hidden></form>
-				
-
-							</div>
-							</div>
-							</li>
-							`;
-
-							$('.userStatusDiv ul').html(userHtml);
-						}
-					});
+									<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
+									<i class="fas fa-sign-out-alt"></i> Log out
+									</a>
+									<form id="userLogoutForm" method="post" action="authen/logout" hidden></form>
 
 
+									</div>
+									</div>
+									</li>
+									`;
 
-					}
-				})
+									$('.userStatusDiv ul').html(userHtml);
+								}
+							});
+
+
+
+				}
+			})
 
 
 		};

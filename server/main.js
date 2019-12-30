@@ -58,10 +58,12 @@ app.engine('html', expHbs({
 			return numeral(number).format('0,0 $');
 		},
 		dmyConvert: function(datetime){
+
 			return moment(datetime).format('D/M/Y');
 		},
 
 		relativeDateTimeConvert: function(datetime){
+
 			let a = moment();
 			let b = moment(datetime);
 			let diff = b.diff(a, 'seconds');
@@ -89,17 +91,26 @@ app.set('view engine', 'html');
 
 // client get, post
 app.get('/', function(req, res){
-	res.redirect('/home/');
+
+	res.redirect('/home');
 })
 
 
 // app middleware
-app.use(function(req, res, next){
+app.use(async function(req, res, next){
+
+	// pass authen info
 	if(req.session.isAuthen === true){
 		res.locals.userName = req.session.account.Name,
 		res.locals.userType = req.session.account.AccType,
 		res.locals.isAuthen = true;
 	}
+
+	// pass catagory list
+	const cataList = await require('./models/cataModel').all();
+	res.locals.cataList = cataList;
+	res.locals.numPro = cataList.NumPro;
+	lg(cataList);
 
 	next();
 })
@@ -116,6 +127,9 @@ app.use('/authen', authenRouter);
 const proRouter = require('./routes/proRouter');
 app.use('/product', proRouter);
 
+// // catagory
+// const cataRouter = require('./routes/cataRouter');
+// app.use('/cata', cataRouter);
 
 // listen
 const port = 3000;

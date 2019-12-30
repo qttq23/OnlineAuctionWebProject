@@ -1,0 +1,143 @@
+
+
+<!-- product list card -->
+<div class="card d-flex justify-content-center">
+
+	<div class="card-header">
+		{{this.cata.Name}}
+	</div>
+	<!-- related products list -->
+	<div class=" d-flex flex-column justify-content-around">
+
+
+
+		<div class="itemContainer d-flex flex-row flex-wrap justify-content-start">
+			{{#if this.isEmpty}}
+			<h5>
+				No product for this catagory.
+			</h5>
+			{{else}}
+
+			{{#each this.proList}}
+			<div class="col col-sm-4 mt-2 mb-2">
+				<div class="item card h-100" >
+
+					<a href="#" title="go to product details">
+						<img class="card-img-top  img-fluid"
+						src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
+					</a>
+
+					<div class="card-body">
+
+						<a class="linkToItemDetails" href="detailpage.html" title="go to product details">
+							<h5 class="card-title">{{Name}}</h5>
+						</a>
+
+						<dl class="row">
+
+							<dd class="col-sm-8" title="Price to win instantly">
+								<i class="fas fa-shopping-cart"></i> Win price
+							</dd>
+							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
+								{{#if EndPrice}}
+								{{cashConvert EndPrice}}
+								{{else}}
+								<i class="fas fa-ban" title="Not set"></i>
+								{{/if}}
+							</dd>
+
+							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
+
+								<span class="text-wrap text-left">
+									<i class="far fa-user"></i> {{BidderName}}
+								</span>
+								<span class="text-wrap text-right">
+									{{cashConvert Max_Price}}
+								</span>
+							</dd>
+
+
+
+							<dd class="col-12 d-flex flex-row justify-content-between">
+								<span class="badge badge-secondary  text-wrap" title="The date product was uploaded">
+									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
+								</span>
+								<span class="badge badge-primary  text-sm-right text-wrap" title="Time left">
+									<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+								</span>
+							</dd>
+							
+
+
+							<dd class="col">
+								<div class="badge badge-light badge-lg" title="Number of turns made">
+									{{Turn}} turns
+								</div>
+							</dd>
+						</dl>
+
+
+					</div>
+
+					<!-- list of buttons -->
+					<div class="buttons">
+						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
+						</button>
+
+
+					</div>
+
+
+				</div> 
+			</div>
+			{{/each}}
+			{{/if}}
+
+		</div>
+
+		<!-- pagination -->
+		<div class="pagination d-flex justify-content-start mt-3"></div>
+
+
+	</div>
+
+
+
+</div>
+
+
+
+{{#section 'js'}}
+
+<!-- pagination -->
+<script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
+
+
+<script type="text/javascript">
+	$(()=>{
+		// pagination
+		{{#if this.isEmpty}}
+		{{else}}
+		$('.pagination').pagination({
+			items: {{this.cata.NumPro}},
+			itemsOnPage: {{this.onPage}},
+			cssStyle: 'light-theme',
+			onPageClick: function(pageNumber, event) {
+				// Callback triggered when a page is clicked
+				// Page number is given as an optional parameter
+
+				window.location.href = `/product?catId={{this.cata.Id}}&page=${pageNumber}`;
+			}
+
+		});
+
+		$('.pagination').pagination('drawPage', {{this.page}});
+
+		{{/if}}
+		
+	})
+</script>
+
+
+{{/section}}
+

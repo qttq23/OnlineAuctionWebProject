@@ -16,9 +16,10 @@ router.get('/', async function(req, res){
 	const nearEndProList = await proModel.nearEnd(config.NumProInListHomePage);
 	const mostTurnProList = await proModel.mostTurn(config.NumProInListHomePage);
 	const highestPriceProList = await proModel.highestPrice(config.NumProInListHomePage);
-	
+
+
 	res.render('home/home.html', {
-		cata: cataList,
+		cataList: cataList,
 		nearEndPro: nearEndProList,
 		mostTurnPro: mostTurnProList,
 		highestPricePro: highestPriceProList,
