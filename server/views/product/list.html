@@ -46,14 +46,14 @@
 			<div class="itemContainerSub col col-sm-4 mt-2 mb-2">
 				<div class="item card h-100" id="item{{Id}}">
 
-					<a href="#" title="go to product details">
+					<a href="/product/details?id={{Id}}" title="go to product details">
 						<img class="card-img-top  img-fluid"
 						src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
 					</a>
 
 					<div class="card-body">
 
-						<a class="linkToItemDetails" href="detailpage.html" title="go to product details">
+						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
 							<h5 class="card-title">{{Name}}</h5>
 						</a>
 
@@ -83,11 +83,11 @@
 
 
 							<dd class="col-12 d-flex flex-row justify-content-between">
-								<span class="badge badge-secondary  text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
+								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
+									<i class="fas fa-play"></i> <div>{{dmyConvert StartTime}}</div>
 								</span>
-								<span class="badge badge-primary  text-sm-right text-wrap" title="Time left">
-									<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+								<span class="badge badge-primary text-wrap endTimeBadge" title="Time left">
+									<i class="fas fa-hourglass-start"></i> <div>{{relativeDateTimeConvert EndTime}}</div>
 								</span>
 							</dd>
 							
@@ -190,10 +190,8 @@
 <script type="text/javascript">
 
 	$(()=>{
-		// var html = $('#sort1').html();
-		// $('.sortSelected').html(html);
 
-
+		moment.locale('vi');
 		
 	})
 
@@ -208,6 +206,50 @@
 	});
 	{{/each}}
 	// get list done
+
+	// <!-- timer effect for nearly end products -->
+	var listNearEnd = [];
+	for(let i = 0; i < list.length; i++){
+
+		let remains = remainSeconds(list[i].EndTime);
+		if(remains > 0 && remains < 24 * 60 * 60 /*a day*/){
+
+			// red highlight
+			$(`#item${list[i].Id} .endTimeBadge`).addClass('badge-danger');
+
+			// counter for less than 5 minutes
+			if(remains < 5 * 60){
+				listNearEnd.push(list[i]);
+				// alert("pushed");
+			}
+
+			setTimeout(decreaseEndTime, 1000);
+		}
+	}
+
+
+	function decreaseEndTime(){
+		console.log('timout');
+
+		// traverse all near end list
+		listNearEnd.forEach(item=>{
+			let remains = remainSeconds(item.EndTime);
+			if(remains > 0){
+				// decrease 1 second
+				$(`#item${item.Id} .endTimeBadge div`).text('' + remains +' giây nữa');
+			}
+			else if(remains < 0){
+			
+				$(`#item${item.Id} .endTimeBadge div`).text('' + relativeDateTimeConvert(item.EndTime));
+				$(`#item${item.Id} .endTimeBadge`).removeClass('badge-danger');
+			
+
+
+			}
+		});
+
+		setTimeout(decreaseEndTime, 1000);
+	}
 
 	
 
@@ -243,94 +285,119 @@
 						||(remainK > 0 && remainI < 0)){
 						// alert('swap');
 
-						
 
-						let itemFirst = $(`#item${list[i].Id}`);
-						let itemLast = $(`#item${list[k].Id}`);
 
-						let htmlFirst = itemFirst.html();
-						itemFirst.html($(itemLast).html());
-						$(itemLast).html(htmlFirst);
+					let itemFirst = $(`#item${list[i].Id}`);
+					let itemLast = $(`#item${list[k].Id}`);
 
-						itemFirst.attr('id', `item${list[k].Id}`);
-						itemLast.attr('id', `item${list[i].Id}`);
+					let htmlFirst = itemFirst.html();
+					itemFirst.html($(itemLast).html());
+					$(itemLast).html(htmlFirst);
 
-						// swap item
-						let temp = list[i];
-						list[i] = list[k];
-						list[k] = temp;
-					}
+					itemFirst.attr('id', `item${list[k].Id}`);
+					itemLast.attr('id', `item${list[i].Id}`);
+
+					// swap item
+					let temp = list[i];
+					list[i] = list[k];
+					list[k] = temp;
 				}
-
-
-
 			}
 
 
 
 		}
-		else if(sortOpt === 'ascPrice'){
 
-			// sort list
 
-			for(let i = 0; i < list.length - 1; i++){
 
-				// find the nearest end time product
-				for(let k = i + 1; k < list.length; k++){
+	}
+	else if(sortOpt === 'ascPrice'){
 
-					let remainK = +list[k].Price;
-					let remainI = +list[i].Price;
+		// sort list
 
-					// alert('i: ' + i + ', id:' + list[i].Id);
-					// alert('k: ' + k+ ', id:' + list[k].Id);
-					
-					if(remainK < remainI){
-						// alert('swap' + remainI + "," + remainK);
+		for(let i = 0; i < list.length - 1; i++){
 
-						
+			// find the nearest end time product
+			for(let k = i + 1; k < list.length; k++){
 
-						let itemFirst = $(`#item${list[i].Id}`);
-						let itemLast = $(`#item${list[k].Id}`);
+				let remainK = +list[k].Price;
+				let remainI = +list[i].Price;
 
-						let htmlFirst = itemFirst.html();
-						itemFirst.html($(itemLast).html());
-						$(itemLast).html(htmlFirst);
+				// alert('i: ' + i + ', id:' + list[i].Id);
+				// alert('k: ' + k+ ', id:' + list[k].Id);
 
-						itemFirst.attr('id', `item${list[k].Id}`);
-						itemLast.attr('id', `item${list[i].Id}`);
-						
-						// swap item
-						let temp = list[i];
-						list[i] = list[k];
-						list[k] = temp;
-					}
+				if(remainK < remainI){
+					// alert('swap' + remainI + "," + remainK);
+
+
+
+					let itemFirst = $(`#item${list[i].Id}`);
+					let itemLast = $(`#item${list[k].Id}`);
+
+					let htmlFirst = itemFirst.html();
+					itemFirst.html($(itemLast).html());
+					$(itemLast).html(htmlFirst);
+
+					itemFirst.attr('id', `item${list[k].Id}`);
+					itemLast.attr('id', `item${list[i].Id}`);
+
+					// swap item
+					let temp = list[i];
+					list[i] = list[k];
+					list[k] = temp;
 				}
-
-
-
 			}
+
+
 
 		}
 
-
-
-		// reset item container
-		$('.itemContainer').show(1000);
-
-
-
-
 	}
 
-	function remainSeconds(datetime){
-		let a = moment();
-		let b = moment(datetime);
-		let diff = b.diff(a, 'seconds');
-		console.log(diff);
 
-		return diff;
+
+	// reset item container
+	$('.itemContainer').show(1000);
+
+
+
+
+}
+
+
+
+function remainSeconds(datetime){
+	let a = moment();
+	let b = moment(datetime);
+	let diff = b.diff(a, 'seconds');
+	console.log(diff);
+
+	return diff;
+}
+
+function relativeDateTimeConvert(datetime){
+
+	let a = moment();
+	let b = moment(datetime);
+	let diff = b.diff(a, 'seconds');
+	console.log(diff);
+
+	if(diff > 0 && diff > 86400){
+		// more than 1 day
+		console.log('case 1');
+		return moment(datetime).format('D/M/Y, HH:mm');
 	}
+	else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
+		// less than 1 day
+		return b.from(a);
+	}
+
+}
+
+
 </script>
+
+
 
 
 

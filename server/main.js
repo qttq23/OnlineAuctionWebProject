@@ -16,13 +16,13 @@ const moment = require('moment');
 
 // load a locale
 numeral.register('locale', 'vi', {
-    delimiters: {
-        thousands: ',',
-        decimal: '.'
-    },
-    currency: {
-        symbol: 'VNĐ'
-    }
+	delimiters: {
+		thousands: ',',
+		decimal: '.'
+	},
+	currency: {
+		symbol: 'VNĐ'
+	}
 });
 numeral.locale('vi');
 moment.locale('vi');
@@ -88,6 +88,16 @@ app.engine('html', expHbs({
 			console.log(diff);
 
 			return diff;
+		},
+
+		ratePointConvert: function(rawPoint){
+			// return '' + rawPoint*100 + '%';
+			if(rawPoint >= 2){
+				return '' + rawPoint + ' points';
+			}
+			else{
+				return '' + rawPoint + ' point';
+			}
 		}
 
 

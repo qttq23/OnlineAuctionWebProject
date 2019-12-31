@@ -71,3 +71,44 @@ router.get('/', async function(req, res){
 
 
 })
+
+router.get('/details', async function(req, res){
+	lg('GET details');
+	lg(req.query);
+
+	// get product details
+	const result = await proModel.single(req.query.id);
+	lg(result);
+
+	if(result != null){
+		
+		// get 6 products with same catagory
+		const relatedList = await proModel.some(result.CatId, 6, 0);
+		lg(relatedList);
+
+		// check if any products same as current detailed product
+		for(let i = 0; i < relatedList.length; i++){
+
+			if(relatedList[i].Id === result.Id){
+				relatedList.splice( i, 1);
+				break;
+			}
+
+			if(i === 5){
+				relatedList.splice( i, 1);
+				break;
+			}
+		}
+
+
+
+		res.render('product/details.html', {
+			product: result,
+			relatedList: relatedList,
+		});
+	}
+	else{
+		// show error page
+	}
+
+})

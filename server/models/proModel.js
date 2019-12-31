@@ -32,6 +32,33 @@ module.exports = {
 
 	},
 
+	single: async (id)=>{
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+		from (select *
+		from product as p
+		where p.Id = ${id}) as sortedPro
+		left join
+		bidderproduct as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		group by sortedPro.Id) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		const results = await db.query(sql);
+		if(results != null && results.length > 0){
+			return results[0];
+		}
+
+		return null;
+	},
+
 
 
 	nearEnd: (numPro)=>{
