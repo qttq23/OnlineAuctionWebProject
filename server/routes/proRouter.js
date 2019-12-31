@@ -15,28 +15,59 @@ router.get('/add', restrict.authen, function(req, res){
 })
 
 router.get('/', async function(req, res){
-	lg('get product, cata id = ' + req.query.catId + ', page = ' + req.query.page);
+	lg(req.query);
 
-	// get products
-	const numPro = config.NumProOnPage;
-	const offset = (req.query.page - 1)*numPro;
-	const catId = req.query.catId;
-	const results = await proModel.some(catId, numPro, offset);
-	lg(results);
-	const cata = await cataModel.single(catId);
+	if(!req.query.search){
+		// get products
+		const numPro = config.NumProOnPage;
+		const offset = (req.query.page - 1)*numPro;
+		const catId = req.query.catId;
+		const results = await proModel.some(catId, numPro, offset);
+		lg(results);
+		const cata = await cataModel.single(catId);
 
-	// show
-	res.render('product/list.html', {
+		// show
+		res.render('product/list.html', {
 
-		cata: cata,
+			cata: cata,
 
-		total: cata.NumPro,
-		onPage: config.NumProOnPage,
-	 	isEmpty: cata.NumPro === 0,
+			total: cata.NumPro,
+			onPage: config.NumProOnPage,
+			isEmpty: cata.NumPro === 0,
 
-		proList: results,
-	 	page: req.query.page,
-	});
+			proList: results,
+			page: req.query.page,
+		});
+
+	}
+	else{
+		// search
+		const type = req.query.search;
+		const keyword = req.query.key;
+		const page = req.query.page;
+		const numPro = config.NumProOnPage;
+		const offset = (req.query.page - 1)*numPro;
+		const results = await proModel.search(type, keyword, numPro, offset);
+
+		lg(results);
+
+		// show
+		res.render('product/list.html', {
+
+			isSearch: true,
+			keySearch: keyword,
+			searchType: type,
+
+			total: results.total,
+			onPage: numPro,
+			isEmpty: results.total === 0,
+
+			proList: results.list,
+			page: page,
+		});
+	}
+
+	
 
 
 })

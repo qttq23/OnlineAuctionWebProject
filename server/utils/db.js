@@ -52,6 +52,31 @@ module.exports = {
 	},
 
 	update: (table, id, record) => poolQuery(`update ${table} set ? where ?`, [record, id]),
+
+	fullTextSearch: (table, columns, keyword)=>{
+		
+		let columns_sql = '(';
+		let count = 0;
+		columns.forEach(item=>{
+			if(count === 0){
+				count++;
+				columns_sql += item;
+			}
+			else{
+				columns_sql += ',' + item;
+			}
+		});
+		columns_sql += ')';
+		log.log(columns_sql);
+
+		return poolQuery(`select ${table}.*, match ${columns_sql} against ('$${keyword}*' in boolean mode) as score` +
+			` from ${table}`+
+			` where match ${columns_sql} against ('$${keyword}*' in boolean mode) > 0 ` +
+			`order by score `);
+
+
+		// reference:https://stackoverflow.com/questions/9121778/fulltext-mysql-search-not-working
+	}
 	
 };
 

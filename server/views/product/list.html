@@ -4,23 +4,47 @@
 <div class="card d-flex justify-content-center">
 
 	<div class="card-header">
+		{{#if this.isSearch}}
+		<div>{{this.total}} products for '{{this.keySearch}}' by {{this.searchType}}</div>
+		{{else}}
+
 		{{this.cata.Name}}
+		{{/if}}
+		
 	</div>
-	<!-- related products list -->
+	<!-- products list -->
 	<div class=" d-flex flex-column justify-content-around">
 
+		{{#if this.isEmpty}}
+		{{else}}
+		<!-- sort by -->
+		<div class="dropdown ml-3 mt-3">
 
+			sort by 
+			<button type="button" class="sortSelected btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+			</button>
+
+			<div class="dropdown-menu">
+				<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort1" name="descEndTime"><i class="fas fa-arrow-down"></i> Finish time </a>
+
+				<a class="sortOpt dropdown-item" href="javascript:;" onclick="setSortSelected(this.id)" id="sort2" name="ascPrice"><i class="fas fa-arrow-up"></i> Price </a>
+
+			</div>
+		</div>
+		{{/if}}
 
 		<div class="itemContainer d-flex flex-row flex-wrap justify-content-start">
 			{{#if this.isEmpty}}
-			<h5>
-				No product for this catagory.
+			<h5 class="ml-3">
+				No product.
 			</h5>
 			{{else}}
 
+
 			{{#each this.proList}}
-			<div class="col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" >
+			<div class="itemContainerSub col col-sm-4 mt-2 mb-2">
+				<div class="item card h-100" id="item{{Id}}">
 
 					<a href="#" title="go to product details">
 						<img class="card-img-top  img-fluid"
@@ -96,7 +120,7 @@
 		</div>
 
 		<!-- pagination -->
-		<div class="pagination d-flex justify-content-start mt-3"></div>
+		<div class="pagination d-flex justify-content-start mt-3 ml-3"></div>
 
 
 	</div>
@@ -115,18 +139,28 @@
 
 <script type="text/javascript">
 	$(()=>{
+
+		
 		// pagination
 		{{#if this.isEmpty}}
 		{{else}}
+
+
 		$('.pagination').pagination({
-			items: {{this.cata.NumPro}},
+			items: {{this.total}},
 			itemsOnPage: {{this.onPage}},
 			cssStyle: 'light-theme',
 			onPageClick: function(pageNumber, event) {
 				// Callback triggered when a page is clicked
 				// Page number is given as an optional parameter
 
+				{{#if isSearch}}
+				window.location.href = 
+				`/product?search={{this.searchType}}&key={{this.keySearch}}&page=${pageNumber}`;
+				
+				{{else}}
 				window.location.href = `/product?catId={{this.cata.Id}}&page=${pageNumber}`;
+				{{/if}}
 			}
 
 		});
@@ -137,6 +171,168 @@
 		
 	})
 </script>
+
+
+<!-- hight light current menu item -->
+<script type="text/javascript">
+
+	{{# if isSearch}}
+
+	{{else}}
+
+	$('#cata{{this.cata.Id}}').css('background-color', '#329AD6');
+	{{/if}}
+
+</script>
+
+<!-- sort options -->
+<script type="text/javascript" src="/moment/moment.js"></script>
+<script type="text/javascript">
+
+	$(()=>{
+		// var html = $('#sort1').html();
+		// $('.sortSelected').html(html);
+
+
+		
+	})
+
+	// get list
+	var list = [];
+	{{#each this.proList}}
+	list.push(
+	{
+		Id:{{Id}}, 
+		EndTime:'{{EndTime}}',
+		Price: '{{Max_Price}}',
+	});
+	{{/each}}
+	// get list done
+
+	
+
+	function setSortSelected(btnId){
+		// alert(btnId);
+		$('.itemContainer').hide();
+
+		// set sort selected
+		var html = $(`#${btnId}`).html();
+		$('.sortSelected').html(html);
+
+		
+
+		let sortOpt = $(`#${btnId}`).attr('name');
+		// alert(sortOpt);
+		if(sortOpt === 'descEndTime'){
+
+			// sort list
+
+			for(let i = 0; i < list.length - 1; i++){
+
+				// find the nearest end time product
+				for(let k = i + 1; k < list.length; k++){
+
+					let remainK = remainSeconds(list[k].EndTime);
+					let remainI = remainSeconds(list[i].EndTime);
+
+					// alert('i: ' + i + ', id:' + list[i].Id);
+					// alert('k: ' + k+ ', id:' + list[k].Id);
+					
+					if((remainI > 0 && remainK > 0 && remainK < remainI)
+						||(remainK < 0 && remainI <0 && remainK > remainI)
+						||(remainK > 0 && remainI < 0)){
+						// alert('swap');
+
+						
+
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
+
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
+
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
+
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
+				}
+
+
+
+			}
+
+
+
+		}
+		else if(sortOpt === 'ascPrice'){
+
+			// sort list
+
+			for(let i = 0; i < list.length - 1; i++){
+
+				// find the nearest end time product
+				for(let k = i + 1; k < list.length; k++){
+
+					let remainK = +list[k].Price;
+					let remainI = +list[i].Price;
+
+					// alert('i: ' + i + ', id:' + list[i].Id);
+					// alert('k: ' + k+ ', id:' + list[k].Id);
+					
+					if(remainK < remainI){
+						// alert('swap' + remainI + "," + remainK);
+
+						
+
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
+
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
+
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
+						
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
+				}
+
+
+
+			}
+
+		}
+
+
+
+		// reset item container
+		$('.itemContainer').show(1000);
+
+
+
+
+	}
+
+	function remainSeconds(datetime){
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		return diff;
+	}
+</script>
+
+
 
 
 {{/section}}

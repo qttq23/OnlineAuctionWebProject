@@ -94,14 +94,7 @@ footer{
 	font-weight: bold;
 }
 
-.laptopCataOn,.phoneCataOn,
-.likeMenuOn, .bidMenuOn,
-.postedMenuOn,
-.manageCataMenuOn,
-.managePostMenuOn,
-.manageUserMenuOn{
-	background-color: #329AD6;
-}
+
 
 .linkToItemDetails{
 	color: #329AD6;

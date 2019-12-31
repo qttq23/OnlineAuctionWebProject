@@ -30,18 +30,18 @@
 
 	<!-- header -->
 	<nav class="navbar navbar-default shadow sticky-top" role="navigation">
-		<a class="navbar-brand" href="/home/">
+		<a class="navbar-brand" href="/home">
 			<i class="fab fa-autoprefixer"></i>
 			Online Auction
 		</a>
 
 		<!-- Search form -->
-		<form class="form-inline w-50">
+		<form class="form-inline w-50" id="searchForm">
 			<div class="input-group w-100">
-				<input class="form-control w-75" type="search" placeholder="Search product/catagory...">
+				<input class="form-control w-75" type="search" placeholder="Search product/catagory..." id="searchInput">
 
 				<div class="btn-group">
-					<a class="btn btn-secondary input-group-append" href="searchResultPage.html">
+					<a class="btn btn-secondary input-group-append" onclick="searchClicked();" id="searchBtn">
 						<i class="fas fa-search"></i>
 					</a>
 
@@ -50,9 +50,9 @@
 					</button>
 
 					<div class="dropdown-menu">
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt1"><i class="fas fa-check"></i> Search by product name</a>
+						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt1" name="Name"><i class="fas fa-check"></i> Search by product name</a>
 
-						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt2"><i class="fas fa-check"></i> Search by catagory</a>
+						<a class="searchOpt dropdown-item" href="javascript:;" onclick="setChecked(this.id)" id="opt2" name="Catagory"><i class="fas fa-check"></i> Search by catagory</a>
 						
 					</div>
 				</div>
@@ -131,7 +131,7 @@
 					<ul class="cataMenu list-group list-group-flush">
 
 						{{#each this.cataList}}
-						<a class="cataMenuItem list-group-item list-group-item-action" href="/product?catId={{Id}}&page=1">{{Name}} 
+						<a class="cataMenuItem list-group-item list-group-item-action" href="/product?catId={{Id}}&page=1" id ="cata{{Id}}">{{Name}} 
 							{{#if NumPro}}
 							<span class="badge badge-pill badge-warning float-right">{{NumPro}}</span>
 							{{/if}}
@@ -479,19 +479,44 @@
 
 	<!-- search option -->
 	<script type="text/javascript">
+		var searchOption = 'Name';
+
 		$(()=>{
 			$('.searchOpt i').css('display', 'none');
 			$('#opt1 i').css('display', 'inline');
 		});
 
 		function setChecked(btnId){
-			// alert(btnId);
 			$('.searchOpt i').css('display', 'none');
 			$(`#${btnId} i`).css('display', 'inline');
+			searchOption = $(`#${btnId}`).attr('name');
 		}
 	</script>
 
 	{{{_sections.js}}}
+
+
+	<!-- search clicked -->
+	<script type="text/javascript">
+
+		$(()=>{
+			$("#searchForm").submit(function( event ) {
+				// alert( "Handler for .submit() called." );
+				searchClicked();
+				event.preventDefault();
+			});
+		})
+
+		function searchClicked(){
+
+			let key = $('#searchInput').val();
+			let url = '/product?search=' 
+			+ searchOption + '&key=' + key + '&page=1';
+			// alert(url);
+			window.location.href=url;
+
+		}
+	</script>
 
 
 </body>

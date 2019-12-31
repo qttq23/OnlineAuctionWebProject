@@ -81,6 +81,15 @@ app.engine('html', expHbs({
 
 		},
 
+		remainSeconds: function(datetime){
+			let a = moment();
+			let b = moment(datetime);
+			let diff = b.diff(a, 'seconds');
+			console.log(diff);
+
+			return diff;
+		}
+
 
 	}
 })
