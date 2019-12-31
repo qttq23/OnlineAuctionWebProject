@@ -150,6 +150,17 @@ app.use('/product', proRouter);
 // const cataRouter = require('./routes/cataRouter');
 // app.use('/cata', cataRouter);
 
+
+app.use(function(req,res){
+	res.render('error/error.html',{
+		layout: 'simple.html',
+		title: '404 Not Found',
+		description: 'Sorry, an error has occured, Requested page not found!',
+	})
+    // res.status(404).render('404.jade');
+});
+
+
 // listen
 const port = 3000;
 app.listen(port, function(){
