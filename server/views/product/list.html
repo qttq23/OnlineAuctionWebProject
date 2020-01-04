@@ -43,77 +43,76 @@
 
 
 			{{#each this.proList}}
-			<div class="itemContainerSub col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" id="item{{Id}}">
+			<div class="col col-sm-4 mt-2 mb-2">
+					<div class="item card h-100" id="item{{Id}}">
 
-					<a href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top  img-fluid"
-						src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
-					</a>
-
-					<div class="card-body">
-
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
-							<h5 class="card-title">{{Name}}</h5>
+						<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
+							<img class="card-img-top h-100"
+							src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 						</a>
 
-						<dl class="row">
+						<div class="card-body h-25">
 
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
-							</dd>
+							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
+								<h5 class="card-title">{{shortenName Name}}</h5>
+							</a>
 
-							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
+							<dl class="row">
 
-								<span class="text-wrap text-left">
-									<i class="far fa-user"></i> {{BidderName}}
-								</span>
-								<span class="text-wrap text-right">
-									{{cashConvert Max_Price}}
-								</span>
-							</dd>
+								<dd class="col-sm-8" title="Price to win instantly">
+									<i class="fas fa-shopping-cart"></i> Win price
+								</dd>
+								<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
+									{{#if EndPrice}}
+									{{cashConvert EndPrice}}
+									{{else}}
+									<i class="fas fa-ban" title="Not set"></i>
+									{{/if}}
+								</dd>
 
-
-
-							<dd class="col-12 d-flex flex-row justify-content-between">
-								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> <div>{{dmyConvert StartTime}}</div>
-								</span>
-								<span class="badge badge-primary text-wrap endTimeBadge" title="Time left">
-									<i class="fas fa-hourglass-start"></i> <div>{{relativeDateTimeConvert EndTime}}</div>
-								</span>
-							</dd>
-							
+								<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
+									
+									<span class="text-wrap text-left">
+										<i class="far fa-user"></i> {{BidderName}}
+									</span>
+									<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
+								</dd>
 
 
-							<dd class="col">
-								<div class="badge badge-light badge-lg" title="Number of turns made">
-									{{Turn}} turns
-								</div>
-							</dd>
-						</dl>
+
+								<dd class="col-12 d-flex flex-row justify-content-between">
+
+									<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
+										<i class="fas fa-play"></i> {{dmyConvert StartTime}}
+									</span>
+									<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
+										<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
+									</span>
+								</dd>
 
 
-					</div>
 
-					<!-- list of buttons -->
-					<div class="buttons">
-						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
-						</button>
-
-
-					</div>
+								<dd class="col">
+									<div class="badge badge-light badge-lg" title="Number of turns made">
+										{{Turn}} turns
+									</div>
+								</dd>
+							</dl>
 
 
-				</div> 
-			</div>
+						</div>
+
+						<!-- list of buttons -->
+						<div class="buttons ">
+							<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
+							</button>
+
+
+						</div>
+
+
+					</div> 
+				</div>
 			{{/each}}
 			{{/if}}
 
@@ -236,13 +235,13 @@
 			let remains = remainSeconds(item.EndTime);
 			if(remains > 0){
 				// decrease 1 second
-				$(`#item${item.Id} .endTimeBadge div`).text('' + remains +' giây nữa');
+				$(`#item${item.Id} .endTimeBadge span`).text('' + remains +' giây nữa');
 			}
 			else if(remains < 0){
-			
-				$(`#item${item.Id} .endTimeBadge div`).text('' + relativeDateTimeConvert(item.EndTime));
+
+				$(`#item${item.Id} .endTimeBadge span`).text('' + relativeDateTimeConvert(item.EndTime));
 				$(`#item${item.Id} .endTimeBadge`).removeClass('badge-danger');
-			
+
 
 
 			}
@@ -265,7 +264,8 @@
 
 		let sortOpt = $(`#${btnId}`).attr('name');
 		// alert(sortOpt);
-		if(sortOpt === 'descEndTime'){
+		if(sortOpt === 'descEndTime')
+		{
 
 			// sort list
 
@@ -282,117 +282,118 @@
 					
 					if((remainI > 0 && remainK > 0 && remainK < remainI)
 						||(remainK < 0 && remainI <0 && remainK > remainI)
-						||(remainK > 0 && remainI < 0)){
+						||(remainK > 0 && remainI < 0))
+					{
 						// alert('swap');
 
 
 
-					let itemFirst = $(`#item${list[i].Id}`);
-					let itemLast = $(`#item${list[k].Id}`);
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
 
-					let htmlFirst = itemFirst.html();
-					itemFirst.html($(itemLast).html());
-					$(itemLast).html(htmlFirst);
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
 
-					itemFirst.attr('id', `item${list[k].Id}`);
-					itemLast.attr('id', `item${list[i].Id}`);
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
 
-					// swap item
-					let temp = list[i];
-					list[i] = list[k];
-					list[k] = temp;
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
 				}
+
+
+
 			}
 
 
 
 		}
+		else if(sortOpt === 'ascPrice'){
+
+			// sort list
+
+			for(let i = 0; i < list.length - 1; i++){
+
+				// find the nearest end time product
+				for(let k = i + 1; k < list.length; k++){
+
+					let remainK = +list[k].Price;
+					let remainI = +list[i].Price;
+
+					// alert('i: ' + i + ', id:' + list[i].Id);
+					// alert('k: ' + k+ ', id:' + list[k].Id);
+
+					if(remainK < remainI){
+						// alert('swap' + remainI + "," + remainK);
 
 
 
-	}
-	else if(sortOpt === 'ascPrice'){
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
 
-		// sort list
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
 
-		for(let i = 0; i < list.length - 1; i++){
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
 
-			// find the nearest end time product
-			for(let k = i + 1; k < list.length; k++){
-
-				let remainK = +list[k].Price;
-				let remainI = +list[i].Price;
-
-				// alert('i: ' + i + ', id:' + list[i].Id);
-				// alert('k: ' + k+ ', id:' + list[k].Id);
-
-				if(remainK < remainI){
-					// alert('swap' + remainI + "," + remainK);
-
-
-
-					let itemFirst = $(`#item${list[i].Id}`);
-					let itemLast = $(`#item${list[k].Id}`);
-
-					let htmlFirst = itemFirst.html();
-					itemFirst.html($(itemLast).html());
-					$(itemLast).html(htmlFirst);
-
-					itemFirst.attr('id', `item${list[k].Id}`);
-					itemLast.attr('id', `item${list[i].Id}`);
-
-					// swap item
-					let temp = list[i];
-					list[i] = list[k];
-					list[k] = temp;
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
 				}
+
+
+
 			}
-
-
 
 		}
 
+
+
+		// reset item container
+		$('.itemContainer').show(1000);
+
+
+
+
 	}
 
 
 
-	// reset item container
-	$('.itemContainer').show(1000);
+	function remainSeconds(datetime){
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
 
-
-
-
-}
-
-
-
-function remainSeconds(datetime){
-	let a = moment();
-	let b = moment(datetime);
-	let diff = b.diff(a, 'seconds');
-	console.log(diff);
-
-	return diff;
-}
-
-function relativeDateTimeConvert(datetime){
-
-	let a = moment();
-	let b = moment(datetime);
-	let diff = b.diff(a, 'seconds');
-	console.log(diff);
-
-	if(diff > 0 && diff > 86400){
-		// more than 1 day
-		console.log('case 1');
-		return moment(datetime).format('D/M/Y, HH:mm');
-	}
-	else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
-		// less than 1 day
-		return b.from(a);
+		return diff;
 	}
 
-}
+	function relativeDateTimeConvert(datetime){
+
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		if(diff > 0 && diff > 86400){
+			// more than 1 day
+			console.log('case 1');
+			return moment(datetime).format('D/M/Y, HH:mm');
+		}
+		else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
+			// less than 1 day
+			return b.from(a);
+		}
+
+	}
 
 
 </script>

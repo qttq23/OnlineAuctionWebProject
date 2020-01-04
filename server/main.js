@@ -67,11 +67,11 @@ app.engine('html', expHbs({
 			let a = moment();
 			let b = moment(datetime);
 			let diff = b.diff(a, 'seconds');
-			console.log(diff);
+			// console.log(diff);
 
 			if(diff > 0 && diff > 86400){
 				// more than 1 day
-				console.log('case 1');
+				// console.log('case 1');
 				return moment(datetime).format('D/M/Y, HH:mm');
 			}
 			else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
@@ -85,7 +85,7 @@ app.engine('html', expHbs({
 			let a = moment();
 			let b = moment(datetime);
 			let diff = b.diff(a, 'seconds');
-			console.log(diff);
+			// console.log(diff);
 
 			return diff;
 		},
@@ -98,6 +98,14 @@ app.engine('html', expHbs({
 			else{
 				return '' + rawPoint + ' point';
 			}
+		},
+
+		shortenName: function(longName){
+			if(longName.length >= 40){
+				longName = longName.substring(0, 35).concat('...');
+			}
+
+			return longName;
 		}
 
 

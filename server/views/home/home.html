@@ -23,15 +23,15 @@
 				<div class="col col-sm-4 mt-2 mb-2">
 					<div class="item card h-100" id="item{{Id}}">
 
-						<a href="/product/details?id={{Id}}" title="go to product details">
-							<img class="card-img-top  img-fluid"
-							src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
+						<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
+							<img class="card-img-top h-100"
+							src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 						</a>
 
-						<div class="card-body">
+						<div class="card-body h-25">
 
-							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
-								<h5 class="card-title">{{Name}}</h5>
+							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
+								<h5 class="card-title">{{shortenName Name}}</h5>
 							</a>
 
 							<dl class="row">
@@ -62,8 +62,8 @@
 									<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
 										<i class="fas fa-play"></i> {{dmyConvert StartTime}}
 									</span>
-									<span class="badge badge-primary text-sm-right text-wrap" title="Time left">
-										<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+									<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
+										<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
 									</span>
 								</dd>
 
@@ -80,7 +80,7 @@
 						</div>
 
 						<!-- list of buttons -->
-						<div class="buttons">
+						<div class="buttons ">
 							<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
 							</button>
 
@@ -103,20 +103,22 @@
 				</h5>
 			</span>
 
+
+
 			<div class="relatedProductContainer row flex-nowrap overflow-hidden" id="nearEndProDiv">
 				{{#each this.mostTurnPro}}
 				<div class="col col-sm-4 mt-2 mb-2">
-					<div class="item card h-100" >
+					<div class="item card h-100" id="item{{Id}}">
 
-						<a href="/product/details?id={{Id}}" title="go to product details">
-							<img class="card-img-top  img-fluid"
-							src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
+						<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
+							<img class="card-img-top h-100"
+							src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 						</a>
 
-						<div class="card-body">
+						<div class="card-body h-25">
 
-							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
-								<h5 class="card-title">{{Name}}</h5>
+							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
+								<h5 class="card-title">{{shortenName Name}}</h5>
 							</a>
 
 							<dl class="row">
@@ -137,26 +139,21 @@
 									<span class="text-wrap text-left">
 										<i class="far fa-user"></i> {{BidderName}}
 									</span>
-									<span class="text-wrap text-right">
-										{{cashConvert Max_Price}}
-									</span>
+									<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
 								</dd>
-								<!-- 	<dd class="col-6 text-wrap text-right" title="The highest price made">
-									
-								</dd> -->
+
 
 
 								<dd class="col-12 d-flex flex-row justify-content-between">
-									<span class="badge badge-secondary  text-wrap" title="The date product was uploaded">
+
+									<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
 										<i class="fas fa-play"></i> {{dmyConvert StartTime}}
 									</span>
-									<span class="badge badge-primary  text-sm-right text-wrap" title="Time left">
-										<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+									<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
+										<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
 									</span>
 								</dd>
-								<!-- <dd class="col-sm-6">
-									
-								</dd> -->
+
 
 
 								<dd class="col">
@@ -170,7 +167,7 @@
 						</div>
 
 						<!-- list of buttons -->
-						<div class="buttons">
+						<div class="buttons ">
 							<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
 							</button>
 
@@ -192,20 +189,23 @@
 					<i class="fas fa-dollar-sign"></i> 5 highest price products
 				</h5>
 			</span>
+
+
+
 			<div class="relatedProductContainer row flex-nowrap overflow-hidden" id="nearEndProDiv">
 				{{#each this.highestPricePro}}
 				<div class="col col-sm-4 mt-2 mb-2">
-					<div class="item card h-100" >
+					<div class="item card h-100" id="item{{Id}}">
 
-						<a href="/product/details?id={{Id}}" title="go to product details">
-							<img class="card-img-top  img-fluid"
-							src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
+						<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
+							<img class="card-img-top h-100"
+							src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 						</a>
 
-						<div class="card-body">
+						<div class="card-body h-25">
 
-							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
-								<h5 class="card-title">{{Name}}</h5>
+							<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
+								<h5 class="card-title">{{shortenName Name}}</h5>
 							</a>
 
 							<dl class="row">
@@ -226,26 +226,21 @@
 									<span class="text-wrap text-left">
 										<i class="far fa-user"></i> {{BidderName}}
 									</span>
-									<span class="text-wrap text-right">
-										{{cashConvert Max_Price}}
-									</span>
+									<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
 								</dd>
-								<!-- 	<dd class="col-6 text-wrap text-right" title="The highest price made">
-									
-								</dd> -->
+
 
 
 								<dd class="col-12 d-flex flex-row justify-content-between">
-									<span class="badge badge-secondary  text-wrap" title="The date product was uploaded">
+
+									<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
 										<i class="fas fa-play"></i> {{dmyConvert StartTime}}
 									</span>
-									<span class="badge badge-primary  text-sm-right text-wrap" title="Time left">
-										<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+									<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
+										<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
 									</span>
 								</dd>
-								<!-- <dd class="col-sm-6">
-									
-								</dd> -->
+
 
 
 								<dd class="col">
@@ -259,7 +254,7 @@
 						</div>
 
 						<!-- list of buttons -->
-						<div class="buttons">
+						<div class="buttons ">
 							<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
 							</button>
 
@@ -353,6 +348,282 @@
 		}
 
 	}
+</script>
+
+
+<!-- highlight nearly end products -->
+<script type="text/javascript" src="/moment/moment.js"></script>
+<script type="text/javascript">
+
+	$(()=>{
+
+		moment.locale('vi');
+
+	})
+
+	// get list
+	var list1 = [];
+	var list2 = [];
+	var list3 = [];
+	{{#each this.nearEndPro}}
+	list1.push(
+	{
+		Id:{{Id}}, 
+		EndTime:'{{EndTime}}',
+		Price: '{{Max_Price}}',
+	});
+	{{/each}}//
+
+
+	{{#each this.mostTurnPro}}
+	list2.push(
+	{
+		Id:{{Id}}, 
+		EndTime:'{{EndTime}}',
+		Price: '{{Max_Price}}',
+	});
+	{{/each}}//
+
+	{{#each this.highestPricePro}}
+	list3.push(
+	{
+		Id:{{Id}}, 
+		EndTime:'{{EndTime}}',
+		Price: '{{Max_Price}}',
+	});
+	{{/each}}//
+	// get list done
+
+	// <!-- timer effect for nearly end products -->
+	var listNearEnd = [];
+	for(let i = 0; i < list1.length; i++){
+
+		let remains = remainSeconds(list1[i].EndTime);
+		if(remains > 0 && remains < 24 * 60 * 60 /*a day*/){
+
+			// red highlight
+			$(`#item${list1[i].Id} .endTimeBadge`).addClass('badge-danger');
+
+			// counter for less than 5 minutes
+			if(remains < 5 * 60){
+				listNearEnd.push(list1[i]);
+				// alert("pushed");
+
+			}
+
+		}
+	}
+
+	for(let i = 0; i < list2.length; i++){
+
+		let remains = remainSeconds(list2[i].EndTime);
+		if(remains > 0 && remains < 24 * 60 * 60 /*a day*/){
+
+			// red highlight
+			$(`#item${list2[i].Id} .endTimeBadge`).addClass('badge-danger');
+
+			// counter for less than 5 minutes
+			if(remains < 5 * 60){
+				listNearEnd.push(list2[i]);
+				// alert("pushed");
+
+			}
+
+		}
+	}
+
+	for(let i = 0; i < list3.length; i++){
+
+		let remains = remainSeconds(list3[i].EndTime);
+		if(remains > 0 && remains < 24 * 60 * 60 /*a day*/){
+
+			// red highlight
+			$(`#item${list3[i].Id} .endTimeBadge`).addClass('badge-danger');
+
+			// counter for less than 5 minutes
+			if(remains < 5 * 60){
+				listNearEnd.push(list3[i]);
+				// alert("pushed");
+				
+			}
+
+		}
+	}
+	setTimeout(decreaseEndTime, 1000);
+
+
+	function decreaseEndTime(){
+		console.log('timeout');
+
+		// traverse all near end list
+		listNearEnd.forEach(item=>{
+			let remains = remainSeconds(item.EndTime);
+
+			if(remains > 0){
+				// decrease 1 second
+			
+				$(`#item${item.Id} .endTimeBadge span`).text('' + remains +' giây nữa');
+			}
+			else if(remains < 0){
+
+		
+				$(`#item${item.Id} .endTimeBadge span`).text('' + relativeDateTimeConvert(item.EndTime));
+				$(`#item${item.Id} .endTimeBadge`).removeClass('badge-danger');
+
+
+
+			}
+		});
+
+		setTimeout(decreaseEndTime, 1000);
+	}
+
+
+
+	function setSortSelected(btnId){
+		// alert(btnId);
+		$('.itemContainer').hide();
+
+		// set sort selected
+		var html = $(`#${btnId}`).html();
+		$('.sortSelected').html(html);
+
+
+
+		let sortOpt = $(`#${btnId}`).attr('name');
+		// alert(sortOpt);
+		if(sortOpt === 'descEndTime')
+		{
+
+			// sort list
+
+			for(let i = 0; i < list.length - 1; i++){
+
+				// find the nearest end time product
+				for(let k = i + 1; k < list.length; k++){
+
+					let remainK = remainSeconds(list[k].EndTime);
+					let remainI = remainSeconds(list[i].EndTime);
+
+					// alert('i: ' + i + ', id:' + list[i].Id);
+					// alert('k: ' + k+ ', id:' + list[k].Id);
+
+					if((remainI > 0 && remainK > 0 && remainK < remainI)
+						||(remainK < 0 && remainI <0 && remainK > remainI)
+						||(remainK > 0 && remainI < 0))
+					{
+						// alert('swap');
+
+
+
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
+
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
+
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
+
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
+				}
+
+
+
+			}
+
+
+
+		}
+		else if(sortOpt === 'ascPrice'){
+
+			// sort list
+
+			for(let i = 0; i < list.length - 1; i++){
+
+				// find the nearest end time product
+				for(let k = i + 1; k < list.length; k++){
+
+					let remainK = +list[k].Price;
+					let remainI = +list[i].Price;
+
+					// alert('i: ' + i + ', id:' + list[i].Id);
+					// alert('k: ' + k+ ', id:' + list[k].Id);
+
+					if(remainK < remainI){
+						// alert('swap' + remainI + "," + remainK);
+
+
+
+						let itemFirst = $(`#item${list[i].Id}`);
+						let itemLast = $(`#item${list[k].Id}`);
+
+						let htmlFirst = itemFirst.html();
+						itemFirst.html($(itemLast).html());
+						$(itemLast).html(htmlFirst);
+
+						itemFirst.attr('id', `item${list[k].Id}`);
+						itemLast.attr('id', `item${list[i].Id}`);
+
+						// swap item
+						let temp = list[i];
+						list[i] = list[k];
+						list[k] = temp;
+					}
+				}
+
+
+
+			}
+
+		}
+
+
+
+		// reset item container
+		$('.itemContainer').show(1000);
+
+
+
+
+	}
+
+
+
+	function remainSeconds(datetime){
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		return diff;
+	}
+
+	function relativeDateTimeConvert(datetime){
+
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		if(diff > 0 && diff > 86400){
+			// more than 1 day
+			console.log('case 1');
+			return moment(datetime).format('D/M/Y, HH:mm');
+		}
+		else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
+			// less than 1 day
+			return b.from(a);
+		}
+
+	}
+
+
 </script>
 {{/section}}
 

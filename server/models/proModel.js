@@ -67,7 +67,8 @@ module.exports = {
 		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
 		from (select *
 		from product as p
-		order by p.EndTime DESC
+		where p.EndPrice IS NULL
+		order by p.EndTime ASC
 		limit 5 offset 0) as sortedPro
 		left join
 		bidderproduct as b
@@ -78,7 +79,7 @@ module.exports = {
 		left join 
 		account as owner on t2.OwnerId = owner.Id
 
-		order by t2.EndTime DESC
+		order by t2.EndTime ASC
 		`;
 
 		return db.query(sql);
