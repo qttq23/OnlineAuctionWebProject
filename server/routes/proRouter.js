@@ -112,3 +112,36 @@ router.get('/details', async function(req, res){
 	}
 
 })
+
+router.post('/price', async function(req, res){
+
+	lg('query price:');
+	lg(req.body);
+
+	const userId = req.body.userId;
+	const pro = req.body.pro;
+
+	// get price according to user
+	const result = await proModel.getPrice(userId, pro);
+
+	lg(result);
+	res.json(result);
+})
+
+router.post('/bid', async function(req, res){
+	lg('bid price');
+	lg(req.body);
+
+	const userId = req.body.userId;
+	const pro = req.body.pro;
+	const price = req.body.price;
+
+	// check and update user bid product table
+	const result = await proModel.setBid(userId, pro, price);
+
+	lg(result);
+	if(result.isOk){
+		result.redirect = req.headers.referer || '../home';
+	}
+	res.json(result);
+})

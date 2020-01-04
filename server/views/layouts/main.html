@@ -321,6 +321,16 @@
 
 	<!-- login dialog -->
 	<script type="text/javascript">
+
+		{{#if this.isAuthen}}
+		var isAuthen = true;
+		var userId = {{this.userId}};
+		
+		{{else}}
+		var isAuthen = false;
+		var userId = null;
+		{{/if}}//
+
 		function showLoginDialog () {
 
 			Swal.fire({
@@ -369,17 +379,22 @@
 
 							if(json.isAlreadyLogin){
 								// already login
+								isAuthen = true;
+								userId = json.userId;
+
 								Swal.fire(
 									'Log in failed!',
 									json.msg,
 									'info'
 									).then(()=>{
 										window.location.href = window.location;
-									});	
+									});
 								}
 								else{
 
 									// login failed
+									isAuthen = false;
+
 									Swal.fire(
 										'Log in failed!',
 										json.msg,
@@ -387,10 +402,15 @@
 										).then(()=>{
 											showLoginDialog();
 										});	
-									}
+									};
+
+
 								}
 								else{
 									// login success
+									isAuthen = true;
+									userId = json.userId;
+									
 									// update user div
 									let userHtml = `
 									<li class="list-inline-item">

@@ -1,5 +1,7 @@
 
 const db = require('../utils/db');
+const moment = require('moment');
+
 const table = 'product';
 
 module.exports = {
@@ -42,7 +44,12 @@ module.exports = {
 		left join
 		bidderproduct as b
 		on sortedPro.Id = b.ProId and b.isBanned = 0
-		group by sortedPro.Id) as t2
+		
+		where b.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = sortedPro.Id)
+		) as t2
 		left join
 		account as bidder on t2.BidderId = bidder.Id
 		left join 
@@ -67,7 +74,7 @@ module.exports = {
 		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
 		from (select *
 		from product as p
-		where p.EndPrice IS NULL
+		where TIMESTAMPDIFF(SECOND,p.EndTime,CURRENT_TIMESTAMP()) < 0
 		order by p.EndTime ASC
 		limit 5 offset 0) as sortedPro
 		left join
@@ -108,6 +115,7 @@ module.exports = {
 	},
 
 	highestPrice: (numPro)=>{
+
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
 		from (select p.*, popularPro.Turn, popularPro.Max_Price, popularPro.BidderId
@@ -116,9 +124,10 @@ module.exports = {
 		where IsBanned = 0
 		group by ProId
 		order by max(Price) desc
-		limit 5 offset 0) as popularPro,
+		) as popularPro,
 		product as p
-		where popularPro.ProId = p.Id) as t2,
+		where popularPro.ProId = p.Id and TIMESTAMPDIFF(SECOND,p.EndTime,CURRENT_TIMESTAMP()) < 0
+		limit 5 offset 0) as t2,
 		account as bidder,
 		account as owner
 		where t2.BidderId = bidder.Id and t2.OwnerId = owner.Id
@@ -255,7 +264,83 @@ module.exports = {
 
 
 
-	}
+	},
+
+	getPrice: async (userId, pro)=>{
+
+		lg(pro.Max_Price);
+		lg(pro.PriceStep);
+
+		// check if product require point to bid
+		if(pro.IsRestrictBidder === '1'){
+
+			// check the bidder's point
+			const result = await db.query(
+				`select count(*) as count 
+				from commentrate 
+				where ToId=${userId}`);
+			let total = +result[0].count;
+
+			if(total > 0){
+
+				let likes = await db.query(
+					`select count(*) as count 
+					from commentrate 
+					where ToId=${userId} and Point=1`);
+				likes = +likes[0].count;
+
+				if((likes/total * 100) > 80){
+					// allowed
+					// calc price
+					let newPrice = +pro.Max_Price + +pro.PriceStep;
+					return {isOk: true, newPrice: newPrice};
+
+				}
+				else{
+					// --> not allowed to bid
+					return {isOk: false, msg: "Your point is less than 80% to bid this product."};
+				}
+			}
+			else{
+				// not any point
+				// --> not allowed to bid
+				return {isOk: false, msg: "Only rated user can bid this product."};
+			}
+		}
+		else{
+			// no restrict
+			// allowed
+			// calc price
+			let newPrice = +pro.Max_Price + +pro.PriceStep;
+			return {isOk: true, newPrice: newPrice};
+		}
+	},
+
+	setBid: async(userId, pro, price)=>{
+
+		// check if product still available
+		// let a = moment();
+		// let b = moment(pro.EndTime);
+		// let diff = b.diff(a, 'seconds');
+		// lg(diff);
+		if(true){
+			// still available
+			// bid success
+			// update table
+			let record = {
+				BidderId: userId,
+				ProId: pro.Id,
+				Price: price
+			};
+			const result = await db.save('bidderproduct', record);
+			return {isOk: true, msg: "Bid success."};
+		}
+		else{
+			// out of time
+			// bid fail
+			return {isOk: false, msg: "Product is not available any more."};
+		}
+	},
 }
 
 

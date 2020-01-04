@@ -14,21 +14,21 @@
 					<div id="productImgContainer" class="carousel slide mr-3 mb-2" data-ride="carousel">
 
 						<!-- Indicators -->
-						<ul id = "productImgIndicator" class=" carousel-indicators">
+						<ul id = "productImgIndicator" class=" carousel-indicators" >
 
 						</ul>
 
 						<!-- The slideshow -->
-						<div id="productImgSlider" class=" carousel-inner ">
+						<div id="productImgSlider" class=" carousel-inner " >
 
 						</div>
 
 						<!-- Left and right controls -->
-						<a class="carousel-control-prev" href="#productImgContainer" data-slide="prev">
-							<span class="carousel-control-prev-icon"></span>
+						<a class="carousel-control-prev" href="#productImgContainer" data-slide="prev" >
+							<i class="fas fa-chevron-left"></i>
 						</a>
 						<a class="carousel-control-next" href="#productImgContainer" data-slide="next">
-							<span class="carousel-control-next-icon"></span>
+							<i class="fas fa-chevron-right"></i>
 						</a>
 
 					</div>
@@ -37,7 +37,7 @@
 					<div class="buttons">
 
 
-						<button class="bidBtn btn btn-primary" onclick="bid()"><i class="fas fa-dollar-sign"></i> Bid</button>
+						<button class="bidBtn btn btn-primary" onclick="bid();"><i class="fas fa-dollar-sign"></i> Bid</button>
 
 						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i> Like</button>
 
@@ -48,6 +48,7 @@
 
 				</div>
 
+				<!-- product details -->
 				<div class="col-md-4">
 					<div class="card" style="border: none;">
 						<h5 class="card-title">{{this.product.Name}}</h5>
@@ -75,7 +76,7 @@
 									<i class="fas fa-gavel"></i> Seller	
 								</dt>
 								<dd class="col-sm-8 text-sm-right">
-									{{this.product.OwnerName}}, {{ratePointConvert this.product.OwnerPoint}}
+									{{maskenName this.product.OwnerName}}, <a href="#" title="Go to details of points">{{ratePointConvert this.product.OwnerPoint}}</a>
 								</dd>
 
 
@@ -84,7 +85,7 @@
 									<i class="far fa-user"></i> Bidder
 								</dt>
 								<dd class="col-sm-7 text-sm-right">
-									{{this.product.BidderName}}, {{ratePointConvert this.product.BidderPoint}}
+									{{maskenName this.product.BidderName}}, <a href="#" title="Go to details of points">{{ratePointConvert this.product.BidderPoint}}</a>
 								</dd>
 
 								<dt class="col-sm-5">
@@ -110,8 +111,9 @@
 									<button class="btn btn-light" title="Add description" onclick="addDescription()"><i class="fas fa-plus"></i></button>
 								</dt>
 								<dd class="productDescription col-sm-12">
-									This is description.This is description.This is description.This is description.This is description.
+									{{this.product.Description}}
 								</dd>
+								<!-- <textarea id="mytextarea">Hello, World!</textarea> -->
 							</dl>
 						</p>
 
@@ -140,15 +142,15 @@
 			<div class="col col-sm-4 mt-2 mb-2">
 				<div class="item card h-100" id="item{{Id}}">
 
-					<a href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top  img-fluid"
-						src="/images/products/67/1.jpg" alt="Image of product {{Name}}">
+					<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
+						<img class="card-img-top h-100"
+						src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 					</a>
 
-					<div class="card-body">
+					<div class="card-body h-25">
 
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details">
-							<h5 class="card-title">{{Name}}</h5>
+						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
+							<h5 class="card-title">{{shortenName Name}}</h5>
 						</a>
 
 						<dl class="row">
@@ -165,9 +167,9 @@
 							</dd>
 
 							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
-
+								
 								<span class="text-wrap text-left">
-									<i class="far fa-user"></i> {{BidderName}}
+									<i class="far fa-user"></i> {{maskenName BidderName}}
 								</span>
 								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
 							</dd>
@@ -179,8 +181,8 @@
 								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
 									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
 								</span>
-								<span class="badge badge-primary text-sm-right text-wrap" title="Time left">
-									<i class="fas fa-hourglass-start"></i> {{relativeDateTimeConvert EndTime}}
+								<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
+									<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
 								</span>
 							</dd>
 
@@ -197,7 +199,7 @@
 					</div>
 
 					<!-- list of buttons -->
-					<div class="buttons">
+					<div class="buttons ">
 						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
 						</button>
 
@@ -245,13 +247,18 @@
 
 				imgSliderHtml +=
 				`<div class="carousel-item ">
-				<img class="img-fluid" src="${imgList[i]}" alt="" style="height: 400px">
+				<img class="img-fluid" src="${imgList[i]}" alt="" style="height: 400px;">
 				</div>`;
 			}
 
 		}
 		$('#productImgIndicator').html(imgIndicatorHtml);
 		$('#productImgSlider').html(imgSliderHtml);
+
+		// set color for indicators and left, right navigation buttons
+		$('#productImgIndicator li').css('background-color', 'gray');
+		$('.carousel-control-prev i').css('color', 'gray');
+		$('.carousel-control-next i').css('color', 'gray');
 	});
 </script>
 
@@ -288,5 +295,251 @@
 	})
 </script>
 
+
+<!-- highlight nearly end related products -->
+<script type="text/javascript" src="/moment/moment.js"></script>
+<script type="text/javascript">
+
+	$(()=>{
+
+		moment.locale('vi');
+		
+	})
+
+	// get list
+	var list = [];
+	{{#each this.relatedList}}
+	list.push(
+	{
+		Id:{{Id}}, 
+		EndTime:'{{EndTime}}',
+		Price: '{{Max_Price}}',
+	});
+	{{/each}}
+	// get list done
+
+	// <!-- timer effect for nearly end products -->
+	var listNearEnd = [];
+	for(let i = 0; i < list.length; i++){
+
+		let remains = remainSeconds(list[i].EndTime);
+		if(remains > 0 && remains < 24 * 60 * 60 /*a day*/){
+
+			// red highlight
+			$(`#item${list[i].Id} .endTimeBadge`).addClass('badge-danger');
+
+			// counter for less than 5 minutes
+			if(remains < 5 * 60){
+				listNearEnd.push(list[i]);
+				// alert("pushed");
+			}
+
+			setTimeout(decreaseEndTime, 1000);
+		}
+	}
+
+
+	function decreaseEndTime(){
+		console.log('timout');
+
+		// traverse all near end list
+		listNearEnd.forEach(item=>{
+			let remains = remainSeconds(item.EndTime);
+			if(remains > 0){
+				// decrease 1 second
+				$(`#item${item.Id} .endTimeBadge span`).text('' + remains +' giây nữa');
+			}
+			else if(remains < 0){
+
+				$(`#item${item.Id} .endTimeBadge span`).text('' + relativeDateTimeConvert(item.EndTime));
+				$(`#item${item.Id} .endTimeBadge`).removeClass('badge-danger');
+
+
+
+			}
+		});
+
+		setTimeout(decreaseEndTime, 1000);
+	}
+
+	
+
+
+
+
+	function remainSeconds(datetime){
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		return diff;
+	}
+
+	function relativeDateTimeConvert(datetime){
+
+		let a = moment();
+		let b = moment(datetime);
+		let diff = b.diff(a, 'seconds');
+		console.log(diff);
+
+		if(diff > 0 && diff > 86400){
+			// more than 1 day
+			console.log('case 1');
+			return moment(datetime).format('D/M/Y, HH:mm');
+		}
+		else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
+			// less than 1 day
+			return b.from(a);
+		}
+
+	}
+
+
+</script>
+
+
+<!-- rich text editor -->
+<script src="https://cdn.tiny.cloud/1/sguks5b8xq72spqc54wfsvdq7harih5jaa1358y1qxuo0cob/tinymce/5/tinymce.min.js"></script>
+<script>
+	tinymce.init({
+		selector: '#mytextarea'
+	});
+</script>
+
+<!-- bid -->
+<script type="text/javascript">
+	var price = 500;
+	var step = 300;
+
+	function bid(){
+
+		let pro = {
+			Id: {{this.product.Id}},
+			Name: '{{this.product.Name}}',
+			CatId: {{this.product.CatId}},
+			EndTime: '{{this.product.EndTime}}',
+
+			IsRestrictBidder: {{this.product.IsRestrictBidder}},
+			PriceStep: {{this.product.PriceStep}},
+			Max_Price: {{this.product.Max_Price}},
+
+		};
+
+		if(isAuthen){
+
+			// ajax request price to server
+			$.ajax({
+				method: 'post',
+				url: '/product/price',
+				data: {
+					userId: userId,
+					pro: pro
+				}
+
+			})
+			.done(function(json){
+				if(json.isOk){
+
+					let price = json.newPrice;
+
+					var sec = 1000;
+					Swal.fire({
+						position: 'center',
+						icon: 'info',
+						title: 'System is calculating suggested price',
+						showConfirmButton: false,
+						timer: sec,
+						toast: true
+					});
+
+					myVar = setTimeout(()=>{
+						Swal.fire({
+							title: `<p style="color:red">${price}$&nbsp;</p>is suggested price.`,
+							text: " Are you sure to bid?",
+							icon: 'question',
+							showCancelButton: true,
+							confirmButtonColor: '#3085d6',
+							cancelButtonColor: '#d33',
+							confirmButtonText: 'Yes, I bid!'
+						}).then((result) => {
+							if (result.value) {
+								// confirm bid
+								$.ajax({
+									method: 'post',
+									url: '/product/bid',
+									data: {
+										userId: userId,
+										pro: pro,
+										price: price
+									},
+									async: false
+								})
+								.done(function(json){
+									if(json.isOk){
+										// re-fresh page
+										window.location.href = json.redirect;
+
+										// add to history
+										countHistory++;
+										times[countHistory - 1] = 'just 	now';
+										bidders[countHistory - 1] = 'You';
+										priceds[countHistory - 1] = `${price}`;
+
+										// increase next price
+										price += step;
+
+
+
+										// show notification
+										Swal.fire(
+											'Bidded!',
+											'Your bid has been made.',
+											'success'
+											);
+									}
+									else{
+										//show error
+										alert(json.msg);
+									}
+								});
+
+								
+
+
+							}
+						});
+
+						clearTimeout(myVar);
+					}, sec);
+
+				}
+				else{
+					alert(json.msg);
+				}
+			})
+
+			
+		}
+		else{
+			// show login require notification
+			Swal.fire(
+				'Login required!',
+				'You need to login to use this function',
+				'info'
+				);
+
+		}
+
+		
+
+		
+
+
+
+
+
+	}
+</script>
 
 {{/section}}

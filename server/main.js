@@ -106,6 +106,19 @@ app.engine('html', expHbs({
 			}
 
 			return longName;
+		},
+
+		maskenName: function(longName){
+			let tokens = longName.split(' ');
+			if(tokens != null && tokens.length > 1){
+				longName = tokens[tokens.length - 1];
+			}
+			if(longName.length > 7){
+				longName = longName.substring(0, 7);
+			}
+
+			longName = '***' + longName;
+			return longName;
 		}
 
 
@@ -128,6 +141,7 @@ app.use(async function(req, res, next){
 
 	// pass authen info
 	if(req.session.isAuthen === true){
+		res.locals.userId = req.session.account.Id,
 		res.locals.userName = req.session.account.Name,
 		res.locals.userType = req.session.account.AccType,
 		res.locals.isAuthen = true;

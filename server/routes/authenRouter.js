@@ -39,6 +39,7 @@ router.post('/login', async function(req, res){
 			msg: 'You already logged in. please refresh your page.',
 			isErr: true,
 			isAlreadyLogin: true,
+			
 		});
 	}
 	else{
@@ -51,7 +52,7 @@ router.post('/login', async function(req, res){
 
 		log.log(result);
 
-		let msg, isErr, userName, userType, returnTo;
+		let msg, isErr, userName, userType, returnTo, userId;
 		// check password
 		if(result != null
 			&& result.AccType > 0 	// account is active
@@ -70,6 +71,7 @@ router.post('/login', async function(req, res){
 			isErr = false;
 			userName = result.Name;
 			userType = result.AccType;
+			userId = result.Id;
 			returnTo = req.session.returnTo || '/home';
 
 			lg(returnTo);
@@ -85,6 +87,8 @@ router.post('/login', async function(req, res){
 			// client
 			msg = 'Please check your username and password';
 			isErr = true;
+			userId = null;
+
 		}
 
 
@@ -101,6 +105,7 @@ router.post('/login', async function(req, res){
 			isErr: isErr,
 			userName: userName,
 			userType: userType,
+			userId: userId,
 			returnTo: returnTo,
 		};		
 		res.json(obj);
