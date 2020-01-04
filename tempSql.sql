@@ -244,5 +244,26 @@ where t2.BidderId = bidder.Id and t2.OwnerId = owner.Id
 order by t2.Max_Price desc
 
 
+select * from account limit 5 offset 5
+select * from account where Id = '93' limit 5 offset 0
 
+select count(*) from account
+select count(*) ffrom
+
+/* full text search*/
+
+ALTER TABLE product ADD FULLTEXT (Name);
+ALTER TABLE catagory ADD FULLTEXT (Name);
+
+select product.*, match (Name) against ('$ef*' in boolean mode) as score
+			from product
+			where match (Name) against ('$ef*' in boolean mode) > 0
+			order by score 
+			limit 1 offset 0
+			
+select product.*
+			from product
+			where match (Name) against ('$ef*' in boolean mode) > 0
+	
+			limit 1 offset 0
 
