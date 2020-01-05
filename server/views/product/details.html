@@ -39,7 +39,7 @@
 
 						<button class="bidBtn btn btn-primary" onclick="bid();"><i class="fas fa-dollar-sign"></i> Bid</button>
 
-						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i> Like</button>
+						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0" id="btnForItem_{{this.product.Id}}"><i class="fas fa-heart"></i> Like</button>
 
 						<button class="historyBtn btn btn-light" onclick="viewHistory()"><i class="fas fa-history"></i> History</button>
 
@@ -361,15 +361,6 @@
 
 		setTimeout(decreaseEndTime, 1000);
 	}
-
-	
-
-
-
-
-	
-
-
 </script>
 
 

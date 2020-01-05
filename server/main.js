@@ -48,6 +48,8 @@ app.use(expSession(
 })
 );
 
+
+
 app.engine('html', expHbs({
 	defaultLayout: 'main.html',
 	helpers: {
@@ -132,12 +134,21 @@ app.engine('html', expHbs({
 
 			longName = '***' + longName;
 			return longName;
-		}
+		},
+
+		ifeq: function(a, b, options){
+			if (a === b) {
+				return options.fn(this);
+			}
+			return options.inverse(this);
+		},
 
 
 	}
 })
 );
+
+
 app.set('view engine', 'html');
 
 
@@ -164,7 +175,7 @@ app.use(async function(req, res, next){
 	const cataList = await require('./models/cataModel').all();
 	res.locals.cataList = cataList;
 	res.locals.numPro = cataList.NumPro;
-	lg(cataList);
+	// lg(cataList);
 
 	next();
 })
@@ -185,6 +196,10 @@ app.use('/product', proRouter);
 // const cataRouter = require('./routes/cataRouter');
 // app.use('/cata', cataRouter);
 
+// account
+const accRouter = require('./routes/accRouter');
+app.use('/acc', accRouter);
+
 
 app.use(function(req,res){
 	res.render('error/error.html',{
@@ -192,7 +207,7 @@ app.use(function(req,res){
 		title: '404 Not Found',
 		description: 'Sorry, an error has occured, Requested page not found!',
 	})
-    // res.status(404).render('404.jade');
+	// res.status(404).render('404.jade');
 });
 
 

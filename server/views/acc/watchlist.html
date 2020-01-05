@@ -1,17 +1,16 @@
+{{#section 'css'}}
+
+{{/section}}
+
 
 
 <!-- product list card -->
 <div class="card d-flex justify-content-center">
 
 	<div class="card-header">
-		{{#if this.isSearch}}
-		<div>{{this.total}} products for '{{this.keySearch}}' by {{this.searchType}}</div>
-		{{else}}
-
-		{{this.cata.Name}}
-		{{/if}}
-		
+		Liked products
 	</div>
+
 	<!-- products list -->
 	<div class=" d-flex flex-column justify-content-around">
 
@@ -129,12 +128,10 @@
 </div>
 
 
-
 {{#section 'js'}}
 
 <!-- pagination -->
 <script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
-
 
 <script type="text/javascript">
 	$(()=>{
@@ -153,13 +150,7 @@
 				// Callback triggered when a page is clicked
 				// Page number is given as an optional parameter
 
-				{{#if isSearch}}
-				window.location.href = 
-				`/product?search={{this.searchType}}&key={{this.keySearch}}&page=${pageNumber}`;
-				
-				{{else}}
-				window.location.href = `/product?catId={{this.cata.Id}}&page=${pageNumber}`;
-				{{/if}}
+				window.location.href = `/acc/watchlist?page=${pageNumber}`;
 			}
 
 		});
@@ -175,22 +166,16 @@
 <!-- hight light current menu item -->
 <script type="text/javascript">
 
-	{{# if isSearch}}
-
-	{{else}}
-
-	$('#cata{{this.cata.Id}}').css('background-color', '#329AD6');
-	{{/if}}
+	$('.watchListMenu').css('background-color', '#329AD6');
 
 </script>
 
 <!-- sort options -->
-
 <script type="text/javascript">
 
 	$(()=>{
 
-	
+
 		
 	})
 
@@ -367,9 +352,12 @@
 </script>
 
 
-
-
-
-
+<!-- on load -->
+<script type="text/javascript">
+	$(()=>{
+		$('.addWatchListBtn').css('color', 'red');
+		$('.addWatchListBtn').attr('title', 'Remove from watch list');
+		$('.addWatchListBtn').attr('value', '1');
+	})
+</script>
 {{/section}}
-

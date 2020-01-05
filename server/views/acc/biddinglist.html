@@ -1,17 +1,16 @@
+{{#section 'css'}}
+
+{{/section}}
+
 
 
 <!-- product list card -->
 <div class="card d-flex justify-content-center">
 
 	<div class="card-header">
-		{{#if this.isSearch}}
-		<div>{{this.total}} products for '{{this.keySearch}}' by {{this.searchType}}</div>
-		{{else}}
-
-		{{this.cata.Name}}
-		{{/if}}
-		
+		Bidding products
 	</div>
+
 	<!-- products list -->
 	<div class=" d-flex flex-column justify-content-around">
 
@@ -70,10 +69,12 @@
 								{{/if}}
 							</dd>
 
-							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
+							<dd class="col-12 d-flex flex-row justify-content-between" title="{{#ifeq ../userId BidderId}}You are the one who bid highest price{{else}}The highest price paying bidder{{/ifeq}}">
 
-								<span class="text-wrap text-left">
+								<span class="text-wrap text-left {{#ifeq ../userId BidderId}}badge badge-warning{{/ifeq}}">
+									
 									<i class="far fa-user"></i> {{maskenName BidderName}}
+									
 								</span>
 								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
 							</dd>
@@ -129,12 +130,10 @@
 </div>
 
 
-
 {{#section 'js'}}
 
 <!-- pagination -->
 <script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
-
 
 <script type="text/javascript">
 	$(()=>{
@@ -153,13 +152,7 @@
 				// Callback triggered when a page is clicked
 				// Page number is given as an optional parameter
 
-				{{#if isSearch}}
-				window.location.href = 
-				`/product?search={{this.searchType}}&key={{this.keySearch}}&page=${pageNumber}`;
-				
-				{{else}}
-				window.location.href = `/product?catId={{this.cata.Id}}&page=${pageNumber}`;
-				{{/if}}
+				window.location.href = `/acc/watchlist?page=${pageNumber}`;
 			}
 
 		});
@@ -175,22 +168,16 @@
 <!-- hight light current menu item -->
 <script type="text/javascript">
 
-	{{# if isSearch}}
-
-	{{else}}
-
-	$('#cata{{this.cata.Id}}').css('background-color', '#329AD6');
-	{{/if}}
+	$('.biddingListMenu').css('background-color', '#329AD6');
 
 </script>
 
 <!-- sort options -->
-
 <script type="text/javascript">
 
 	$(()=>{
 
-	
+
 		
 	})
 
@@ -367,9 +354,10 @@
 </script>
 
 
+<!-- on load -->
+<script type="text/javascript">
+	$(()=>{
 
-
-
-
+	})
+</script>
 {{/section}}
-

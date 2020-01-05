@@ -11,7 +11,7 @@ module.exports = {
 
 		let result = null;
 
-		const list = await db.single(table, userpass);
+		const list = await db.some(table, userpass);
 		if(list != null && list.length >= 1){
 			result = list[0];
 		}
@@ -142,6 +142,281 @@ module.exports = {
 
 		lg(result);
 		return result;
+	},
+
+	addWatchList: async (acc, proId)=>{
+
+		// check account
+		if(!acc){
+			return {isOk: false, msg: "Please login to use this feature."};
+		}
+		
+		let record = {AccountId: acc.Id, ProId: proId};
+		const result = await db.save('watchlist', record);
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: "Add product to watchlist successfully."};
+		}
+
+		return {isOk: false, msg: "Add product to watchlist failed."};
+	},
+
+	removeWatchList: async (acc, proId)=>{
+
+		// check account
+		if(!acc){
+			return {isOk: false, msg: "Please login to use this feature."};
+		}
+		
+		let record = {AccountId: acc.Id, ProId: proId};
+		const result = await db.delete('watchlist', record);
+		lg(result);
+
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: "Remove product from watchlist successfully."};
+		}
+
+		return {isOk: false, msg: "Remove product from watchlist failed."};
+	},
+
+	// nested query
+	watchList: async (accId, numPro, offset)=>{
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (select DISTINCT pro.*
+		from product as pro, watchlist as wat
+		where wat.AccountId = ${accId} and wat.ProId = pro.Id
+
+		) as sortedPro
+		left join
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		where b2.IsBanned = 0
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		
+		const results = await db.query(sql);
+
+		// ok
+		if(results != null && results.length > 0){
+
+			// refine output
+			let list =[];
+			let count = 0;
+			for(let i = offset; i < results.length; i++){
+				if(count < numPro){
+
+					list.push(results[i]);
+					count++;
+				}
+				else{
+					break;
+				}
+			}
+
+			return {
+				total: results.length,
+				list: list,
+			};
+		}
+
+		//search fails
+		return {
+			total: 0,
+			list: [],
+		};
+	},
+
+	// nested query
+	biddingList: async (accId, numPro, offset)=>{
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (select DISTINCT pro.*
+		from product as pro, bidderproduct as bid
+		where bid.BidderId = ${accId} and bid.ProId = pro.Id and bid.isBanned = 0
+
+		) as sortedPro
+		left join
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		where b2.IsBanned = 0
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		const results = await db.query(sql);
+
+		// ok
+		if(results != null && results.length > 0){
+
+			// refine output
+			let list =[];
+			let count = 0;
+			for(let i = offset; i < results.length; i++){
+				if(count < numPro){
+
+					list.push(results[i]);
+					count++;
+				}
+				else{
+					break;
+				}
+			}
+
+			return {
+				total: results.length,
+				list: list,
+			};
+		}
+
+		//search fails
+		return {
+			total: 0,
+			list: [],
+		};
+	},
+
+
+	// nested query
+	wonList: async (accId, numPro, offset)=>{
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (select DISTINCT pro.*
+		from product as pro, bidderproduct as bid
+		where bid.BidderId = ${accId} and bid.ProId = pro.Id 
+		and bid.isBanned = 0 and bid.isWin = 1
+
+		) as sortedPro
+		left join
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		where b2.IsBanned = 0
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		const results = await db.query(sql);
+
+		// ok
+		if(results != null && results.length > 0){
+
+			// refine output
+			let list =[];
+			let count = 0;
+			for(let i = offset; i < results.length; i++){
+				if(count < numPro){
+
+					list.push(results[i]);
+					count++;
+				}
+				else{
+					break;
+				}
+			}
+
+			return {
+				total: results.length,
+				list: list,
+			};
+		}
+
+		//search fails
+		return {
+			total: 0,
+			list: [],
+		};
+	},
+
+
+	commentRate: async (fromId, toId, point, comment)=>{
+
+		let record = {
+			FromId: fromId,
+			ToId: toId,
+			Point: point,
+			Message: comment
+		};
+		const result = await db.save('commentrate', record);
+
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: "Comment and rate successfully."};
+		}
+
+		return {isOk: false, msg: "Comment and rate failed."};
+
 	},
 
 

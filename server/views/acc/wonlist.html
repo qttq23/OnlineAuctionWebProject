@@ -1,17 +1,16 @@
+{{#section 'css'}}
+
+{{/section}}
+
 
 
 <!-- product list card -->
 <div class="card d-flex justify-content-center">
 
 	<div class="card-header">
-		{{#if this.isSearch}}
-		<div>{{this.total}} products for '{{this.keySearch}}' by {{this.searchType}}</div>
-		{{else}}
-
-		{{this.cata.Name}}
-		{{/if}}
-		
+		Won products
 	</div>
+
 	<!-- products list -->
 	<div class=" d-flex flex-column justify-content-around">
 
@@ -104,8 +103,8 @@
 
 					<!-- list of buttons -->
 					<div class="buttons ">
-						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"  id="btnForItem_{{Id}}"><i class="fas fa-heart"></i>
-						</button>
+
+						<button class="rateCommentBtn btn btn-primary w-100" title="Rate and comment" onclick="rateComment(this)" value="0" id="btnFor_{{OwnerName}}_{{OwnerId}}">Rate Seller</button>
 
 
 					</div>
@@ -129,12 +128,10 @@
 </div>
 
 
-
 {{#section 'js'}}
 
 <!-- pagination -->
 <script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
-
 
 <script type="text/javascript">
 	$(()=>{
@@ -153,13 +150,7 @@
 				// Callback triggered when a page is clicked
 				// Page number is given as an optional parameter
 
-				{{#if isSearch}}
-				window.location.href = 
-				`/product?search={{this.searchType}}&key={{this.keySearch}}&page=${pageNumber}`;
-				
-				{{else}}
-				window.location.href = `/product?catId={{this.cata.Id}}&page=${pageNumber}`;
-				{{/if}}
+				window.location.href = `/acc/watchlist?page=${pageNumber}`;
 			}
 
 		});
@@ -175,22 +166,17 @@
 <!-- hight light current menu item -->
 <script type="text/javascript">
 
-	{{# if isSearch}}
+	$('.wonListMenu').css('background-color', '#329AD6');
 
-	{{else}}
-
-	$('#cata{{this.cata.Id}}').css('background-color', '#329AD6');
-	{{/if}}
 
 </script>
 
 <!-- sort options -->
-
 <script type="text/javascript">
 
 	$(()=>{
 
-	
+
 		
 	})
 
@@ -367,9 +353,86 @@
 </script>
 
 
+<!-- rate and comment -->
+<script type="text/javascript">
+	function rateComment(button){
 
 
+		let tokens = ($(button).attr('id')).split('_');
+		let ownerName = tokens[1];
+		let ownerId = tokens[2];
+
+		let htl = 
+		'<div class="mb-3">' +
+		'<div class="custom-control custom-radio"><input type="radio" class="custom-control-input" id="swal-input1" name="defaultExampleRadios" checked><label class="custom-control-label" for="swal-input1"> +1 <i class="fas fa-thumbs-up"></i></label></div>'+
+		'<div class="custom-control custom-radio"><input type="radio" class="custom-control-input" id="swal-input3" name="defaultExampleRadios"><label class="custom-control-label" for="swal-input3">-1 <i class="fas fa-thumbs-down"></i></label></div>'+
+		'</div>';
 
 
+		Swal.fire({
+
+			// title: 'rate comment',
+			html:
+
+			`<h1>Rate ${ownerName}</h1>`+
+
+			'<div class="d-flex flex-column align-items-start">' +
+
+			'<div>Point</div>'+
+			htl+
+
+			'<div>Comment</div>'+
+			'<textarea id="swal-input2" class="swal2-input" style="height:200px;" maxlength="400"></textarea>'+
+
+			'</div>',
+			focusConfirm: false,
+			showCancelButton: true,
+			confirmButtonText:
+			'<i class="fas fa-paper-plane"></i> Send',
+
+			preConfirm: () => {
+
+				return [
+				document.getElementById('swal-input1').checked,
+				document.getElementById('swal-input2').value,
+				document.getElementById('swal-input3').checked,
+				]
+			}
+		}).then((result) => {
+			if(result.value){
+				// Swal.fire(JSON.stringify(result.value));
+				// console.log(result.value);
+
+				
+
+				// send to server
+				$.ajax({
+					method: 'post',
+					url: '/acc/commentrate',
+					data: {
+						toId: ownerId,
+						comment: result.value[1],
+						point: (result.value[0]===true)?1:-1,
+					}
+				})
+				.then(function(json){
+					if(json.isOk){
+
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: 'Rate and comment are sent',
+							showConfirmButton: false,
+							timer: 1300,
+							toast: true
+						});
+					}
+					else{
+						alert(json.msg);
+					}
+				});
+			}
+		})
+	}
+</script>
 {{/section}}
-

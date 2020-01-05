@@ -25,7 +25,7 @@ module.exports = {
 		return poolQuery(`select * from ${table}`);
 	},
 
-	single: (table, condition)=>{
+	some: (table, condition)=>{
 		let condition_sql = '';
 		let count = 0;
 		let prefix = '';
@@ -76,6 +76,30 @@ module.exports = {
 
 
 		// reference:https://stackoverflow.com/questions/9121778/fulltext-mysql-search-not-working
+	},
+
+	delete: (table, condition)=>{
+
+		let condition_sql = '';
+		let count = 0;
+		let prefix = '';
+		if(Object.keys(condition).length > 1){
+			Object.keys(condition).forEach(function(key) {
+				prefix = ' and ';
+				if(count === 0){
+					prefix = '';
+					count++;
+				}
+
+				condition_sql += prefix + key + "='" + condition[key] +"'";
+			});
+			log.log(condition_sql);
+			return poolQuery(`delete from ${table} where ${condition_sql}`);
+		}
+		else{
+			return poolQuery(`delete from ${table} where ?`, condition);
+		}
+
 	}
 	
 };

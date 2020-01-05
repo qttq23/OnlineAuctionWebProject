@@ -10,7 +10,7 @@ module.exports = {
 	},
 
 	single: async (id)=>{
-		const results = await db.single(table, {Id: id});
+		const results = await db.some(table, {Id: id});
 
 		if(results != null && results.length > 0){
 			return results[0];
