@@ -101,6 +101,10 @@ app.engine('html', expHbs({
 		},
 
 		shortenName: function(longName){
+			if(!longName){
+				return '';
+			}
+
 			if(longName.length >= 40){
 				longName = longName.substring(0, 35).concat('...');
 			}
@@ -109,6 +113,10 @@ app.engine('html', expHbs({
 		},
 
 		maskenName: function(longName){
+			if(!longName){
+				return '';
+			}
+			
 			let tokens = longName.split(' ');
 			if(tokens != null && tokens.length > 1){
 				longName = tokens[tokens.length - 1];

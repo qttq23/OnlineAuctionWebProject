@@ -10,19 +10,39 @@ module.exports = {
 		return db.load(table)
 	},
 
+	// nested query
 	some: (catId, numPro, offset)=>{
 		
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 		from (select *
 		from product as p
 		where p.CatId = '${catId}'
-		limit ${numPro} offset ${offset}) as sortedPro
+		limit ${numPro} offset ${offset}
+		) as sortedPro
 		left join
-		bidderproduct as b
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId)
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
 		on sortedPro.Id = b.ProId and b.isBanned = 0
-		group by sortedPro.Id) as t2
+		) as t2
 		left join
 		account as bidder on t2.BidderId = bidder.Id
 		left join 
@@ -34,21 +54,36 @@ module.exports = {
 
 	},
 
+	// nested query
 	single: async (id)=>{
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 		from (select *
-		from product as p
-		where p.Id = ${id}) as sortedPro
+		from product
+		where Id = ${id}
+		) as sortedPro
 		left join
-		bidderproduct as b
-		on sortedPro.Id = b.ProId and b.isBanned = 0
-		
-		where b.Price >= all(
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = sortedPro.Id)
+		where b1.ProId = b3.ProId)
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
 		) as t2
 		left join
 		account as bidder on t2.BidderId = bidder.Id
@@ -67,18 +102,36 @@ module.exports = {
 	},
 
 
-
+	// nested query
 	nearEnd: (numPro)=>{
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-		from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 		from (select *
 		from product as p
 		where TIMESTAMPDIFF(SECOND,p.EndTime,CURRENT_TIMESTAMP()) < 0
 		order by p.EndTime ASC
-		limit 5 offset 0) as sortedPro
+		limit ${numPro} offset 0) as sortedPro
 		left join
-		bidderproduct as b
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId)
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
 		on sortedPro.Id = b.ProId and b.isBanned = 0
 		group by sortedPro.Id) as t2
 		left join
@@ -92,18 +145,34 @@ module.exports = {
 		return db.query(sql);
 	},
 
+	// nested query
 	mostTurn: (numPro)=>{
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-		from (select p.*, popularPro.Turn, popularPro.Max_Price, popularPro.BidderId
-		from (select ProId, count(BidderId) as Turn, MAX(Price) as Max_Price, BidderId
-		from bidderproduct
-		where IsBanned = 0
-		group by ProId
-		order by count(BidderId)
-		limit 5 offset 0) as popularPro,
+		from (select p.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId)
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		order by tt2.Turn desc
+		limit ${numPro} offset 0
+		) as b,
 		product as p
-		where popularPro.ProId = p.Id) as t2,
+		where b.ProId = p.Id) as t2,
 		account as bidder,
 		account as owner
 
@@ -114,20 +183,36 @@ module.exports = {
 		return db.query(sql);
 	},
 
+	// nested query
 	highestPrice: (numPro)=>{
 
 		let sql = `
 		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-		from (select p.*, popularPro.Turn, popularPro.Max_Price, popularPro.BidderId
-		from (select ProId, count(BidderId) as Turn, MAX(Price) as Max_Price, BidderId
-		from bidderproduct
-		where IsBanned = 0
-		group by ProId
-		order by max(Price) desc
-		) as popularPro,
+		from (select p.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId)
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		
+		) as b,
 		product as p
-		where popularPro.ProId = p.Id and TIMESTAMPDIFF(SECOND,p.EndTime,CURRENT_TIMESTAMP()) < 0
-		limit 5 offset 0) as t2,
+		where b.ProId = p.Id and TIMESTAMPDIFF(SECOND,p.EndTime,CURRENT_TIMESTAMP()) < 0
+		order by b.Price desc
+		limit ${numPro} offset 0) as t2,
 		account as bidder,
 		account as owner
 		where t2.BidderId = bidder.Id and t2.OwnerId = owner.Id
@@ -137,6 +222,7 @@ module.exports = {
 		return db.query(sql);
 	},
 
+	// nested query
 	search: async (type, keyword, numPro, offset)=>{
 		
 		let results = null;
@@ -146,15 +232,34 @@ module.exports = {
 
 			let sql = `
 			select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-			from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+			from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 			from (select *
 			from product
 			where match (Name) against ('$${keyword}*' in boolean mode) > 0
 			) as sortedPro
 			left join
-			bidderproduct as b
+			(
+			select tt1.*, tt2.Turn 
+			FROM (
+			SELECT *
+			from bidderproduct b3
+			where b3.Price >= all(
+			select b1.Price 
+			from bidderproduct as b1 
+			where b1.ProId = b3.ProId)
+
+			group by b3.ProId
+			) as tt1,
+			(
+			select  b2.ProId, count(b2.BidderId) as Turn
+			from bidderproduct b2
+			GROUP by b2.ProId
+			) as tt2
+			where tt1.ProId = tt2.ProId
+			) as b
 			on sortedPro.Id = b.ProId and b.isBanned = 0
-			group by sortedPro.Id) as t2
+			
+			) as t2
 			left join
 			account as bidder on t2.BidderId = bidder.Id
 			left join 
@@ -205,18 +310,35 @@ module.exports = {
 				let list = results;
 
 				// select products for related catagories
-
+				let catId = list[0].Id;
 				let sql = `
 				select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
-				from (select sortedPro.*, count(b.BidderId) as Turn, MAX(b.Price) as Max_Price, b.BidderId
+				from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 				from (select *
-				from product as p
-				where p.CatId = '${list[0].Id}'
+				from product
+				where CatId = ${catId}
 				) as sortedPro
 				left join
-				bidderproduct as b
-				on sortedPro.Id = b.ProId and b.isBanned = 0
-				group by sortedPro.Id) as t2
+				(
+				select tt1.*, tt2.Turn 
+				FROM (
+				SELECT *
+				from bidderproduct b3
+				where b3.Price >= all(
+				select b1.Price 
+				from bidderproduct as b1 
+				where b1.ProId = b3.ProId)
+
+				group by b3.ProId
+				) as tt1,
+				(
+				select  b2.ProId, count(b2.BidderId) as Turn
+				from bidderproduct b2
+				GROUP by b2.ProId
+				) as tt2
+				where tt1.ProId = tt2.ProId
+				) as b
+				on sortedPro.Id = b.ProId and b.isBanned = 0) as t2
 				left join
 				account as bidder on t2.BidderId = bidder.Id
 				left join 
