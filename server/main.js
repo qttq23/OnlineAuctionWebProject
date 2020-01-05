@@ -14,6 +14,7 @@ const expSession = require('express-session');
 const numeral = require('numeral');
 const moment = require('moment');
 
+
 // load a locale
 numeral.register('locale', 'vi', {
 	delimiters: {
@@ -92,6 +93,10 @@ app.engine('html', expHbs({
 
 		ratePointConvert: function(rawPoint){
 			// return '' + rawPoint*100 + '%';
+			if(!rawPoint){
+				return '0' + ' point' ;
+			}
+
 			if(rawPoint >= 2){
 				return '' + rawPoint + ' points';
 			}
@@ -116,7 +121,7 @@ app.engine('html', expHbs({
 			if(!longName){
 				return '';
 			}
-			
+
 			let tokens = longName.split(' ');
 			if(tokens != null && tokens.length > 1){
 				longName = tokens[tokens.length - 1];

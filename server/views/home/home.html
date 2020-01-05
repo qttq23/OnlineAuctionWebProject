@@ -352,12 +352,9 @@
 
 
 <!-- highlight nearly end products -->
-<script type="text/javascript" src="/moment/moment.js"></script>
 <script type="text/javascript">
 
 	$(()=>{
-
-		moment.locale('vi');
 
 	})
 
@@ -480,148 +477,7 @@
 
 
 
-	function setSortSelected(btnId){
-		// alert(btnId);
-		$('.itemContainer').hide();
 
-		// set sort selected
-		var html = $(`#${btnId}`).html();
-		$('.sortSelected').html(html);
-
-
-
-		let sortOpt = $(`#${btnId}`).attr('name');
-		// alert(sortOpt);
-		if(sortOpt === 'descEndTime')
-		{
-
-			// sort list
-
-			for(let i = 0; i < list.length - 1; i++){
-
-				// find the nearest end time product
-				for(let k = i + 1; k < list.length; k++){
-
-					let remainK = remainSeconds(list[k].EndTime);
-					let remainI = remainSeconds(list[i].EndTime);
-
-					// alert('i: ' + i + ', id:' + list[i].Id);
-					// alert('k: ' + k+ ', id:' + list[k].Id);
-
-					if((remainI > 0 && remainK > 0 && remainK < remainI)
-						||(remainK < 0 && remainI <0 && remainK > remainI)
-						||(remainK > 0 && remainI < 0))
-					{
-						// alert('swap');
-
-
-
-						let itemFirst = $(`#item${list[i].Id}`);
-						let itemLast = $(`#item${list[k].Id}`);
-
-						let htmlFirst = itemFirst.html();
-						itemFirst.html($(itemLast).html());
-						$(itemLast).html(htmlFirst);
-
-						itemFirst.attr('id', `item${list[k].Id}`);
-						itemLast.attr('id', `item${list[i].Id}`);
-
-						// swap item
-						let temp = list[i];
-						list[i] = list[k];
-						list[k] = temp;
-					}
-				}
-
-
-
-			}
-
-
-
-		}
-		else if(sortOpt === 'ascPrice'){
-
-			// sort list
-
-			for(let i = 0; i < list.length - 1; i++){
-
-				// find the nearest end time product
-				for(let k = i + 1; k < list.length; k++){
-
-					let remainK = +list[k].Price;
-					let remainI = +list[i].Price;
-
-					// alert('i: ' + i + ', id:' + list[i].Id);
-					// alert('k: ' + k+ ', id:' + list[k].Id);
-
-					if(remainK < remainI){
-						// alert('swap' + remainI + "," + remainK);
-
-
-
-						let itemFirst = $(`#item${list[i].Id}`);
-						let itemLast = $(`#item${list[k].Id}`);
-
-						let htmlFirst = itemFirst.html();
-						itemFirst.html($(itemLast).html());
-						$(itemLast).html(htmlFirst);
-
-						itemFirst.attr('id', `item${list[k].Id}`);
-						itemLast.attr('id', `item${list[i].Id}`);
-
-						// swap item
-						let temp = list[i];
-						list[i] = list[k];
-						list[k] = temp;
-					}
-				}
-
-
-
-			}
-
-		}
-
-
-
-		// reset item container
-		$('.itemContainer').show(1000);
-
-
-
-
-	}
-
-
-
-	function remainSeconds(datetime){
-		let a = moment();
-		let b = moment(datetime);
-		let diff = b.diff(a, 'seconds');
-		console.log(diff);
-
-		return diff;
-	}
-
-	function relativeDateTimeConvert(datetime){
-
-		let a = moment();
-		let b = moment(datetime);
-		let diff = b.diff(a, 'seconds');
-		console.log(diff);
-
-		if(diff > 0 && diff > 86400){
-			// more than 1 day
-			console.log('case 1');
-			return moment(datetime).format('D/M/Y, HH:mm');
-		}
-		else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
-			// less than 1 day
-			return b.from(a);
-		}
-
-	}
 
 
 </script>

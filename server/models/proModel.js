@@ -1,6 +1,7 @@
 
 const db = require('../utils/db');
 const moment = require('moment');
+moment.locale('vi');
 
 const table = 'product';
 
@@ -30,13 +31,14 @@ module.exports = {
 		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = b3.ProId)
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
 
 		group by b3.ProId
 		) as tt1,
 		(
 		select  b2.ProId, count(b2.BidderId) as Turn
 		from bidderproduct b2
+		where b2.IsBanned = 0
 		GROUP by b2.ProId
 		) as tt2
 		where tt1.ProId = tt2.ProId
@@ -72,13 +74,14 @@ module.exports = {
 		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = b3.ProId)
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
 
 		group by b3.ProId
 		) as tt1,
 		(
 		select  b2.ProId, count(b2.BidderId) as Turn
 		from bidderproduct b2
+		where b2.IsBanned = 0
 		GROUP by b2.ProId
 		) as tt2
 		where tt1.ProId = tt2.ProId
@@ -121,13 +124,14 @@ module.exports = {
 		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = b3.ProId)
+		where b1.ProId = b3.ProId and b1.isBanned=0) and b3.isBanned = 0
 
 		group by b3.ProId
 		) as tt1,
 		(
 		select  b2.ProId, count(b2.BidderId) as Turn
-		from bidderproduct b2
+		from bidderproduct b2 
+		where b2.isBanned = 0
 		GROUP by b2.ProId
 		) as tt2
 		where tt1.ProId = tt2.ProId
@@ -158,13 +162,14 @@ module.exports = {
 		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = b3.ProId)
+		where b1.ProId = b3.ProId and b1.isBanned = 0) and b3.isBanned = 0
 
 		group by b3.ProId
 		) as tt1,
 		(
 		select  b2.ProId, count(b2.BidderId) as Turn
-		from bidderproduct b2
+		from bidderproduct b2 
+		where b2.isBanned = 0
 		GROUP by b2.ProId
 		) as tt2
 		where tt1.ProId = tt2.ProId
@@ -197,13 +202,14 @@ module.exports = {
 		where b3.Price >= all(
 		select b1.Price 
 		from bidderproduct as b1 
-		where b1.ProId = b3.ProId)
+		where b1.ProId = b3.ProId and b1.isBanned = 0) and b3.isBanned = 0
 
 		group by b3.ProId
 		) as tt1,
 		(
 		select  b2.ProId, count(b2.BidderId) as Turn
-		from bidderproduct b2
+		from bidderproduct b2 
+		where b2.isBanned = 0
 		GROUP by b2.ProId
 		) as tt2
 		where tt1.ProId = tt2.ProId
@@ -246,13 +252,13 @@ module.exports = {
 			where b3.Price >= all(
 			select b1.Price 
 			from bidderproduct as b1 
-			where b1.ProId = b3.ProId)
+			where b1.ProId = b3.ProId and b1.isBanned = 0) and b3.isBanned = 0
 
 			group by b3.ProId
 			) as tt1,
 			(
 			select  b2.ProId, count(b2.BidderId) as Turn
-			from bidderproduct b2
+			from bidderproduct b2 where b2.isBanned = 0
 			GROUP by b2.ProId
 			) as tt2
 			where tt1.ProId = tt2.ProId
@@ -327,13 +333,13 @@ module.exports = {
 				where b3.Price >= all(
 				select b1.Price 
 				from bidderproduct as b1 
-				where b1.ProId = b3.ProId)
+				where b1.ProId = b3.ProId and b1.isBanned = 0) and b3.isBanned = 0
 
 				group by b3.ProId
 				) as tt1,
 				(
 				select  b2.ProId, count(b2.BidderId) as Turn
-				from bidderproduct b2
+				from bidderproduct b2 where b2.isBanned = 0
 				GROUP by b2.ProId
 				) as tt2
 				where tt1.ProId = tt2.ProId
@@ -440,12 +446,33 @@ module.exports = {
 
 	setBid: async(userId, pro, price)=>{
 
+		// check if price of bidder is valid
+		let newPrice = +pro.Max_Price + +pro.PriceStep;
+		if(price < newPrice){
+			return {isOk: false, msg: "Your price is less than the valid price."};
+		}
+
+		// check if user is banned
+		//...
+		let sql = `
+		select * 
+		from bidderproduct
+		where ProId = ${pro.Id} and BidderId = ${userId} and isbanned = 1
+		`;
+		const results = await db.query(sql);
+		if(results != null && results.length > 0){
+			// this mean user is banned from this product
+			// fail to bid
+			return {isOk: false, msg: "You are banned from this product."};
+		}
+
 		// check if product still available
-		// let a = moment();
-		// let b = moment(pro.EndTime);
-		// let diff = b.diff(a, 'seconds');
-		// lg(diff);
-		if(true){
+		let a = moment();
+		let b = moment(pro.EndTime);
+		let diff = b.diff(a, 'seconds');
+		lg(diff);
+		
+		if(diff > 0){
 			// still available
 			// bid success
 			// update table
@@ -463,6 +490,27 @@ module.exports = {
 			return {isOk: false, msg: "Product is not available any more."};
 		}
 	},
+
+	getHistory: async(proId)=>{
+
+		// get all product id in table 'bidderproduct': bidder id, bidder name, dateCreate, not banned
+		let sql = `
+		select b1.*, a1.Name as BidderName
+		FROM bidderproduct as b1,
+		account as a1
+		where b1.ProId = ${proId} and b1.isBanned = 0 and b1.BidderId = a1.Id
+		order by b1.DateCreate asc
+		`;
+
+		const results = await db.query(sql);
+		if(results != null && results.length > 0){
+			return {isOk: true, history: results};
+		}
+
+		return null;
+
+
+	}
 }
 
 

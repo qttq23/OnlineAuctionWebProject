@@ -145,3 +145,16 @@ router.post('/bid', async function(req, res){
 	}
 	res.json(result);
 })
+
+
+router.get('/history', async function(req, res){
+	lg('GET bid history');
+	lg(req.query);
+
+	let proId = req.query.id;
+	const results = await proModel.getHistory(proId);
+	lg(results);
+
+	res.json(results);
+
+})

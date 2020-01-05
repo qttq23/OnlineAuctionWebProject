@@ -298,11 +298,11 @@
 
 <!-- highlight nearly end related products -->
 <script type="text/javascript" src="/moment/moment.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <script type="text/javascript">
 
 	$(()=>{
 
-		moment.locale('vi');
 		
 	})
 
@@ -367,33 +367,7 @@
 
 
 
-	function remainSeconds(datetime){
-		let a = moment();
-		let b = moment(datetime);
-		let diff = b.diff(a, 'seconds');
-		console.log(diff);
-
-		return diff;
-	}
-
-	function relativeDateTimeConvert(datetime){
-
-		let a = moment();
-		let b = moment(datetime);
-		let diff = b.diff(a, 'seconds');
-		console.log(diff);
-
-		if(diff > 0 && diff > 86400){
-			// more than 1 day
-			console.log('case 1');
-			return moment(datetime).format('D/M/Y, HH:mm');
-		}
-		else if(diff < 0 || (diff > 0 && diff <= 86400 && diff > 180)){
-			// less than 1 day
-			return b.from(a);
-		}
-
-	}
+	
 
 
 </script>
@@ -418,6 +392,7 @@
 			Id: {{this.product.Id}},
 			Name: '{{this.product.Name}}',
 			CatId: {{this.product.CatId}},
+			// EndTime: '{{dmyConvert this.product.EndTime}}',
 			EndTime: '{{this.product.EndTime}}',
 
 			IsRestrictBidder: {{this.product.IsRestrictBidder}},
@@ -425,6 +400,12 @@
 			Max_Price: {{this.product.Max_Price}},
 
 		};
+
+		let endTime = '{{this.product.EndTime}}';
+		if(remainSeconds(endTime) <= 0){
+			alert('Product is not available any more :(.');
+			return;
+		}
 
 		if(isAuthen){
 
@@ -454,9 +435,10 @@
 					});
 
 					myVar = setTimeout(()=>{
+						let cash_converted = cashConvert(price);
 						Swal.fire({
-							title: `<p style="color:red">${price}$&nbsp;</p>is suggested price.`,
-							text: " Are you sure to bid?",
+							title: `<div><p style="color:red">${cash_converted}&nbsp;</p>is suggested price. <input id="swal-input-price" class="swal2-input" type="number" value="${price}"></div>`,
+							text: " Are you sure to bid? ",
 							icon: 'question',
 							showCancelButton: true,
 							confirmButtonColor: '#3085d6',
@@ -471,7 +453,7 @@
 									data: {
 										userId: userId,
 										pro: pro,
-										price: price
+										price: $('#swal-input-price').val()
 									},
 									async: false
 								})
@@ -539,6 +521,71 @@
 
 
 
+	}
+</script>
+
+
+<!-- history -->
+<script type="text/javascript">
+
+	function viewHistory(){
+
+		// send request history to server
+		$.ajax({
+			method: 'get',
+			url: '/product/history?id={{this.product.Id}}',
+
+		})
+		.done(function(json){
+
+			if(json.isOk){
+
+				var trHtml = '';
+				for(var i = 0; i < json.history.length; i++){
+					let dateCreate_converted = dmyhmsConvert(json.history[i].DateCreate);
+					let price_converted = cashConvert(json.history[i].Price);
+					let name_masked = maskenName(json.history[i].BidderName);
+					trHtml += `
+					<tr>
+					<td>${dateCreate_converted}</td>
+					<td>${name_masked}</td>
+					<td>${price_converted}</td>
+					</tr>
+					`;
+				}
+
+				var tableHtml = `
+				<table class="historyTable table">
+				<thead>
+				<tr>
+
+				<th scope="col">Time</th>
+				<th scope="col">Bidder</th>
+				<th scope="col">Price</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				` +
+				trHtml +
+
+				`</tbody>
+				</table>`;
+
+				Swal.fire(
+					'History',
+					tableHtml,
+					// 'success'
+					);
+
+			}
+			else{
+				alert('fail to get bid history');
+			}
+		})
+
+
+		
 	}
 </script>
 
