@@ -183,4 +183,62 @@ router.post('/profile/update', restrict.authen, async function(req, res){
 })
 
 
+router.get('/password/change', restrict.authen, async function(req, res){
+	lg('GET /password/change');
+	lg(req.session.account);
+	
 
+	res.render('acc/changePassword.html',{
+		layout: 'simple.html'
+	});
+
+})
+
+
+router.post('/password/change', restrict.authen, async function(req, res){
+	lg('POST /password/change');
+	lg(req.session.account);
+	lg(req.body);
+
+	let acc = req.session.account;
+	let info = req.body.password;
+	const results = await accModel.changePassword(acc, info);
+
+	lg(results);
+	if(results.isOk === true){
+		// re-set info for user
+		const newAccInfo = await accModel.single({Id:acc.Id});
+		lg(newAccInfo);
+		req.session.account = newAccInfo;
+
+		// redirect
+		results.redirect = '/acc/password/success';
+	}
+
+	res.json(results);
+})
+
+
+router.get('/password/success', restrict.authen, async function(req, res){
+	lg('GET /password/success');
+	lg(req.session.account);
+	
+
+	res.render('acc/changePasswordSuccess.html',{
+		layout: 'simple.html'
+	});
+
+})
+
+
+router.post('/upgrade/request', restrict.authen, async function(req, res){
+	lg('POST /upgrade/request');
+	lg(req.session.account);
+	lg(req.body);
+
+	let acc = req.session.account;
+	const results = await accModel.requestUpgrade(acc);
+
+	lg(results);
+	res.json(results);
+})

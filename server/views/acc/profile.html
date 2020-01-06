@@ -60,7 +60,7 @@
 						<div class="form-group d-flex flex-column">
 							<label class="boldLabel" for="examplePassword">Password</label>
 
-							<a href="changePasswordPage.html" target="_blank">
+							<a href="/acc/password/change" target="_blank">
 							Change password...</a>
 
 						</div>
@@ -69,7 +69,7 @@
 							<label class="boldLabel" for="exampleType">Type</label>
 
 							<p>
-								{{accTypeConvert this.account.accType}} <a href="changePasswordPage.html" target="_blank">Request upgrade</a>
+								{{accTypeConvert this.account.accType}} <a href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
 							</p>
 
 						</div>
@@ -361,35 +361,38 @@
 		if( 
 			input3.length === 0 || 
 			input4.length === 0 || 
-			input5.length === 0 ){
+			input5.length === 0 )
+		{
 
 			// not satisfied
-		$('#overalError').html(error);
+			$('#overalError').html(error);
 
-		return false;
+			return false;
+		}
+		else if(
+			!checkEmail(input3)||
+			!checkName(input4) ||
+			!checkBirthday(input7)
+			)
+		{
+			// not satisfied
+			$('#overalError').html(error);
+			return false;
+		}
+		else{
+			// satisfied
+			$('#overalError').html('');
+			$('.errorPrompt').html('');
+			return true;
+
+		}
+
+
+
 	}
-	else if(
-		!checkEmail(input3)||
-		!checkName(input4) ||
-		!checkBirthday(input7)
-		)
-	{
-		// not satisfied
-		$('#overalError').html(error);
-		return false;
-	}
-	else{
-		// satisfied
-		$('#overalError').html('');
-		$('.errorPrompt').html('');
-		return true;
-
-	}
-
-
-
-}
-
 
 </script>
+
+
+
 {{/section}}

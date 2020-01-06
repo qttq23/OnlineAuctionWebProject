@@ -7,7 +7,14 @@ module.exports = {
 			lg('return to: ' + req.originalUrl);
 			
 			req.session.returnTo = req.originalUrl;
-			return res.redirect(`../authen/login`);
+
+			// form prefix
+			let prefix = '';
+			let tokens = req.originalUrl.split('/');	// ex: /acc/password/change -> acc,password,change
+			for(let i = 0; i < tokens.length - 1; i++){
+				prefix += '/..';						// -> /../..
+			}
+			return res.redirect(`${prefix}/authen/login`);
 		}
 
 		next();

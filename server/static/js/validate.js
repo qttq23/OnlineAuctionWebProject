@@ -9,6 +9,18 @@ function checkPassword(input){
 	}
 }
 
+function checkSamePassword(input1, input2){
+
+
+	if(input1 == input2){
+		// alert('equal');
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
 function checkEmail(input){
 	var patt = /^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/i;
 	var result = input.match(patt);

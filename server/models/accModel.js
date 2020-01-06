@@ -430,6 +430,46 @@ module.exports = {
 
 		return {isOk: false, msg: 'Update account information failed.'};
 
+	},
+
+	changePassword: async (acc, password)=>{
+
+		// check if current pass = old pass
+		if(bcrypt.compareSync(password.old, acc.Password) === false){
+			return {isOk: false, msg: "You entered wrong old password"};
+		}
+
+
+		// if all ok
+		// hash new password
+		let salt = bcrypt.genSaltSync(10);
+		let newPassword = bcrypt.hashSync(password.new, salt);
+
+
+		const result = await db.update(table, {Id: acc.Id}, {Password: newPassword});
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: 'Change Password successfully.'};
+		}
+
+		return {isOk: false, msg: 'Change Password failed.'};
+
+	},
+
+	requestUpgrade: async (acc)=>{
+
+		// check if account is a bidder
+		if(acc.AccType !== 1){
+			return {isOk: false, msg: 'You are not bidder to request upgrade.'};
+		}
+
+		// if all ok
+		const result = await db.save('upgraderequest', {FromId: acc.Id});
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: 'Send upgrade request successfully. Admin will respond to you soon.'};
+		}
+
+		return {isOk: false, msg: 'Send upgrade request failed.'};
+
 	}
 
 
