@@ -146,7 +146,8 @@ router.get('/profile', restrict.authen, async function(req, res){
 	// const results = accModel.profile(acc);
 
 	res.render('acc/profile.html', {
-		layout: 'simple.html',
+		// layout: 'simple.html',
+		isLayoutSimple: true,
 
 		account:{
 			name: acc.Name,
@@ -189,7 +190,8 @@ router.get('/password/change', restrict.authen, async function(req, res){
 	
 
 	res.render('acc/changePassword.html',{
-		layout: 'simple.html'
+		// layout: 'simple.html',
+		isLayoutSimple: true,
 	});
 
 })
@@ -225,7 +227,8 @@ router.get('/password/success', restrict.authen, async function(req, res){
 	
 
 	res.render('acc/changePasswordSuccess.html',{
-		layout: 'simple.html'
+		// layout: 'simple.html',
+		isLayoutSimple: true,
 	});
 
 })

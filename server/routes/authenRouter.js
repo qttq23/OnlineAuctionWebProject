@@ -19,7 +19,8 @@ router.get('/login', function(req, res){
 	if(!req.session.isAuthen){
 		// render login page
 		res.render('authen/login.html', {
-			layout: 'simple.html',
+			// layout: 'simple.html',
+			isLayoutSimple: true,
 			isLoginRequired: true,
 		});
 	}
@@ -94,25 +95,25 @@ router.post('/login', async function(req, res){
 
 
 		// let obj = { 
-		// 	msg: await (()=>msg)(),
-		// 	isErr: await (()=>isErr)(),
-		// 	userName: await(()=>userName)(),
-		// 	userType: await(()=>userType)(),
-		// 	returnTo: await(()=>returnTo)(),
-		// };
-		let obj = { 
-			msg: msg,
-			isErr: isErr,
-			userName: userName,
-			userType: userType,
-			userId: userId,
-			returnTo: returnTo,
-		};		
-		res.json(obj);
-	}
-	
-	
-})
+			// 	msg: await (()=>msg)(),
+			// 	isErr: await (()=>isErr)(),
+			// 	userName: await(()=>userName)(),
+			// 	userType: await(()=>userType)(),
+			// 	returnTo: await(()=>returnTo)(),
+			// };
+			let obj = { 
+				msg: msg,
+				isErr: isErr,
+				userName: userName,
+				userType: userType,
+				userId: userId,
+				returnTo: returnTo,
+			};		
+			res.json(obj);
+		}
+
+
+	})
 
 router.post('/logout', function(req, res){
 	log.log('post logout');
@@ -133,7 +134,8 @@ router.get('/signup', function(req, res){
 	res.render(
 		'authen/signup.html',
 		{
-			layout: 'simple.html',
+			// layout: 'simple.html',
+			isLayoutSimple: true,
 		});
 })
 
@@ -255,7 +257,10 @@ router.post('/signup', async function(req, res){
 router.get('/signupActive', function(req, res){
 	lg('GET active');
 
-	res.render('authen/signupActive.html',{layout: 'simple.html'});
+	res.render('authen/signupActive.html',{
+		// layout: 'simple.html',
+		isLayoutSimple: true,
+	});
 })
 
 router.post('/signupActive', async function(req, res){

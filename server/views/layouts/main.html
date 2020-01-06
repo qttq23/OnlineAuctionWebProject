@@ -36,6 +36,8 @@
 		</a>
 
 		<!-- Search form -->
+		{{#if isLayoutSimple}}
+		{{else}}
 		<form class="form-inline w-50" id="searchForm">
 			<div class="input-group w-100">
 				<input class="form-control w-75" type="search" placeholder="Search product/catagory..." id="searchInput">
@@ -59,6 +61,7 @@
 				
 			</div>
 		</form>
+		{{/if}}
 		
 
 		<div class="userStatusDiv" >
@@ -112,6 +115,11 @@
 	<br>
 
 	<!-- body -->
+	{{#if isLayoutSimple}}
+
+	{{{body}}}
+
+	{{else}}
 	<div class=" container">
 
 		<!-- menu button-->
@@ -219,19 +227,20 @@
 
 			</div>
 
+
 			<!-- main -->
 			<div class="main col col-sm-9">
 
 				{{{body}}}
 
-
-
 			</div>
+			
 
 		</div>	
 
 
 	</div>
+	{{/if}}
 
 	<br>
 
