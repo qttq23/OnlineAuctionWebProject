@@ -53,6 +53,11 @@ function dmyhmsConvert(datetime){
 	return moment(datetime).format('D/M/Y, HH:mm:ss');
 }
 
+function datetimeConvert(datetime, format){
+	console.log(moment(datetime).format(format));
+	return moment(datetime).format(format);
+}
+
 function cashConvert (number){
 	// return numeral(number).format('0,0 $');
 	return numeral(number).format('0,0 $');

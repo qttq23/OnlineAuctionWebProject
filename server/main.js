@@ -64,6 +64,10 @@ app.engine('html', expHbs({
 
 			return moment(datetime).format('D/M/Y');
 		},
+		datetimeConvert: function(datetime, format){
+			// console.log(moment(datetime).format(format));
+			return moment(datetime).format(format);
+		},
 
 		relativeDateTimeConvert: function(datetime){
 
@@ -129,7 +133,7 @@ app.engine('html', expHbs({
 				longName = tokens[tokens.length - 1];
 			}
 			if(longName.length > 7){
-				longName = longName.substring(0, 7);
+				longName = longName.substring(longName.length - 7);
 			}
 
 			longName = '***' + longName;
@@ -142,6 +146,22 @@ app.engine('html', expHbs({
 			}
 			return options.inverse(this);
 		},
+
+		accTypeConvert: function(typeNum){
+			let typeName = 'unknown';
+
+			if(typeNum === 1){
+				typeName = 'Bidder';
+			}
+			else if(typeNum === 2){
+				typeName = 'Seller';
+			}
+			else if(typeNum === 3){
+				typeName = 'Admin';
+			}
+
+			return typeName;
+		}
 
 
 	}

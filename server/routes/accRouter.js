@@ -138,5 +138,49 @@ router.post('/commentrate', restrict.authen, async function(req, res){
 })
 
 
+router.get('/profile', restrict.authen, async function(req, res){
+	lg('GET profile');
+	lg(req.session.account);
+
+	let acc = req.session.account;
+	// const results = accModel.profile(acc);
+
+	res.render('acc/profile.html', {
+		layout: 'simple.html',
+
+		account:{
+			name: acc.Name,
+			address: acc.Address,
+			birthday: acc.Birthday,
+			email: acc.Email,
+			accType: acc.AccType,
+			point: acc.Point
+		}
+	});
+})
+
+router.post('/profile/update', restrict.authen, async function(req, res){
+	lg('POST profile');
+	lg(req.session.account);
+	lg(req.body);
+
+	let acc = req.session.account;
+	let info = req.body.updateInfo;
+	const results = await accModel.updateProfile(acc, info);
+
+	lg(results);
+	if(results.isOk === true){
+		// re-set info for user
+		const newAccInfo = await accModel.single({Id:acc.Id});
+		lg(newAccInfo);
+		req.session.account = newAccInfo;
+
+		// redirect
+		results.redirect = req.headers.referer || '../home';
+	}
+
+	res.json(results);
+})
+
 
 

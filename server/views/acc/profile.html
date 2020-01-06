@@ -1,0 +1,395 @@
+
+
+
+{{#section 'css'}}
+{{/section}}
+
+
+<div class=" container">
+	<div class="body row justify-content-center">
+
+		<!-- main -->
+		<div class="main col-sm-6">
+
+			<div class="card">
+				<div class="card-body">
+					<h1>Account profile</h1>
+
+					<button type="button" class="editButton btn btn-primary " onclick="switchToEditMode(true)"><i class="fas fa-edit"></i> Edit</button>
+
+					<form class="profileForm">
+						<small id="overalError"></small>
+
+						<div class="editableForm nameDiv form-group">
+							<label class="boldLabel" for="exampleName">Name</label>
+
+							<input type="text" class="toEditInput  form-control" id="exampleName">
+
+							<p class="editablePara">{{this.account.name}}</p>
+							<small class="errorPrompt"></small>
+						</div>
+
+						<div class="editableForm addressDiv form-group">
+							<label class="boldLabel" for="exampleAddress">Address</label>
+
+							<input type="text" class="toEditInput  form-control" id="exampleAddress">
+
+							<p class="editablePara">{{this.account.address}}</p>
+							<small class="errorPrompt"></small>
+						</div>
+
+
+						<div class="editableForm emailDiv form-group">
+							<label class="boldLabel" for="exampleEmail">Email</label>
+
+							<input type="text" class="toEditInput form-control" id="exampleEmail" disabled>
+
+							<p class="editablePara">{{this.account.email}}</p>
+							<small class="errorPrompt"></small>
+						</div>
+
+						<div class="editableForm birthdayDiv form-group">
+							<label class="boldLabel" for="exampleEmail">Birthday</label>
+
+							<input type="date" class="toEditInput   form-control" id="exampleEmail">
+
+							<p class="editablePara">{{datetimeConvert this.account.birthday 'YYYY-MM-DD'}}</p>
+							<small class="errorPrompt"></small>
+						</div>
+
+						<div class="form-group d-flex flex-column">
+							<label class="boldLabel" for="examplePassword">Password</label>
+
+							<a href="changePasswordPage.html" target="_blank">
+							Change password...</a>
+
+						</div>
+
+						<div class="form-group d-flex flex-column">
+							<label class="boldLabel" for="exampleType">Type</label>
+
+							<p>
+								{{accTypeConvert this.account.accType}} <a href="changePasswordPage.html" target="_blank">Request upgrade</a>
+							</p>
+
+						</div>
+
+
+
+						<div class="listConfirmButtons">
+							<div class=" d-flex flex-row justify-content-between">
+								<button type="button" class="btn btn-primary" onclick="saveProfile()">
+									<i class="fas fa-check"></i>
+								Save</button>
+
+								<button type="button" class="btn btn-secondary" onclick="discardProfile()">
+									<i class="fas fa-times"></i>
+								Cancel</button>
+
+							</div>
+
+						</div>
+
+					</form>
+
+
+				</div>
+			</div>
+
+
+
+		</div>
+
+	</div>	
+
+
+</div>
+
+
+
+
+{{#section 'js'}}
+
+
+<!-- switch EditableInput -->
+<script type="text/javascript">
+	$(()=>{
+		initEditableForm();
+	});
+
+
+	var profileText = [];
+	{{#if isAuthen}}
+	profileText.push('{{this.account.name}}');
+	profileText.push('{{this.account.address}}');
+	profileText.push('{{this.account.email}}');
+	profileText.push(datetimeConvert('{{this.account.birthday}}', 'YYYY-MM-DD'));
+
+	{{/if}}//
+
+	function initEditableForm(){
+
+		$('.profileForm .toEditInput').css('display', 'none');
+		$('.profileForm .listConfirmButtons').css('display', 'none');
+
+
+	}
+
+	function switchToEditMode(isEditable){
+		// alert('flag');
+
+		let paraDisplay = 'block';
+		let inputDisplay = 'none';
+		let buttonsDisplay  = 'none';
+		let editBtnDisabled = false;
+		if(isEditable){
+			paraDisplay = 'none';
+			inputDisplay = 'block';
+			buttonsDisplay = 'block';
+			editBtnDisabled = true;
+		}
+
+
+		// set paragraph invisible
+		$('.editablePara').each(function(idx, item) {
+			$(item).css('display', paraDisplay);
+
+		});
+
+		// set input visible
+		$('.toEditInput').each(function(idx, item){
+			$(item).css('display', inputDisplay);
+			$(item).val(profileText[idx]);
+		});
+
+		// set save button visisble
+		$('.listConfirmButtons').each(function(idx, item){
+			$(item).css('display', buttonsDisplay);
+		});
+
+		// set edit button disabled
+		$('.editButton').each(function(idx, item){
+			$(item).attr("disabled", editBtnDisabled);
+		});
+	}
+
+
+
+
+
+</script>
+
+<!-- save/discard profile -->
+<script type="text/javascript">
+	function saveProfile(){
+
+		if(validateForm() === true){
+			// alert('validate ok');
+
+			// submit to server
+			$.ajax({
+				method: 'post',
+				url: '/acc/profile/update',
+				data: {
+					updateInfo:{
+						Name: $('.nameDiv input').val(),
+						Address: $('.addressDiv input').val(),
+						Birthday: $('.birthdayDiv input').val(),
+					}
+				}
+			})
+			.then(function(json){
+
+				if(json.isOk){
+
+					$('.profileForm .editableForm').each(function(idx, item){
+						var input = $(item).find('.toEditInput');
+						profileText[idx] = input.val();
+
+
+						var para = $(item).find( '.editablePara');
+						para.html(profileText[idx]);
+					});
+
+					// switch to no-editable mode
+					switchToEditMode(false);
+
+					// show notification
+					let secs = 1300;
+					Swal.fire({
+						position: 'center',
+						icon: 'success',
+						title: 'Your profile is saved',
+						showConfirmButton: false,
+						timer: secs,
+						toast: true
+					});
+
+					// re-load
+					setTimeout(function() {
+						window.location.href = json.redirect;
+					}, secs);
+					
+
+				}
+				else{
+					console.log(json.msg);
+					// show notification
+					Swal.fire({
+						position: 'center',
+						icon: 'error',
+						title: 'Failed to save your profile',
+						showConfirmButton: false,
+						timer: 1300,
+						toast: true
+					});
+				}
+			});
+
+			
+
+
+		}
+
+
+		else{
+			// show notification
+			Swal.fire({
+				position: 'center',
+				icon: 'error',
+				title: 'Failed to save your profile',
+				showConfirmButton: false,
+				timer: 1300,
+				toast: true
+			});
+
+
+		}
+
+
+	}
+
+	function discardProfile(){
+
+
+		$('.profileForm .editableForm').each(function(idx, item){
+			var input = $(item).find('.toEditInput');
+			input.val(profileText[idx]);
+
+			var para = $(item).find( '.editablePara');
+			para.html(profileText[idx]);
+		});
+
+		validateForm();
+
+		// switch to no-editable mode
+		switchToEditMode(false);
+
+		// show notification
+		Swal.fire({
+			position: 'center',
+			icon: 'info',
+			title: 'Canceled editting',
+			showConfirmButton: false,
+			timer: 1300,
+			toast: true
+		});
+	}
+</script>
+
+<!-- form vaidation -->
+<script type="text/javascript" src="/js/validate.js"></script>
+<script type="text/javascript">
+
+
+	$('.emailDiv').focusout(function(){
+		var input = $('.emailDiv input').val();
+
+		var result = checkEmail(input);
+
+		if(!result){
+			var error = '* Email is not valid';
+			$('.emailDiv .errorPrompt').html(error);
+		}
+		else{
+			$('.emailDiv .errorPrompt').html('');
+		}
+
+	});
+
+	$('.nameDiv').focusout(function(){
+		var input = $('.nameDiv input').val();
+		var result = checkName(input);
+
+		if(!result){
+			var error = '* Name is not valid';
+			$('.nameDiv .errorPrompt').html(error);
+		}
+		else{
+			$('.nameDiv .errorPrompt').html('');
+		}
+
+	});
+
+	$('.birthdayDiv').focusout(function(){
+		var input = $('.birthdayDiv input').val();
+		var result = checkBirthday(input);
+
+		if(!result){
+			var error = '* Birthday is not valid';
+			$('.birthdayDiv .errorPrompt').html(error);
+		}
+		else{
+			$('.birthdayDiv .errorPrompt').html('');
+		}
+
+	});
+
+
+
+	function validateForm(){
+
+		var error = '* Please fill in correct information. The red text indicates that you are writing wrong.';
+
+
+		var input3 = $('.emailDiv input').val();
+		var input4 = $('.nameDiv input').val();
+		var input5 = $('.addressDiv input').val();
+		var input7 = $('.birthdayDiv input').val();
+
+
+		if( 
+			input3.length === 0 || 
+			input4.length === 0 || 
+			input5.length === 0 ){
+
+			// not satisfied
+		$('#overalError').html(error);
+
+		return false;
+	}
+	else if(
+		!checkEmail(input3)||
+		!checkName(input4) ||
+		!checkBirthday(input7)
+		)
+	{
+		// not satisfied
+		$('#overalError').html(error);
+		return false;
+	}
+	else{
+		// satisfied
+		$('#overalError').html('');
+		$('.errorPrompt').html('');
+		return true;
+
+	}
+
+
+
+}
+
+
+</script>
+{{/section}}

@@ -35,6 +35,52 @@
 			Online Auction
 		</a>
 
+
+		<div class="userStatusDiv" >
+			<ul class="list-inline">
+				{{#if this.isAuthen}}
+				
+				<li class="list-inline-item">
+					<div class="dropdown">
+						<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
+
+						<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
+							<i class="far fa-user"></i>	{{this.userName}}
+						</button>
+
+						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+							<a class="dropdown-item" href="/acc/profile">Profile</a>
+							<a class="dropdown-item" href="changePasswordPage.html">Change password</a>
+
+							<div class="dropdown-divider"></div>
+
+							<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
+
+							<div class="dropdown-divider"></div>
+
+							<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
+								<i class="fas fa-sign-out-alt"></i> Log out
+							</a>
+							<form id="userLogoutForm" method="post" action="/authen/logout" hidden></form>
+
+							
+						</div>
+					</div>
+				</li>
+				{{else}}
+
+				<li class="list-inline-item">
+					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()" title="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
+				</li>
+				<li class="list-inline-item">
+					<a class="social-icon text-xs-center" href="/authen/signup" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
+				</li>
+				{{/if}}
+
+
+			</ul>
+		</div>
+
 		
 	</nav>
 
@@ -89,8 +135,167 @@
 	<!-- https://flaviusmatis.github.io/simplePagination.js/#page-6 -->
 	<script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
 
+	<!-- converted -->
+	<script type="text/javascript" src="/moment/moment.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+	<script type="text/javascript" src="/js/converted.js"></script>
+
+	<!-- login dialog -->
+	<script type="text/javascript">
+
+		{{#if this.isAuthen}}
+		var isAuthen = true;
+		var userId = {{this.userId}};
+		var userType = {{this.userType}};
+
+		{{else}}
+		var isAuthen = false;
+		var userId = null;
+		var userType = '0';
+		{{/if}}//
+
+		function showLoginDialog () {
+
+			Swal.fire({
+				
+				// title: 'Log in',
+				html:
+				'<i class="fab fa-autoprefixer" style="color: #329AD6; font-size:70px;"></i>'+
+				'<h1>Log in</h1>'+
+
+				'<div class="d-flex flex-column align-items-start">' +
+
+				'<div>Username</div>'+
+				'<input id="swal-input1" class="swal2-input">' +
+
+				'<div>Password</div>'+
+				'<input id="swal-input2" class="swal2-input" type="password">' +
+				
+				'<a href="/authen/signup">Not have an account? Sign up...</a>'+
+				'<a href="javascript:;">Forget password</a>'+
+				'</div>',
+				focusConfirm: false,
+				showCancelButton: true,
+				cancelButtonText: '<i class="fas fa-times"></i> Cancel',
+				confirmButtonText:
+				'<i class="fas fa-sign-in-alt"></i> Log in',
+
+				preConfirm: () => {
+					return [
+					document.getElementById('swal-input1').value,
+					document.getElementById('swal-input2').value
+					]
+				}
+			}).then((result) => {
+				if(result.value){
+
+					// post to server
+					$.ajax({
+						method: "post",
+						url: '/authen/login',
+						data: { username: result.value[0], password: result.value[1]},
+						
+
+					})
+					.done(function(json) {
+						if(json.isErr){
+
+							if(json.isAlreadyLogin){
+								// already login
+								isAuthen = true;
+								userId = json.userId;
+
+								Swal.fire(
+									'Log in failed!',
+									json.msg,
+									'info'
+									)
+								.then(()=>{
+									window.location.href = window.location;
+								});
+							}
+							else{
+
+								// login failed
+								isAuthen = false;
+
+								Swal.fire(
+									'Log in failed!',
+									json.msg,
+									'error'
+									).then(()=>{
+										showLoginDialog();
+									});	
+								};
 
 
+							}
+							else{
+								// login success
+								isAuthen = true;
+								userId = json.userId;
+
+								// show menu for user functions
+								userType = `${json.userType}`;
+								showMenuBasedUser(userType);
+
+								// update user div
+								let userHtml = `
+								<li class="list-inline-item">
+								<div class="dropdown">
+								<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
+
+								<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
+								<i class="far fa-user"></i>	${json.userName}
+								</button>
+
+								<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+								<a class="dropdown-item" href="/acc/profile">Profile</a>
+								<a class="dropdown-item" href="changePasswordPage.html">Change password</a>
+
+								<div class="dropdown-divider"></div>
+
+								<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
+
+								<div class="dropdown-divider"></div>
+
+								<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
+								<i class="fas fa-sign-out-alt"></i> Log out
+								</a>
+								<form id="userLogoutForm" method="post" action="/authen/logout" hidden></form>
+
+
+								</div>
+								</div>
+								</li>
+								`;
+
+								$('.userStatusDiv ul').html(userHtml);
+							}
+						});
+
+
+
+				}
+			})
+
+
+		};
+
+	</script>
+
+	<!-- log out -->
+	<script type="text/javascript">
+		function submitLogout(){
+
+
+			let url = `authen/logout`;
+			$('#userLogoutForm').submit((event)=>{
+				$(this).attr('action', url);
+			}).trigger('submit');
+
+		}
+	</script>
 	
 
 	{{{_sections.js}}}

@@ -19,7 +19,7 @@ router.get('/login', function(req, res){
 	if(!req.session.isAuthen){
 		// render login page
 		res.render('authen/login.html', {
-			layout: false,
+			layout: 'simple.html',
 			isLoginRequired: true,
 		});
 	}

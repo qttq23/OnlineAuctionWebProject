@@ -420,5 +420,18 @@ module.exports = {
 	},
 
 
+	updateProfile: async (acc, newInfo)=>{
+
+		let record = newInfo;
+		const result = await db.update(table, {Id: acc.Id}, record);
+		if(result.affectedRows >= 1){
+			return {isOk: true, msg: 'Update account information successfully.'};
+		}
+
+		return {isOk: false, msg: 'Update account information failed.'};
+
+	}
+
+
 
 }
