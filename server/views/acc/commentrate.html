@@ -1,0 +1,65 @@
+
+
+
+{{#section 'css'}}
+{{/section}}
+
+
+
+
+<div class="card">
+
+	<div class="card-header">
+		Comments and rates
+	</div>
+
+	<!-- comments and rates list -->
+	<div class="card-body d-flex flex-column justify-content-around">
+
+		<!-- 		<h4 class="card-title">Comments and rates</h4> -->
+		<h4 class="totalPointDiv card-title">Total point: {{this.numLike}} ({{percentConvert this.numLike this.total}})</h4>
+
+		<div class="commentContainer d-flex flex-column-reverse">
+			{{#each this.list}}
+			<div class="commentCard card mt-2 mb-2">
+				<div class="card-header">
+					<ul class="list-unstyled d-flex flex-column flex-sm-row justify-content-between mb-0 ml-0">
+						<li><i class="fas fa-user"></i> {{FromUserName}} <span class="badge {{#ifeq Point 1}}badge-success{{else}}badge-danger{{/ifeq}}">{{ratePointConvert Point}}</span></li>
+						<li>{{dmyConvert DateCreate}}</li>
+					</ul>
+
+				</div>
+				<div class="card-body">
+				{{Message}}</div>
+			</div>
+			{{/each}}
+
+		</div>
+
+
+
+
+
+
+
+	</div>
+</div>
+
+
+
+
+
+
+
+
+{{#section 'js'}}
+
+<!-- comment card -->
+
+{{/section}}
+
+
+
+
+
+

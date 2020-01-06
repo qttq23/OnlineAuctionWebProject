@@ -91,3 +91,20 @@ function maskenName(longName){
 	longName = '***' + longName;
 	return longName;
 }
+
+
+function accTypeConvert(typeNum){
+	let typeName = 'unknown';
+
+	if(typeNum === 1){
+		typeName = 'Bidder';
+	}
+	else if(typeNum === 2){
+		typeName = 'Seller';
+	}
+	else if(typeNum === 3){
+		typeName = 'Admin';
+	}
+
+	return typeName;
+}

@@ -3,14 +3,97 @@ const config = require('../config.json');
 const restrict = require('../middlewares/authenMw');
 const proModel = require('../models/proModel');
 const cataModel = require('../models/cataModel');
+const Jimp = require('jimp');
 const router = express.Router();
 module.exports = router;
 
 
-router.get('/add', restrict.authen, function(req, res){
-	lg('get product/add');
+router.get('/upload', restrict.authenSeller, function(req, res){
+	lg('get product/upload');
 
-	res.render('product/add.html');
+	res.render('product/upload.html', {
+		isLayoutSimple: true
+	});
+
+})
+
+router.post('/upload', restrict.authenSeller, async function(req, res){
+	lg('POST product/upload');
+
+	// lg(req.body);
+	// lg(req.files);
+
+	let productRecord = {
+		Name: req.body.nameInput,
+		CatId: req.body.cataInput,
+		StartPrice: req.body.startPriceInput,
+		EndTime: req.body.endTimeInput,
+		EndPrice: req.body.instantPriceInput,
+		OwnerId: req.session.account.Id,
+		IsAutoExtend: (req.body.autoExtendTimeInput === 'on')?1:0,
+		ImageFolder: '/images/products',
+		PriceStep: req.body.stepPriceInput,
+		Description: req.body.descriptionInput,
+	};
+	lg(productRecord);
+	const result = await proModel.add(productRecord);
+
+	if(result.isOk === true){
+
+		// save images
+		if (!req.files || Object.keys(req.files).length === 0) {
+			return res.json({isOk: false, msg: "Please provide 4 images to complete upload product."});
+		}
+
+		// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+		let sampleFile = req.files.fileInput;
+		// log.log(sampleFile);
+
+		if(sampleFile.length >= 4){
+
+			// create neccessary folders
+
+			// save
+			let count = 1;
+			sampleFile.forEach(item=>{
+
+				lg(item.name);
+
+				// save with orignal format
+				let dir = projectPath + `/static/images/products/${result.insertId}`;
+				item.mv(dir + `/${count}.jpg`, function(err) {
+					if (err)
+						return res.json({isOk: false, msg: "Upload product images failed."});
+				});
+
+
+
+				count++;
+			});
+
+			return res.json({
+				isOk: true, 
+				msg: "Upload product info and images successfully.",
+				redirect: `/product/uploadSuccess?proId=${result.insertId}`
+			});
+		}
+		else{
+			return res.json({isOk: false, msg: "Please provide 4 images to complete upload product."});
+		}
+	}
+
+	res.json(result);
+})
+
+router.get('/uploadSuccess', restrict.authenSeller, function(req, res){
+	lg('get product/uploadSuccess');
+
+	res.render('product/uploadSuccess.html', {
+		isLayoutSimple: true,
+
+		proIdView: req.query.proId
+
+	});
 
 })
 
@@ -68,8 +151,6 @@ router.get('/', async function(req, res){
 	}
 
 	
-
-
 })
 
 router.get('/details', async function(req, res){

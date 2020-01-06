@@ -121,21 +121,6 @@ router.get('/wonlist', restrict.authen, async function(req, res){
 })
 
 
-router.post('/commentrate', restrict.authen, async function(req, res){
-	lg('POST commentrate');
-	lg(req.body);
-
-	// get products
-	const fromId = req.session.account.Id;
-	const toId = req.body.toId;
-	const point = req.body.point;
-	const comment = req.body.comment;
-	const result = await accModel.commentRate(fromId, toId, point, comment);
-	lg(result);
-
-	// show
-	res.json(result);
-})
 
 
 router.get('/profile', restrict.authen, async function(req, res){
@@ -244,4 +229,40 @@ router.post('/upgrade/request', restrict.authen, async function(req, res){
 
 	lg(results);
 	res.json(results);
+})
+
+
+
+router.get('/commentrate', restrict.authen, async function(req, res){
+	lg('GET /commentrate');
+
+	
+	let acc = req.session.account;
+	const results = await accModel.listRate(acc);
+	lg(results);
+
+	res.render('acc/commentrate.html',{
+		total: results.list.length,
+		numLike: results.numLike,
+		list: results.list
+	});
+
+})
+
+
+// not test
+router.post('/commentrate/add', restrict.authen, async function(req, res){
+	lg('POST /commentrate/add');
+	lg(req.body);
+
+	// get products
+	const fromId = req.session.account.Id;
+	const toId = req.body.toId;
+	const point = req.body.point;
+	const comment = req.body.comment;
+	const result = await accModel.addRate(fromId, toId, point, comment);
+	lg(result);
+
+	// show
+	res.json(result);
 })

@@ -401,7 +401,7 @@ module.exports = {
 	},
 
 
-	commentRate: async (fromId, toId, point, comment)=>{
+	addRate: async (fromId, toId, point, comment)=>{
 
 		let record = {
 			FromId: fromId,
@@ -417,6 +417,28 @@ module.exports = {
 
 		return {isOk: false, msg: "Comment and rate failed."};
 
+	},
+
+	listRate: async (acc)=>{
+		let sql =`
+		select c.*, a1.Name as FromUserName
+		from commentrate as c, account a1
+		where c.ToId = ${acc.Id}
+		and c.FromId = a1.Id
+		order by c.DateCreate asc
+		`;
+
+		let sql2 =`
+		select count(*) as numLike
+		from commentrate as c, account a1
+		where c.ToId = ${acc.Id}
+		and c.FromId = a1.Id
+		and c.Point = 1
+		`;
+
+		const res = await db.query(sql);
+		const res2 = await db.query(sql2);
+		return {list: res, numLike: res2[0].numLike};
 	},
 
 
@@ -471,7 +493,5 @@ module.exports = {
 		return {isOk: false, msg: 'Send upgrade request failed.'};
 
 	}
-
-
 
 }

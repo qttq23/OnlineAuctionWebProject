@@ -13,6 +13,8 @@ const expHbsSec = require('express-handlebars-sections');
 const expSession = require('express-session');
 const numeral = require('numeral');
 const moment = require('moment');
+const fileUpload = require('express-fileupload');
+
 
 
 // load a locale
@@ -34,10 +36,12 @@ const app = express();
 
 app.use(express.static('static'));
 
+app.use(express.json());
 app.use(express.urlencoded({
 	extended: true
 })
 );
+
 
 app.use(expSession(
 {
@@ -48,6 +52,9 @@ app.use(expSession(
 })
 );
 
+app.use(fileUpload({
+	createParentPath: true
+}));
 
 
 app.engine('html', expHbs({
@@ -98,16 +105,16 @@ app.engine('html', expHbs({
 		},
 
 		ratePointConvert: function(rawPoint){
-			// return '' + rawPoint*100 + '%';
+
 			if(!rawPoint){
-				return '0' + ' point' ;
+				return '0';
 			}
 
-			if(rawPoint >= 2){
-				return '' + rawPoint + ' points';
+			if(rawPoint > 0){
+				return '+' + rawPoint;
 			}
 			else{
-				return '' + rawPoint + ' point';
+				return '' + rawPoint;
 			}
 		},
 
@@ -141,6 +148,7 @@ app.engine('html', expHbs({
 		},
 
 		ifeq: function(a, b, options){
+
 			if (a === b) {
 				return options.fn(this);
 			}
@@ -161,6 +169,10 @@ app.engine('html', expHbs({
 			}
 
 			return typeName;
+		},
+
+		percentConvert: function(part, total){
+			return '' + Math.round(part/total*100) + '%';
 		}
 
 
@@ -223,10 +235,10 @@ app.use('/acc', accRouter);
 
 app.use(function(req,res){
 	res.render('error/error.html',{
-		layout: 'simple.html',
+		isLayoutSimple: true,
 		title: '404 Not Found',
 		description: 'Sorry, an error has occured, Requested page not found!',
-	})
+	});
 	// res.status(404).render('404.jade');
 });
 

@@ -388,10 +388,6 @@ module.exports = {
 				list: [],
 			};
 		}
-
-
-
-
 	},
 
 	getPrice: async (userId, pro)=>{
@@ -508,9 +504,40 @@ module.exports = {
 		}
 
 		return null;
+	},
 
+	add: async (product)=>{
+		// check instantBuy price >= startPrice
+		let p1 = +product.EndPrice;
+		let p2 = +product.StartPrice + +product.PriceStep;
+		if(p1 < p2){
+			return {isOk: false, msg: "The win price mustn't be less than total of start price and step price."};
+		}
+
+		// check end time > current time
+		let a = moment();
+		let b = moment(product.EndTime);
+		let diff = b.diff(a, 'seconds');
+		// lg(diff);
+		if(diff <= 0){
+			return {isOk: false, msg: "The end time mustn't be less than the current time."};
+		}
+
+		// all ok
+		const result = await db.save(table, product);
+		lg(result);
+		if(result.affectedRows >= 1){
+			return {
+				isOk: true,
+				msg: "Upload product successfully.",
+				insertId: result.insertId
+			};
+		}
+
+		return {isOk: false, msg: "Upload product failed."};
 
 	}
+
 }
 
 

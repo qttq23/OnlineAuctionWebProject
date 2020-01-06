@@ -66,46 +66,67 @@
 
 		<div class="userStatusDiv" >
 			<ul class="list-inline">
-				{{#if this.isAuthen}}
 				
-				<li class="list-inline-item">
-					<div class="dropdown">
-						<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
+				<div class="authenDiv {{#if this.isAuthen}}{{else}}d-none{{/if}}">
+					<li class="list-inline-item">
+						<div class="dropdown">
 
-						<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
-							<i class="far fa-user"></i>	{{this.userName}}
-						</button>
+							<div class="uploadField {{#ifeq this.userType 2}}d-inline{{else}}d-none{{/ifeq}}">
+								
+								<a class="btn btn-link" title="Upload new product" style="color: white;" href="/product/upload">
+									<i class="fas fa-upload"></i>
+								</a>
+							</div>
 
-						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+							<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
+								<i class="far fa-user"></i>
+								<span class="userNameField">{{this.userName}}</span>
+							</button>
 
-							<a class="dropdown-item" href="/acc/profile">Profile</a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
 
-							<a class="dropdown-item" href="/acc/password/change">Change password</a>
+								<a class="dropdown-item text-center font-weight-bold">
+									<span class="userTypeField">
+										{{accTypeConvert this.userType}}
+									</span>
+								</a>
 
-							<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="/acc/profile">Profile</a>
 
-							<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
+								<a class="dropdown-item" href="/acc/password/change">Change password</a>
 
-							<div class="dropdown-divider"></div>
+								<div class="dropdown-divider"></div>
 
-							<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
-								<i class="fas fa-sign-out-alt"></i> Log out
-							</a>
-							<form id="userLogoutForm" method="post" action="/authen/logout" hidden></form>
 
-							
+
+								<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
+
+								<div class="dropdown-divider"></div>
+
+								<a class="dropdown-item" href="/acc/commentrate">Comments and Rates</a>
+
+								<div class="dropdown-divider"></div>
+
+								<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
+									<i class="fas fa-sign-out-alt"></i> Log out
+								</a>
+								<form id="userLogoutForm" method="post" action="/authen/logout" hidden></form>
+
+
+							</div>
 						</div>
-					</div>
-				</li>
-				{{else}}
+					</li>
+				</div>
 
-				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()" title="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
-				</li>
-				<li class="list-inline-item">
-					<a class="social-icon text-xs-center" href="/authen/signup" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
-				</li>
-				{{/if}}
+				<div class="unauthenDiv {{#if this.isAuthen}}d-none{{/if}}">
+					<li class="list-inline-item">
+						<a class="social-icon text-xs-center" href="javascript:;" onclick="showLoginDialog()" title="Login"><i class="fas fa-sign-in-alt"></i> Login</a>
+					</li>
+					<li class="list-inline-item">
+						<a class="social-icon text-xs-center" href="/authen/signup" title="Create new account"><i class="fas fa-user-plus"></i> Sign up</a>
+					</li>
+				</div>
+
 
 
 			</ul>
@@ -433,39 +454,17 @@
 								showMenuBasedUser(userType);
 
 								// update user div
-								let userHtml = `
-								<li class="list-inline-item">
-								<div class="dropdown">
-								<a class="btn btn-link" title="Upload new product" style="color: white;" href="uploadpage.html"><i class="fas fa-upload"></i></a>
+								$('.unauthenDiv').addClass('d-none');
+								$('.authenDiv').removeClass('d-none');
+								$('.userNameField').html(json.userName);
+								$('.userTypeField').html(accTypeConvert(json.userType));
+								if(json.userType === 2){
+									// bidder
+									// show upload button
+									$('.uploadField').removeClass('d-none');
+									$('.uploadField').addClass('d-inline');
+								}
 
-								<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="User">
-								<i class="far fa-user"></i>	${json.userName}
-								</button>
-
-								<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-								
-								<a class="dropdown-item" href="/acc/profile">Profile</a>
-								
-								<a class="dropdown-item" href="/acc/password/change">Change password</a>
-
-								<div class="dropdown-divider"></div>
-
-								<a class="dropdown-item" href="javascript:;" onclick="showRequestUpgradeDialog()">Request upgrade</a>
-
-								<div class="dropdown-divider"></div>
-
-								<a class="dropdown-item" href="javascript:;" onclick="submitLogout()">
-								<i class="fas fa-sign-out-alt"></i> Log out
-								</a>
-								<form id="userLogoutForm" method="post" action="/authen/logout" hidden></form>
-
-
-								</div>
-								</div>
-								</li>
-								`;
-
-								$('.userStatusDiv ul').html(userHtml);
 							}
 						});
 
