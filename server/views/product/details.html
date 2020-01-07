@@ -37,7 +37,7 @@
 					<div class="buttons">
 
 
-						<button class="bidBtn btn btn-primary" onclick="bid();"><i class="fas fa-dollar-sign"></i> Bid</button>
+						<button class="bidBtn btn btn-primary" onclick="bid();" {{#ifeq this.userId this.product.OwnerId}}disabled{{/ifeq}}><i class="fas fa-dollar-sign"></i> Bid</button>
 
 						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0" id="btnForItem_{{this.product.Id}}"><i class="fas fa-heart"></i> Like</button>
 
@@ -106,24 +106,33 @@
 
 
 
-								<dt class="col-sm-12">
-									<i class="fas fa-paperclip"></i> Description
-									<button class="btn btn-light" title="Add description" onclick="addDescription()"><i class="fas fa-plus"></i></button>
-								</dt>
-								<dd class="productDescription col-sm-12">
-									{{this.product.Description}}
-								</dd>
-								<!-- <textarea id="mytextarea">Hello, World!</textarea> -->
+
 							</dl>
 						</p>
 
-						<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
-						</p>					
+						
 					</div>
 				</div>
 
 
 			</div>
+
+			<hr/>
+
+			<!-- description -->
+			<div class="row mt-3">
+				<dt class="col-sm-12">
+					<i class="fas fa-paperclip"></i> Description
+					<button class="btn btn-light  {{#ifeq this.userId this.product.OwnerId}}{{else}}d-none{{/ifeq}}" title="Add description" onclick="addDescription()"><i class="fas fa-plus"></i></button>
+				</dt>
+				<div class="col-sm-12">
+
+					<dd class="productDescription col-sm-12">
+						{{{this.product.Description}}}
+					</dd>
+				</div>
+			</div>
+
 		</div>
 
 	</div>
@@ -529,55 +538,135 @@
 		})
 		.done(function(json){
 
-			if(json.isOk){
-
-				var trHtml = '';
-				for(var i = 0; i < json.history.length; i++){
-					let dateCreate_converted = dmyhmsConvert(json.history[i].DateCreate);
-					let price_converted = cashConvert(json.history[i].Price);
-					let name_masked = maskenName(json.history[i].BidderName);
-					trHtml += `
-					<tr>
-					<td>${dateCreate_converted}</td>
-					<td>${name_masked}</td>
-					<td>${price_converted}</td>
-					</tr>
-					`;
-				}
-
-				var tableHtml = `
-				<table class="historyTable table">
-				<thead>
+			var trHtml = '';
+			for(var i = 0; i < json.history.length; i++){
+				let dateCreate_converted = dmyhmsConvert(json.history[i].DateCreate);
+				let price_converted = cashConvert(json.history[i].Price);
+				let name_masked = maskenName(json.history[i].BidderName);
+				trHtml += `
 				<tr>
-
-				<th scope="col">Time</th>
-				<th scope="col">Bidder</th>
-				<th scope="col">Price</th>
+				<td>${dateCreate_converted}</td>
+				<td>${name_masked}</td>
+				<td>${price_converted}</td>
 				</tr>
-				</thead>
-
-				<tbody>
-				` +
-				trHtml +
-
-				`</tbody>
-				</table>`;
-
-				Swal.fire(
-					'History',
-					tableHtml,
-					// 'success'
-					);
-
+				`;
 			}
-			else{
-				alert('fail to get bid history');
-			}
+
+			var tableHtml = `
+			<table class="historyTable table">
+			<thead>
+			<tr>
+
+			<th scope="col">Time</th>
+			<th scope="col">Bidder</th>
+			<th scope="col">Price</th>
+			</tr>
+			</thead>
+
+			<tbody>
+			` +
+			trHtml +
+
+			`</tbody>
+			</table>`;
+
+			Swal.fire(
+				'History',
+				tableHtml,
+				// 'success'
+				);
 		})
 
 
 		
 	}
+</script>
+
+<!-- add description -->
+<script type="text/javascript">
+
+	
+
+
+	var count_addDescription = 0;
+	function addDescription(){
+		count_addDescription++;
+
+		Swal.fire({
+			html:
+
+			`<h1>Add description</h1>`+
+			`<textarea id="mytextarea${count_addDescription}">Hello, World!</textarea>`+
+			'</div>',
+			focusConfirm: false,
+			showCancelButton: true,
+			confirmButtonText:
+			'<i class="fas fa-plus"></i> Add',
+
+			preConfirm: () => {
+
+				return [
+
+				// document.getElementById('mytextarea').value,
+				tinymce.get(`mytextarea${count_addDescription}`).getContent()
+
+				]
+			}
+		}).then((result) => {
+			if(result.value){
+
+				// append to old description
+				let newDescription = result.value[0];
+				let oldDescription = $('.productDescription').html();
+				let totalDescription = oldDescription + '<br>---' + currentDateTime() + '---<br>' + newDescription;
+
+				// post to server
+				$.ajax({
+					method: 'post',
+					url: '/product/description/update',
+					data: {
+						proId: {{this.product.Id}},
+						description: totalDescription
+					}
+				})
+				.then(function(json){
+					if(json.isOk === true){
+						$('.productDescription').html(totalDescription);
+					}	
+					else{
+						alert(json.msg);
+					}
+				})
+
+				
+				
+			}
+
+			tinymce.remove(`#mytextarea${count_addDescription}`);
+		});
+
+		tinymce.init({
+			selector: `#mytextarea${count_addDescription}`,
+			height: 200,
+			menubar: false,
+			plugins: [
+			'advlist autolink lists link image charmap print preview anchor',
+			'searchreplace visualblocks code fullscreen',
+			'insertdatetime media table paste code help wordcount'
+			],
+			toolbar: 'undo redo | formatselect | ' +
+			' bold italic backcolor forecolor| alignleft aligncenter ' +
+			' alignright alignjustify | bullist numlist outdent indent |' +
+			' removeformat | help',
+			content_css: [
+			'//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+			'//www.tiny.cloud/css/codepen.min.css'
+			]
+		});
+
+	};
+
+
 </script>
 
 {{/section}}

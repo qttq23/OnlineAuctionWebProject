@@ -108,3 +108,8 @@ function accTypeConvert(typeNum){
 
 	return typeName;
 }
+
+
+function currentDateTime(){
+	return moment().format('D/M/Y, HH:mm');
+}

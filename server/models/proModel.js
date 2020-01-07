@@ -503,7 +503,7 @@ module.exports = {
 			return {isOk: true, history: results};
 		}
 
-		return null;
+		return {isOk: false, history: []};
 	},
 
 	add: async (product)=>{
@@ -543,7 +543,12 @@ module.exports = {
 
 		return {isOk: false, msg: "Upload product failed."};
 
-	}
+	},
+
+	updateDescription: (id, description)=>{
+
+		return db.update(table, {Id: id}, {Description: description});
+	},
 
 }
 

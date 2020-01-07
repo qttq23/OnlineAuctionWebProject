@@ -309,6 +309,9 @@
 	$(()=>{
 		$('#uploadForm').submit(function() {
 
+			// save description
+			tinymce.triggerSave(); 
+			
 			// check abcxyz
 			if(validateForm() === true){
 

@@ -20,7 +20,7 @@ router.get('/upload', restrict.authenSeller, function(req, res){
 router.post('/upload', restrict.authenSeller, async function(req, res){
 	lg('POST product/upload');
 
-	// lg(req.body);
+	lg(req.body);
 	// lg(req.files);
 
 	let productRecord = {
@@ -190,6 +190,11 @@ router.get('/details', async function(req, res){
 	}
 	else{
 		// show error page
+		res.render('error/error.html',{
+			isLayoutSimple: true,
+			title: '404 Not Found',
+			description: 'Sorry, an error has occured, Requested page not found!',
+		});
 	}
 
 })
@@ -240,5 +245,16 @@ router.get('/history', async function(req, res){
 
 })
 
+router.post('/description/update', async function(req, res){
+	lg('POST description/update');
+	lg(req.body);
 
+	const result = await proModel.updateDescription(req.body.proId, req.body.description);
+	lg(result);
+	if(result.affectedRows > 0){
+
+		return res.json({isOk: true, msg: "update description successfully."});
+	}
+	return res.json({isOk: false, msg: "update description failed."});
+})
 

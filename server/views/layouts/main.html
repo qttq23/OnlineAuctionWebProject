@@ -451,19 +451,23 @@
 
 								// show menu for user functions
 								userType = `${json.userType}`;
-								showMenuBasedUser(userType);
+								// showMenuBasedUser(userType);
 
-								// update user div
-								$('.unauthenDiv').addClass('d-none');
-								$('.authenDiv').removeClass('d-none');
-								$('.userNameField').html(json.userName);
-								$('.userTypeField').html(accTypeConvert(json.userType));
-								if(json.userType === 2){
-									// bidder
-									// show upload button
-									$('.uploadField').removeClass('d-none');
-									$('.uploadField').addClass('d-inline');
-								}
+								// // update user div
+								// $('.unauthenDiv').addClass('d-none');
+								// $('.authenDiv').removeClass('d-none');
+								// $('.userNameField').html(json.userName);
+								// $('.userTypeField').html(accTypeConvert(json.userType));
+								// if(json.userType === 2){
+								// 	// bidder
+								// 	// show upload button
+								// 	$('.uploadField').removeClass('d-none');
+								// 	$('.uploadField').addClass('d-inline');
+								// }
+
+								// so many div to update after login :(
+								// ---> solution: re-load page instead of updating each div manually
+								window.location.href = window.location.href;
 
 							}
 						});
