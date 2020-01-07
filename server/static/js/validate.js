@@ -44,3 +44,14 @@ function checkBirthday(input){
 	}
 	return result;
 }
+
+
+function checkEmpty(input){
+
+    if(input === null || input.match(/^ *$/) !== null){
+    	return false;
+    }
+
+    return true;
+
+}

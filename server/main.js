@@ -206,8 +206,6 @@ app.use(async function(req, res, next){
 	// pass catagory list
 	const cataList = await require('./models/cataModel').all();
 	res.locals.cataList = cataList;
-	res.locals.numPro = cataList.NumPro;
-	// lg(cataList);
 
 	next();
 })

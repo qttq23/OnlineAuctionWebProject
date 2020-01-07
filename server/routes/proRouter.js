@@ -114,9 +114,9 @@ router.get('/', async function(req, res){
 
 			cata: cata,
 
-			total: cata.NumPro,
+			total: cata.CountPro,
 			onPage: config.NumProOnPage,
-			isEmpty: cata.NumPro === 0,
+			isEmpty: cata.CountPro === 0,
 
 			proList: results,
 			page: req.query.page,
