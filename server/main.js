@@ -16,7 +16,6 @@ const moment = require('moment');
 const fileUpload = require('express-fileupload');
 
 
-
 // load a locale
 numeral.register('locale', 'vi', {
 	delimiters: {
@@ -57,8 +56,10 @@ app.use(fileUpload({
 }));
 
 
+
 app.engine('html', expHbs({
 	defaultLayout: 'main.html',
+	partialsDir: __dirname + '/views/partials/',
 	helpers: {
 
 		section: expHbsSec(),
@@ -176,11 +177,10 @@ app.engine('html', expHbs({
 		}
 
 
-	}
+	},
+	
 })
 );
-
-
 app.set('view engine', 'html');
 
 

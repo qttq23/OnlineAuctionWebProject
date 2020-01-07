@@ -59,15 +59,18 @@
 
 						<dl class="row">
 
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
+							<dd class="col-12 d-flex flex-row justify-content-between">
+
+								<span title="Price to win instantly">
+									<i class="fas fa-shopping-cart"></i> Win price
+								</span>
+								<span title="Price to win instantly">
+									{{#if EndPrice}}
+									{{cashConvert EndPrice}}
+									{{else}}
+									<i class="fas fa-ban" title="Not set"></i>
+									{{/if}}
+								</span>
 							</dd>
 
 							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
@@ -190,7 +193,7 @@
 
 	$(()=>{
 
-	
+		
 		
 	})
 

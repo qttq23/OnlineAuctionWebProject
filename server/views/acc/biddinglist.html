@@ -43,76 +43,7 @@
 
 			{{#each this.proList}}
 			<div class="col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" id="item{{Id}}">
-
-					<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top h-100"
-						src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
-					</a>
-
-					<div class="card-body h-25">
-
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
-							<h5 class="card-title">{{shortenName Name}}</h5>
-						</a>
-
-						<dl class="row">
-
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
-							</dd>
-
-							<dd class="col-12 d-flex flex-row justify-content-between" title="{{#ifeq ../userId BidderId}}You are the one who bid highest price{{else}}The highest price paying bidder{{/ifeq}}">
-
-								<span class="text-wrap text-left {{#ifeq ../userId BidderId}}badge badge-warning{{/ifeq}}">
-									
-									<i class="far fa-user"></i> {{maskenName BidderName}}
-									
-								</span>
-								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
-							</dd>
-
-
-
-							<dd class="col-12 d-flex flex-row justify-content-between">
-
-								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
-								</span>
-								<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
-									<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
-								</span>
-							</dd>
-
-
-
-							<dd class="col">
-								<div class="badge badge-light badge-lg" title="Number of turns made">
-									{{Turn}} turns
-								</div>
-							</dd>
-						</dl>
-
-
-					</div>
-
-					<!-- list of buttons -->
-					<div class="buttons ">
-						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"  id="btnForItem_{{Id}}"><i class="fas fa-heart"></i>
-						</button>
-
-
-					</div>
-
-
-				</div> 
+				{{> item parent=..}}
 			</div>
 			{{/each}}
 			{{/if}}

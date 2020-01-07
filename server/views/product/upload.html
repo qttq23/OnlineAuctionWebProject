@@ -61,7 +61,7 @@
 									<i class="fas fa-folder"></i> Browse
 								</button>
 
-								
+								<small>(Select 4 images for product)</small>
 
 
 
@@ -110,8 +110,8 @@
 									</div>
 
 									<div class="instantPriceDiv form-group">
-										<label for="instantPriceInput">Instant win price (VNĐ)</label>
-										<input type="number" class="form-control" name="instantPriceInput" id="instantPriceInput" value="500">
+										<label for="instantPriceInput" title="Price to win product instantly. (Leave this section empty if product can't be bought instantly)">Instant win price (VNĐ)</label>
+										<input type="number" class="form-control" name="instantPriceInput" id="instantPriceInput" >
 										<small class="errorPrompt"></small>
 									</div>
 
@@ -341,7 +341,7 @@
 
 		// check images >= 4
 		if(numImgUpload < 4){
-			$('#overalError').html('At least 4 images for each product to be uploaded.');
+			$('#overalError').html('4 images for each product to be uploaded.');
 			return false;
 		}
 
@@ -353,9 +353,14 @@
 
 		// check end time != empty
 		if(!checkEmpty($('#endTimeInput').val())){
-			$('#overalError').html('End time of product must not be empty.');
+			$('#overalError').html('Finish time of product must not be empty.');
 			return false;
 		}
+
+		// check instant price
+		// if(!checkEmpty($('#instantPriceInput').val())){
+
+		// }
 
 		$('#overalError').html('');
 		return true;

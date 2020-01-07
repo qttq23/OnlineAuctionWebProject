@@ -508,10 +508,17 @@ module.exports = {
 
 	add: async (product)=>{
 		// check instantBuy price >= startPrice
-		let p1 = +product.EndPrice;
-		let p2 = +product.StartPrice + +product.PriceStep;
-		if(p1 < p2){
-			return {isOk: false, msg: "The win price mustn't be less than total of start price and step price."};
+		if(product.EndPrice === null || product.EndPrice.match(/^ *$/) !== null){
+			// if not define end price, just ignore it
+			delete product.EndPrice;
+		}
+		else{
+			// if defined, end price must valid (end price >= start + step price)
+			let p1 = +product.EndPrice;
+			let p2 = +product.StartPrice + +product.PriceStep;
+			if(p1 < p2){
+				return {isOk: false, msg: "The win price mustn't be less than total of start price and step price."};
+			}
 		}
 
 		// check end time > current time
