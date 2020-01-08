@@ -229,6 +229,7 @@
 
 						if(response.isError === true){
 							$('#overalError').html(response.msg);
+							grecaptcha.reset();
 						}
 						else{
 							window.location.href = response.url;

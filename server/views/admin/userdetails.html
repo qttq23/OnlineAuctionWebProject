@@ -1,0 +1,284 @@
+
+
+
+<!-- main -->
+<div class="main col">
+
+	<div class="card">
+		<div class="card-body">
+			<h5>User details</h5>
+
+			<button type="button" class="editButton btn btn-primary " onclick="switchToEditMode(true)"><i class="fas fa-edit"></i> Edit</button>
+
+			<form class="profileForm">
+				<small id="overalError"></small>
+				<div class="d-flex flex-column flex-sm-row mt-2 mb-2">
+					<div class="card col col-sm-6 mr-2 mb-2">
+						<h5 class="card-title">Account</h5>
+
+						<div class="card-body">
+							<div class="editableForm usernameDiv form-group">
+								<label class="boldLabel" for="exampleName">Username</label>
+
+								<input type="text" class="toEditInput  form-control" id="exampleName" disabled>
+
+								<p class="editablePara">{{user.Username}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+							<div class="editableForm idDiv form-group">
+								<label class="boldLabel" for="exampleAddress">User Id</label>
+
+								<input type="text" class="toEditInput  form-control" id="exampleAddress" disabled>
+
+								<p class="editablePara">{{user.Id}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+
+
+							<div class="editableForm userTypeDiv form-group">
+								<label class="boldLabel" for="exampleFormControlSelect1">User type</label>
+
+								<select class="form-control toEditInput" id="exampleFormControlSelect1" disabled>
+									<option value="1" {{#ifeq user.AccType 1}}selected="selected"{{/ifeq}}>{{accTypeConvert 1}}</option>
+									<option value="2" {{#ifeq user.AccType 2}}selected="selected"{{/ifeq}}>{{accTypeConvert 2}}</option>
+								</select>
+								<p class="editablePara">{{accTypeConvert user.AccType}}</p>
+
+								<small class="errorPrompt"></small>
+							</div>
+						</div>
+					</div>
+
+					<div class="card col col-sm-6 mr-2 mb-2">
+						<h5 class="card-title">Personal</h5>
+						<div class="card-body">
+
+
+							<div class="editableForm fullnameDiv form-group">
+								<label class="boldLabel" for="exampleEmail">Full name</label>
+
+								<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+								<p class="editablePara">{{user.Name}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+							<div class="editableForm emailDiv form-group">
+								<label class="boldLabel" for="exampleEmail">Email</label>
+
+								<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+								<p class="editablePara">{{user.Email}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+							<div class="editableForm addressDiv form-group">
+								<label class="boldLabel" for="exampleEmail">Address</label>
+
+								<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+								<p class="editablePara">{{user.Address}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+							<div class="editableForm birthdayDiv form-group">
+								<label class="boldLabel" for="exampleEmail">Birthday</label>
+
+								<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+								<p class="editablePara">{{dmyConvert user.Birthday}}</p>
+								<small class="errorPrompt"></small>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+
+
+
+
+
+				<div class="listConfirmButtons">
+					<div class=" d-flex flex-row justify-content-between">
+						<button type="button" class="btn btn-primary" onclick="saveProfile()">
+							<i class="fas fa-check"></i>
+						Save</button>
+
+						<button type="button" class="btn btn-secondary" onclick="discardProfile()">
+							<i class="fas fa-times"></i>
+						Cancel</button>
+
+					</div>
+
+				</div>
+
+			</form>
+
+			<a class="btn btn-secondary mt-3" href="/admin/users"><i class="fas fa-chevron-left"></i> Return to catagory list</a>
+
+
+		</div>
+	</div>
+
+
+
+</div>
+
+
+
+{{#section 'js'}}
+
+<!-- switch EditableInput -->
+<script type="text/javascript">
+
+	{{#if user}}
+	var user = {
+		Id: {{user.Id}},
+		Name: '{{user.Name}}',
+		AccType: {{user.AccType}},
+		Username: '{{user.Username}}',
+		Address: '{{user.Address}}',
+		Birthday: '{{user.Birthday}}',
+		Email: '{{user.Email}}'
+	};
+
+	{{/if}}//
+
+	$(()=>{
+		switchToEditMode(false);
+	});
+
+	
+
+	function switchToEditMode(isEditable){
+		// alert('flag');
+
+		let paraDisplay = 'block';
+		let inputDisplay = 'none';
+		let buttonsDisplay  = 'none';
+		let editBtnDisabled = false;
+		let selectDisabled = true;
+		if(isEditable){
+			paraDisplay = 'none';
+			inputDisplay = 'block';
+			buttonsDisplay = 'block';
+			editBtnDisabled = true;
+			selectDisabled = false;
+		}
+
+		let profileText = [];
+		// set paragraph invisiable
+		$('.editablePara').each(function(idx, item) {
+			$(item).css('display', paraDisplay);
+			profileText.push($(item).html());
+		});
+
+		// set input visible
+		$('.toEditInput').each(function(idx, item){
+			$(item).css('display', inputDisplay);
+			// $(item).attr('value', profileText[idx]);
+			$(item).val(profileText[idx]);
+		});
+
+		// set type select enabled
+		$('.userTypeDiv select').attr('disabled', selectDisabled);
+		$('.userTypeDiv select').val(user.AccType);
+
+		// set save button visisble
+		$('.listConfirmButtons').each(function(idx, item){
+			$(item).css('display', buttonsDisplay);
+		});
+
+		// set edit button disabled
+		$('.editButton').each(function(idx, item){
+			$(item).attr("disabled", editBtnDisabled);
+		});
+	}
+
+
+
+
+
+</script>
+
+<!-- save/discard profile -->
+<script type="text/javascript">
+	function saveProfile(){
+
+		// send to server
+		let newType = $('.userTypeDiv select').val();
+		$.ajax({
+			method: 'post',
+			url: '/admin/users/update',
+			data:{
+				userId: user.Id,
+				type: newType
+			}
+		})
+		.then(function(json){
+			if(json.isOk === true){
+
+				// switch to no-editable mode
+				switchToEditMode(false);
+				$('.userTypeDiv toEditInput').html($(".userTypeDiv select option:selected").text());
+
+				// show notification
+				Swal.fire({
+					position: 'center',
+					icon: 'success',
+					title: 'Your profile is saved',
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+			}
+			else{
+				alert(json.msg);
+			}
+		});
+
+		
+
+
+	}
+
+	function discardProfile(){
+
+
+		// $('.profileForm .editableForm').each(function(idx, item){
+		// 	var input = $(item).find('.toEditInput');
+		// 	input.val(profileText[idx]);
+
+		// 	var para = $(item).find( '.editablePara');
+		// 	para.html(profileText[idx]);
+		// });
+
+		
+
+		// switch to no-editable mode
+		switchToEditMode(false);
+
+		// show notification
+		Swal.fire({
+			position: 'center',
+			icon: 'info',
+			title: 'Canceled editting',
+			showConfirmButton: false,
+			timer: 1300,
+			toast: true
+		});
+	}
+
+
+</script>
+
+
+
+
+{{/section}}
+

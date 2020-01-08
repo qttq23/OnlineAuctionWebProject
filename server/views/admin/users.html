@@ -1,0 +1,325 @@
+
+
+
+{{#section 'css'}}
+{{/section}}
+
+<!-- main -->
+<div class="main col ">
+
+	
+
+	<div class="card col-8">
+		<div class="card-body">
+			<h4 class='card-title'>Upgrade requests</h4>
+
+			{{#if isReqEmp}}
+			<h5>No request pending</h5>
+			{{else}}
+			<!-- show requests -->
+			<table class="table">
+				<thead>
+					
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Username</th>
+						<th scope="col">Date</th>
+						<th scope="col">Type</th>
+					</tr>
+
+				</thead>
+				<tbody class="requestsContainer">
+					{{#each requests}}
+
+					<tr>
+						<th scope="row">{{FromId}}</th>
+						<td>{{Name}}</td>
+						<td>{{dmyConvert DateCreate}}</td>
+						<td>
+							<button type="button" class="btn btn-link" title="Downgrade" onclick="downgradeUser(this)" value="{{FromId}}">
+								<i class="fas fa-chevron-left"></i>
+							</button>
+
+							<span>{{accTypeConvert AccType}}</span>
+
+							<button type="button" class="btn btn-link" title="Upgrade" onclick="upgradeUser(this)" value="{{FromId}}">
+								<i class="fas fa-chevron-right"></i>
+							</button>
+						</td>
+					</tr>
+
+					{{/each}}
+
+				</tbody>
+			</table>
+
+			<button type="button" class="btn btn-primary" onclick="clearRequest()">
+				<i class="fas fa-eraser"></i>
+				Ok and Clear
+			</button>
+			{{/if}}
+		</div>
+	</div>
+
+	<div class="card mt-3">
+		<div class="card-body">
+			<h4 class='card-title'>Manage users</h4>
+
+			{{#if isUserEmp}}
+			<h5>No user</h5>
+			{{else}}
+			<!-- show posts -->
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+
+						<th scope="col">User name</th>
+						<th scope="col">Type</th>
+
+						<th scope="col">Operations</th>
+					</tr>
+				</thead>
+				<tbody class="usersContainer">
+					{{#each users}}
+
+					<tr>
+						<th scope="row">{{Id}}</th>
+
+						<td class="nameDiv">{{Name}}</td>
+						<td>
+							<!-- <button type="button" class="btn btn-link" title="Downgrade" onclick="downgradeUser(this)" value="{{Id}}">
+								<i class="fas fa-chevron-left"></i>
+							</button> -->
+
+							<span>{{accTypeConvert AccType}}</span>
+
+							<!-- <button type="button" class="btn btn-link" title="Upgrade" onclick="upgradeUser(this)" value="{{Id}}">
+								<i class="fas fa-chevron-right"></i>
+							</button> -->
+
+						</td>
+
+						<td>
+							<a href="/admin/users/details?userId={{Id}}"  class="btn btn-primary" title="View and edit user">
+								<i class="fa fa-eye"></i> <i class="fas fa-edit"></i>
+							</a>
+
+							<button type="button" class="btn btn-danger" title="Delete user" value="{{Id}}" onclick="deleteUser(this)">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+
+						</td>
+					</tr>
+
+
+					{{/each}}
+
+				</tbody>
+			</table>
+			{{/if}}
+
+
+		</div>
+	</div>
+
+
+
+
+</div>
+
+
+
+{{#section 'js'}}
+
+<!-- hight light current menu item -->
+<script type="text/javascript">
+
+	$('.manaUserMenu').css('background-color', '#329AD6');
+
+
+</script>
+
+<!-- upgrade/downgrade -->
+<script type="text/javascript">
+	function upgradeUser(button){
+
+		// check if can upgrade
+		let newType = 2;	// seller
+		let newType_str = '{{accTypeConvert 2}}';
+
+		// send to server
+		let userId = $(button).val();
+		$.ajax({
+			method: 'post',
+			url: '/admin/users/update',
+			data:{
+				userId: userId,
+				type: newType
+			}
+		})
+		.then(function(json){
+			if(json.isOk === true){
+
+				// upgrade
+				let parent = $(button).parent('td');
+
+				$(parent).find('span').text(newType_str);
+
+
+				// show notificaitons
+				Swal.fire({
+					position: 'bottom-start',
+					icon: 'success',
+					title: 'User is upgraded to ' + newType_str,
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+			}
+			else{
+				alert(json.msg);
+			}
+		});
+
+		
+	}
+
+	function downgradeUser(button){
+
+		// check if can upgrade
+		let newType = 1;	// bidder
+		let newType_str = '{{accTypeConvert 1}}';
+
+		// send to server
+		let userId = $(button).val();
+		$.ajax({
+			method: 'post',
+			url: '/admin/users/update',
+			data:{
+				userId: userId,
+				type: newType
+			}
+		})
+		.then(function(json){
+			if(json.isOk === true){
+
+				// delete
+				let parent = $(button).parent('td');
+				$(parent).find('span').text(newType_str);
+
+				// show notificaitons
+				Swal.fire({
+					position: 'bottom-start',
+					icon: 'info',
+					title: 'User is downgraded to ' + newType_str,
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+			}
+			else{
+				alert(json.msg);
+			}
+		});
+
+
+
+	}
+</script>
+
+
+<!-- clear requests -->
+<script type="text/javascript">
+	function clearRequest(){
+
+		// send to server
+		$.ajax({
+			method: 'post',
+			url: '/admin/users/clearRequests',
+		})
+		.then(function(json){
+			if(json.isOk === true){
+				$('.requestsContainer').html('');
+
+				setTimeout(()=>{
+					window.location.href = window.location.href;
+				}, 1000);
+			}
+			else{
+				alert(json.msg);
+			}
+		});
+	}
+</script>
+
+
+<!-- delete user -->
+<script type="text/javascript">
+	var listOfDeletedCatagories = [];
+
+	function deleteUser(button){
+		
+		// confirm
+		let userName = $(button).parent('td').siblings('.nameDiv').html();
+		Swal.fire({
+			position: 'center',
+			icon: 'warning',
+			title: 'Are you sure to delete "'+userName+'" permanently?',
+			showConfirmButton: true,
+			showCancelButton: true,
+			preConfirm: () => {
+				return [
+				true
+				]
+			}
+		})
+		.then((result)=>{
+			if(result.value){
+
+				// delete
+				// post to server
+				let userId = $(button).val();
+				$.ajax({
+					method: 'post',
+					url: '/admin/users/delete',
+					data:{
+						userId: userId
+					}
+				})
+				.then(function(json){
+					if(json.isOk === true){
+						// delete gui
+						$(button).parent('td').parent('tr').css('display', 'none');
+
+						// show notificaitons
+						Swal.fire({
+							position: 'center',
+							icon: 'error',
+							title: 'User is removed from user list',
+							showConfirmButton: false,
+							timer: 1300,
+							toast: true
+						});
+
+					}
+					else{
+						alert(json.msg);
+					}
+				});
+
+
+
+			}
+		});
+
+
+	}
+</script>
+
+{{/section}}
+
+
+

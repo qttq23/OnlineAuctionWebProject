@@ -231,6 +231,11 @@ const accRouter = require('./routes/accRouter');
 app.use('/acc', accRouter);
 
 
+// account
+const adminRouter = require('./routes/adminRouter');
+app.use('/admin', adminRouter);
+
+
 app.use(function(req,res){
 	res.render('error/error.html',{
 		isLayoutSimple: true,

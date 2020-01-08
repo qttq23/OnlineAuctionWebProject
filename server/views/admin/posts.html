@@ -1,0 +1,156 @@
+
+
+
+{{#section 'css'}}
+{{/section}}
+
+<!-- main -->
+<div class="main col ">
+
+	<div class="card">
+		<div class="card-body">
+			<h4 class='card-title'>Manage products</h4>
+
+			<!-- Search form -->
+			<div class="form-group w-25">
+				<label for="exampleFormControlSelect1">Select catagory</label>
+				<select class="form-control" id="exampleFormControlSelect1">
+					<option>Iphone</option>
+					<option>Laptop</option>
+					<option>Car</option>
+					<option>Toy</option>
+					<option selected>---All---</option>
+				</select>
+			</div>
+
+			<!-- show posts -->
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Catagory</th>
+
+						<th scope="col">Product name</th>
+						<th scope="col">Operations</th>
+					</tr>
+				</thead>
+				<tbody class="postsContainer">
+					{{#each posts}}
+					<tr>
+						<th scope="row">{{Id}}</th>
+						<td>
+							{{CatName}}
+						</td>
+
+						<td class="proNameDiv">{{Name}}</td>
+						<td>
+
+							<button type="button" class="btn btn-danger" value="{{Id}}" onclick="deletePost(this)" title="Delete product">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+
+						</td>
+					</tr>
+
+					{{/each}}
+				</tbody>
+			</table>
+
+			<!-- button list -->
+			<div class="mt-2">
+
+				<a class="btn btn-secondary" href="homepage.html">
+					<i class="fas fa-chevron-left"></i>
+				Return to home</a>
+			</div>
+		</div>
+	</div>
+
+
+
+
+</div>
+
+
+
+{{#section 'js'}}
+
+
+<!-- hight light current menu item -->
+<script type="text/javascript">
+
+	$('.manaPostMenu').css('background-color', '#329AD6');
+
+
+</script>
+
+<!-- delete post -->
+<script type="text/javascript">
+	var listOfDeletedPosts = [];
+
+	function deletePost(button){
+
+		// confirm
+		let proName = $(button).parent('td').siblings('.proNameDiv').html();
+
+		Swal.fire({
+			position: 'center',
+			icon: 'warning',
+			title: 'Are you sure to delete "'+proName+'" permanently?',
+			showConfirmButton: true,
+			showCancelButton: true,
+			preConfirm: () => {
+				return [
+				true
+				]
+			}
+		})
+		.then((result)=>{
+			if(result.value){
+
+				// delete
+				// post to server
+				let proId = $(button).val();
+				$.ajax({
+					method: 'post',
+					url: '/admin/posts/delete',
+					data:{
+						proId: proId
+					}
+				})
+				.then(function(json){
+					if(json.isOk === true){
+						// delete gui
+						$(button).parent('td').parent('tr').css('display', 'none');
+
+						// show notificaitons
+						Swal.fire({
+							position: 'center',
+							icon: 'error',
+							title: 'Post is removed from post list',
+							showConfirmButton: false,
+							timer: 1300,
+							toast: true
+						});
+
+					}
+					else{
+						alert(json.msg);
+					}
+				});
+
+
+
+			}
+		});
+
+
+
+
+	}
+</script>
+
+{{/section}}
+
+
+

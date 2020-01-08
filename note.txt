@@ -37,7 +37,7 @@ consider instant buy product for view Finish products of bidder
 consider bid for already finish product
 
 
-
+system must mark product finished when product is out of date and product is bid with instant win price
 
 
 

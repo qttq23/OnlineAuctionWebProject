@@ -27,7 +27,7 @@ module.exports = {
 		if(!account.Username.includes(space)){
 
 			// check unique username
-			const instance = await db.single(table, {Username: account.Username});
+			const instance = await db.some(table, {Username: account.Username});
 
 			if(instance != null && instance.length >= 1){
 				lg(instance[0]);
@@ -51,7 +51,7 @@ module.exports = {
 						!= null)
 					{
 						// check unique email
-						const instanceEmail = await db.single(table, {Email: account.Email});
+						const instanceEmail = await db.some(table, {Email: account.Email});
 
 						if(instanceEmail != null && instanceEmail.length >= 1){
 							result = {
@@ -653,19 +653,19 @@ module.exports = {
 			return {isOk: false, msg: 'You do not own this product or product does not exist.'};
 		}
 
-		// remove from bidderproduct
-		let sql = `
-		DELETE FROM bidderproduct 
-		WHERE ProId = ${proId}
-		`;
-		const result = await db.query(sql);
+		// // remove from bidderproduct
+		// let sql = `
+		// DELETE FROM bidderproduct 
+		// WHERE ProId = ${proId}
+		// `;
+		// const result = await db.query(sql);
 
-		// remove from watchlist
-		let sql1 = `
-		DELETE FROM watchlist 
-		WHERE ProId = ${proId}
-		`;
-		const result1 = await db.query(sql1);
+		// // remove from watchlist
+		// let sql1 = `
+		// DELETE FROM watchlist 
+		// WHERE ProId = ${proId}
+		// `;
+		// const result1 = await db.query(sql1);
 
 
 		// remove product

@@ -1,0 +1,241 @@
+
+
+{{#section 'css'}}
+{{/section}}
+
+
+<!-- main -->
+<div class="main col ">
+
+	<div class="card">
+		<div class="card-body">
+			<h4 class='card-title'>Manage catagories</h4>
+
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Catagory</th>
+						<th scope="col">Number of posts</th>
+						<th scope="col">Operations</th>
+
+					</tr>
+				</thead>
+				<tbody class="catagoriesContainer">
+					{{#each this.cataList}}
+					<tr>
+						<td>{{Id}}</td>
+						<td class="nameDiv">{{Name}}</td>
+						<td>{{#if CountPro}}{{CountPro}}{{else}}0{{/if}}</td>
+						<td>
+							<a class="btn btn-primary" href="/admin/catagories/details?catId={{Id}}" title="View and edit catagory">
+								<i class="fa fa-eye"></i> <i class="fas fa-edit"></i>
+							</a>
+							<button type="button" class="btn btn-danger" title="Delete catagory" onclick="deleteCatagory(this)" value="{{Id}}">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+
+							<button type="button" class="btn btn-link" title="Go to post management">
+								<i class="fas fa-external-link-alt"></i>
+							</button>
+						</td>
+					</tr>
+					
+					{{/each}}
+
+				</tbody>
+			</table>
+
+			<button type="button" class="btn btn-primary" title="Add new catagory" onclick="addCatagory()">
+				<i class="fas fa-plus"></i>
+			</button>
+
+			<div class="mt-2">
+
+				<a class="btn btn-secondary" href="/home">
+					<i class="fas fa-chevron-left"></i>
+				Return to home</a>
+			</div>
+		</div>
+	</div>
+
+
+
+</div>
+
+
+{{#section 'js'}}
+
+<!-- hight light current menu item -->
+<script type="text/javascript">
+
+	$('.manaUserMenu').css('background-color', '#329AD6');
+
+
+</script>
+
+
+<!-- on load -->
+<script type="text/javascript">
+
+	// get list of catagories
+	var listCata = [];
+	{{#each this.cataList}}
+	listCata.push({
+		Id: {{Id}},
+		Name: '{{Name}}',
+		DateCreate: '{{DateCreate}}',
+		CountPro: {{#if CountPro}}{{CountPro}}{{else}}0{{/if}}
+	});
+	{{/each}}//
+
+</script>
+
+<!-- delete catagory -->
+<script type="text/javascript">
+	var listOfDeletedCatagories = [];
+
+	function deleteCatagory(button){
+		// check if can delete
+		let id = $(button).attr('value');
+		let index = 0;
+		for(let i = 0; i < listCata.length; i++){
+			if(listCata[i].Id == id){
+				index = i;
+			}
+		}
+
+		if(listCata[index].CountPro === 0){
+
+			// confirm
+			let cataName = $(button).parent('td').siblings('.nameDiv').html();
+			Swal.fire({
+				position: 'center',
+				icon: 'warning',
+				title: 'Are you sure to delete "'+cataName+'" catagory?',
+				showConfirmButton: true,
+				showCancelButton: true,
+				preConfirm: () => {
+					return [
+					true
+					]
+				}
+			})
+			.then((result)=>{
+				if(result.value){
+
+					// delete
+					// post to server
+					$.ajax({
+						method: 'post',
+						url: '/admin/catagories/delete',
+						data:{
+							catId: listCata[index].Id,
+							countPro: listCata[index].CountPro
+						}
+					})
+					.then(function(json){
+						if(json.isOk === true){
+							// delete gui
+							$(button).parent('td').parent('tr').css('display', 'none');
+							listOfDeletedCatagories.push(button);
+
+							// show notificaitons
+							Swal.fire({
+								position: 'center',
+								icon: 'error',
+								title: 'Catagory is removed from catagory list',
+								showConfirmButton: false,
+								timer: 1300,
+								toast: true
+							});
+
+						}
+						else{
+							alert(json.msg);
+						}
+					});
+
+
+					
+				}
+			});
+
+
+		}
+		else{
+			// show notificaitons
+			Swal.fire({
+				position: 'center',
+				icon: 'info',
+				title: 'Cannot delete. Catagory still has post',
+				showConfirmButton: false,
+				timer: 1300,
+				toast: true
+			});
+		}
+
+	}
+</script>
+
+
+<!-- add catagory -->
+<script type="text/javascript">
+
+	function addCatagory(){
+
+		// request server
+		$.ajax({
+			method: 'post',
+			url: '/admin/catagories/add',
+			data:{
+				name: 'new catagory'
+			}
+		})
+		.then(function(json){
+			if(json.isOk === true){
+				
+				let cata = json.cata;
+				if(!cata.CountPro){
+					cata.CountPro = 0;
+				}
+
+				let ccHtml = $('.catagoriesContainer').html();
+
+				ccHtml += `
+				<tr>
+				<td>${cata.Id}</td>
+				<td>${cata.Name}</td>
+				<td>${cata.CountPro}</td>
+				<td>
+				<a class="btn btn-primary" href="/admin/catagories/details?catId=${cata.Id}" title="View and edit catagory">
+				<i class="fa fa-eye"></i> <i class="fas fa-edit"></i>
+				</a>
+				<button type="button" class="btn btn-danger" title="Delete catagory" onclick="deleteCatagory(this)" value="${cata.Id}">
+				<i class="fas fa-trash-alt"></i>
+				</button>
+
+				<button type="button" class="btn btn-link" title="Go to post management">
+				<i class="fas fa-external-link-alt"></i>
+				</button>
+				</td>
+				</tr>
+				`;
+
+				$('.catagoriesContainer').html(ccHtml);
+
+			}
+			else{
+				alert(json.msg);
+			}
+		});
+
+
+	}
+</script>
+
+{{/section}}
+
+
+
+

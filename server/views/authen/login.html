@@ -15,74 +15,7 @@
 
 {{#section 'js'}}
 
-<!-- login dialog -->
-<script type="text/javascript">
-	function showLoginDialog () {
 
-		Swal.fire({
-
-			// title: 'Log in',
-			html:
-			'<i class="fab fa-autoprefixer" style="color: #329AD6; font-size:70px;"></i>'+
-			'<h1>Log in</h1>'+
-
-			'<div class="d-flex flex-column align-items-start">' +
-
-			'<div>Username</div>'+
-			'<input id="swal-input1" class="swal2-input">' +
-
-			'<div>Password</div>'+
-			'<input id="swal-input2" class="swal2-input" type="password">' +
-
-			'<a href="signuppage.html">Not have an account? Sign up...</a>'+
-			'<a href="javascript:;">Forget password</a>'+
-			'</div>',
-			focusConfirm: false,
-			showCancelButton: true,
-			cancelButtonText: '<i class="fas fa-times"></i> Cancel',
-			confirmButtonText:
-			'<i class="fas fa-sign-in-alt"></i> Log in',
-
-			preConfirm: () => {
-				return [
-				document.getElementById('swal-input1').value,
-				document.getElementById('swal-input2').value
-				]
-			}
-		}).then((result) => {
-			if(result.value){
-
-				// post to server
-				$.ajax({
-					method: "post",
-					url: '../authen/login',
-					data: { username: result.value[0], password: result.value[1]},
-
-
-				})
-				.done(function(json) {
-					if(json.isErr){
-						// login failed
-						Swal.fire(
-							'Log in failed!',
-							json.msg,
-							'error'
-							).then(()=>{
-								showLoginDialog();
-							});
-						}
-						else{
-							// alert(json.returnTo);
-							window.location.href = json.returnTo;
-						}
-					});
-			}
-		})
-
-
-	};
-
-</script>
 
 <!-- show login required -->
 <script type="text/javascript">

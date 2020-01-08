@@ -1,0 +1,222 @@
+
+
+{{#section 'css'}}
+{{/section}}
+
+
+<!-- main -->
+<div class="main col">
+
+	<div class="card">
+		<div class="card-body">
+			<h5>Catagory details</h5>
+
+			<button type="button" class="editButton btn btn-primary " onclick="switchToEditMode(true)"><i class="fas fa-edit"></i> Edit</button>
+
+			<form class="profileForm">
+				<small id="overalError"></small>
+
+				<div class="editableForm nameDiv form-group">
+					<label class="boldLabel" for="exampleName">Catagory name</label>
+
+					<input type="text" class="toEditInput  form-control" id="exampleName">
+
+					<p class="editablePara">{{cata.Name}}</p>
+					<small class="errorPrompt"></small>
+				</div>
+
+				<div class="editableForm idDiv form-group">
+					<label class="boldLabel" for="exampleAddress">Catagory Id</label>
+
+					<input type="text" class="toEditInput  form-control" id="exampleAddress" disabled>
+
+					<p class="editablePara">{{cata.Id}}</p>
+					<small class="errorPrompt"></small>
+				</div>
+
+
+				<div class="editableForm numPostDiv form-group">
+					<label class="boldLabel" for="exampleEmail">Number of posts</label>
+
+					<input type="text" class="toEditInput   form-control" id="exampleEmail" disabled>
+
+					<p class="editablePara">{{#each this.cataList}}{{#ifeq Id ../cata.Id}}{{CountPro}}{{/ifeq}}{{/each}}</p>
+					<small class="errorPrompt"></small>
+				</div>
+
+
+				<div class="editableForm dateCreateDiv form-group">
+					<label class="boldLabel" for="exampleEmail">Date create</label>
+
+					<input type="text" class="toEditInput form-control" id="exampleEmail" disabled>
+
+					<p class="editablePara">{{dmyConvert this.cata.DateCreate}}</p>
+					<small class="errorPrompt"></small>
+				</div>
+
+
+
+
+
+				<div class="listConfirmButtons">
+					<div class=" d-flex flex-row justify-content-between">
+						<button type="button" class="btn btn-primary" onclick="saveProfile()">
+							<i class="fas fa-check"></i>
+						Save</button>
+
+						<button type="button" class="btn btn-secondary" onclick="discardProfile()">
+							<i class="fas fa-times"></i>
+						Cancel</button>
+
+					</div>
+
+				</div>
+
+			</form>
+
+			<a class="btn btn-secondary mt-3" href="/admin/catagories"><i class="fas fa-chevron-left"></i> Return to catagory list</a>
+
+
+		</div>
+	</div>
+
+
+
+</div>
+
+
+{{#section 'js'}}
+
+<!-- switch EditableInput -->
+<script type="text/javascript">
+	$(()=>{
+		// initEditableForm();
+		switchToEditMode(false);
+	});
+
+
+
+	function switchToEditMode(isEditable){
+		// alert('flag');
+
+		let paraDisplay = 'block';
+		let inputDisplay = 'none';
+		let buttonsDisplay  = 'none';
+		let editBtnDisabled = false;
+		if(isEditable){
+			paraDisplay = 'none';
+			inputDisplay = 'block';
+			buttonsDisplay = 'block';
+			editBtnDisabled = true;
+		}
+
+		let profileText = [];
+		// set paragraph invisiable
+		$('.editablePara').each(function(idx, item) {
+			$(item).css('display', paraDisplay);
+			profileText.push($(item).html());
+		});
+
+		// set input visible
+		$('.toEditInput').each(function(idx, item){
+			$(item).css('display', inputDisplay);
+			// $(item).attr('value', profileText[idx]);
+			$(item).val(profileText[idx]);
+		});
+
+		// set save button visisble
+		$('.listConfirmButtons').each(function(idx, item){
+			$(item).css('display', buttonsDisplay);
+		});
+
+		// set edit button disabled
+		$('.editButton').each(function(idx, item){
+			$(item).attr("disabled", editBtnDisabled);
+		});
+	}
+
+
+
+
+
+</script>
+
+<!-- save/discard profile -->
+<script type="text/javascript">
+
+	function saveProfile(){
+
+		// send to server
+		let newName = $('.nameDiv input').val();
+		$.ajax({
+			method: 'post',
+			url: '/admin/catagories/update',
+			data:{
+				catId: {{this.cata.Id}},
+				name: newName
+			}
+		})
+		.then(function(json){
+			if(json.isOk === true){
+				
+				$('.profileForm .editableForm').each(function(idx, item){
+					var input = $(item).find('.toEditInput');
+					let profileText = input.val();
+
+
+					var para = $(item).find( '.editablePara');
+					para.html(profileText);
+				});
+
+				// switch to no-editable mode
+				switchToEditMode(false);
+
+				// show notification
+				Swal.fire({
+					position: 'center',
+					icon: 'success',
+					title: 'Your profile is saved',
+					showConfirmButton: false,
+					timer: 1300,
+					toast: true
+				});
+
+				// reload page
+				setTimeout(()=>{
+					window.location.href = window.location.href;
+				}, 1500);
+			}
+			else{
+				alert(json.msg);
+			}
+
+		});
+
+
+
+
+	}
+
+	function discardProfile(){
+
+
+		// switch to no-editable mode
+		switchToEditMode(false);
+
+		// show notification
+		Swal.fire({
+			position: 'center',
+			icon: 'info',
+			title: 'Canceled editting',
+			showConfirmButton: false,
+			timer: 1300,
+			toast: true
+		});
+	}
+
+</script>
+{{/section}}
+
+
+
+
