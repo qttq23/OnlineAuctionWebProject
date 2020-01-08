@@ -40,4 +40,22 @@ consider bid for already finish product
 system must mark product finished when product is out of date and product is bid with instant win price
 
 
+remove white space when check email same
+
+view user point from another user
+
+
+consider extend time for products
+
+set ban for all bidderproducts when ban a user
+
+
+---> show the highest bidder
+re-test bid
+
+re-test ban/unban user
+
+
+
+
 

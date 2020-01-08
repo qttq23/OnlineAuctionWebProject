@@ -5,6 +5,89 @@ moment.locale('vi');
 
 const table = 'product';
 
+async function resolveBidders(listBidders, validPrice){
+	// input: list of auto bidders
+	// output: who win at the present, and bid a price to bidderproduct table
+
+	lg('resolveBidders');
+
+	let enoughPrice = validPrice;
+	if(listBidders.length === 1){
+		
+		// do nothing
+		lg('donothing');
+	}
+	else if(listBidders.length >= 2){
+
+		// sort descending
+		for(let i = 0; i < 2; i++){
+			for(let j = i + 1; j < listBidders.length; j++){
+				if(listBidders[i].AutoMaxPrice < listBidders[j].AutoMaxPrice){
+					//swap
+					let temp = listBidders[i];
+					listBidders[i] = listBidders[j];
+					listBidders[j] = temp;
+				}
+			}
+		}
+		lg('after sort');
+		lg(listBidders);
+
+		// bid price
+		enoughPrice = listBidders[1].AutoMaxPrice + 1;
+
+
+	}
+
+
+	// save bid price for this bidder
+	let record = {
+		BidderId: listBidders[0].BidderId,
+		ProId: listBidders[0].ProId,
+		Price: enoughPrice,
+		AutoMaxPrice: listBidders[0].AutoMaxPrice
+	};
+	const result = await db.save('bidderproduct', record);
+	lg('save new bid');
+
+	// highest price event
+	highestPriceEvent(listBidders[0].BidderId);
+
+}
+
+async function highestPriceEvent(bidder){
+	if(!bidder){
+		//... query by myself
+		// bidder = ...
+	}
+	return lg('The highest price bidder at the moment is : ' + bidder);
+}
+
+async function getHighestBidder(userId, proId){
+
+	let sql = `
+	select * 
+	from bidderproduct
+	where ProId=${proId} 
+	and Price >= all(select Price from bidderproduct where ProId = ${proId} and IsBanned = 0)
+	and IsBanned = 0
+	group by BidderId
+	order by DateCreate asc
+	`;
+	let bidders = await db.query(sql);
+	let bidder;
+	if(bidders.length > 0 && bidders[0].BidderId !== +userId){
+		bidder = bidders[0];
+		lg('have current highest bidder: ' + bidder.BidderId);
+	}
+	else{
+		bidder = null;
+	}
+
+	return bidder;
+}
+
+
 module.exports = {
 
 	all: ()=>{ 
@@ -394,6 +477,9 @@ module.exports = {
 
 		lg(pro.Max_Price);
 		lg(pro.PriceStep);
+		if(pro.Max_Price === ''){
+			pro.Max_Price = pro.StartPrice;
+		}
 
 		// check if product require point to bid
 		if(pro.IsRestrictBidder === '1'){
@@ -470,14 +556,133 @@ module.exports = {
 		
 		if(diff > 0){
 			// still available
-			// bid success
+			lg('product available');
+
+			// get the current highest bidder
+			let bidder = await getHighestBidder(userId, pro.Id);
+
+			// if same price
+			let isBidAdvance = false;
+			if(bidder && +bidder.AutoMaxPrice === +price){
+				lg('same price');
+
+				// the current will bid first
+				let record = {
+					BidderId: bidder.BidderId,
+					ProId: pro.Id,
+					Price: price,
+					AutoMaxPrice: bidder.AutoMaxPrice
+				};
+				await db.save('bidderproduct', record);
+				isBidAdvance = true;
+			}
+
+			// bid for new bidder
 			// update table
 			let record = {
 				BidderId: userId,
 				ProId: pro.Id,
-				Price: price
+				Price: price,
+				AutoMaxPrice: pro.AutoMaxPrice
 			};
 			const result = await db.save('bidderproduct', record);
+			lg('ok1');
+			if(pro.AutoMaxPrice != null){
+
+				await db.query(
+					`update bidderproduct 
+					set AutoMaxPrice=${pro.AutoMaxPrice} 
+					where BidderId=${userId} and ProId=${pro.Id}`);
+			}
+			lg('saved new bid');
+
+			// resolve auto bidders
+			if(bidder && bidder.AutoMaxPrice > price){
+				lg('current highest bidder is auto');
+
+				// save bid price for this bidder
+				let enoughPrice = +price + +pro.PriceStep;
+				if(bidder.AutoMaxPrice >= enoughPrice){
+					
+					lg('current highest bidder is able to bid');
+
+					// check if new bidder is auto
+					if(pro.AutoMaxPrice){
+						lg('new bidder is auto');
+
+						// this means new and current bidders are auto bidders
+						// need to compare two max prices
+						if(pro.AutoMaxPrice >= enoughPrice 
+							&& pro.AutoMaxPrice > bidder.AutoMaxPrice)
+						{
+
+							lg('new bidder is higher');
+
+							enoughPrice = +bidder.AutoMaxPrice + 1;
+							bidder = {
+								BidderId: userId,
+								ProId: pro.Id,
+								Price: enoughPrice,
+								AutoMaxPrice: pro.AutoMaxPrice
+							};
+						}
+						else if(pro.AutoMaxPrice >= enoughPrice 
+							&& pro.AutoMaxPrice < bidder.AutoMaxPrice)
+						{
+							lg('new bidder is less');
+							enoughPrice = +pro.AutoMaxPrice + 1;
+						}
+						else if(pro.AutoMaxPrice >= enoughPrice 
+							&& pro.AutoMaxPrice == bidder.AutoMaxPrice)
+						{
+							lg('new bidder is equal');
+							enoughPrice = +bidder.AutoMaxPrice;
+						}
+					}
+
+					let record = {
+						BidderId: bidder.BidderId,
+						ProId: bidder.ProId,
+						Price: enoughPrice,
+						AutoMaxPrice: bidder.AutoMaxPrice
+					};
+					await db.save('bidderproduct', record);
+					lg('save new bid');
+
+					// highest price event
+					await highestPriceEvent(bidder.BidderId);
+				}
+				else{
+					await highestPriceEvent(userId);
+				}
+
+
+			}
+			else{
+				if(isBidAdvance === true && pro.AutoMaxPrice >= +price + +pro.PriceStep){
+					// this means the new bidder is also auto and max price is higher
+					let record = {
+						BidderId: userId,
+						ProId: pro.Id,
+						Price: +price + +pro.PriceStep,
+						AutoMaxPrice: pro.AutoMaxPrice
+					};
+					await db.save('bidderproduct', record);
+					await highestPriceEvent(userId);
+				}
+				else if(isBidAdvance === true && pro.AutoMaxPrice < +price + +pro.PriceStep){
+					await highestPriceEvent(bidder);
+				}
+				else if(isBidAdvance === false){
+					await highestPriceEvent(userId);
+				}
+
+				
+			}
+
+
+
+			// return when done
 			return {isOk: true, msg: "Bid success."};
 		}
 		else{
@@ -569,7 +774,11 @@ module.exports = {
 		if(!bidders){
 			return {isOk: false};
 		}
-		
+
+		// get highest bidder
+		let bidder1 = getHighestBidder(null, proId);
+
+
 		for(let i = 0; i < bidders.length; i++){
 
 			let idx = {
@@ -586,6 +795,14 @@ module.exports = {
 			`;
 			let result = await db.query(sql);
 
+		}
+
+		// get highest bidder
+		let bidder2 = getHighestBidder(null, proId);
+		lg(bidder1.BidderId);
+		lg(bidder2.BidderId);
+		if(bidder1.BidderId != bidder2.BidderId){
+			highestPriceEvent(bidder2.BidderId);
 		}
 
 		return {isOk: true};

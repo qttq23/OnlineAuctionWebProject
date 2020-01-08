@@ -333,6 +333,7 @@
 			IsRestrictBidder: {{this.product.IsRestrictBidder}},
 			PriceStep: {{this.product.PriceStep}},
 			Max_Price: '{{this.product.Max_Price}}',
+			StartPrice: '{{this.product.StartPrice}}',
 
 		};
 
@@ -372,7 +373,12 @@
 					myVar = setTimeout(()=>{
 						let cash_converted = cashConvert(price);
 						Swal.fire({
-							title: `<div><p style="color:red">${cash_converted}&nbsp;</p>is suggested price. <input id="swal-input-price" class="swal2-input" type="number" value="${price}"></div>`,
+							title: 
+							`<div>
+							<p style="color:red">${cash_converted}&nbsp;</p>is suggested price. 
+							<input id="swal-input-price" class="swal2-input" type="number" value="${price}">
+							<input id="swal-input-auto" class="swal3-input" type="checkbox"> Max price and auto bid
+							</div>`,
 							text: " Are you sure to bid? ",
 							icon: 'question',
 							showCancelButton: true,
@@ -382,13 +388,24 @@
 						}).then((result) => {
 							if (result.value) {
 								// confirm bid
+
+								// check if select auto max price
+								console.log($('.swal3-input').prop('checked'));
+								if($('.swal3-input').prop('checked') === true){
+									pro.AutoMaxPrice = $('#swal-input-price').val();
+							
+								}
+								else{
+									price = $('#swal-input-price').val();
+								}
+
 								$.ajax({
 									method: 'post',
 									url: '/product/bid',
 									data: {
 										userId: userId,
 										pro: pro,
-										price: $('#swal-input-price').val()
+										price: price
 									},
 									async: false
 								})

@@ -13,29 +13,13 @@ const requestPromise = util.promisify(request);
 const router = express.Router();
 module.exports = router;
 
-router.get('/login', function(req, res){
-	log.log('Get login');
 
-	if(!req.session.isAuthen){
-		// render login page
-		res.render('authen/login.html', {
-			// layout: 'simple.html',
-			isLayoutSimple: true,
-			isLoginRequired: true,
-		});
-	}
-	else{
-		// already login
-		let url = req.headers.referer || '../home';
-		res.redirect(url);
-
-	}
-})
 
 router.post('/login', async function(req, res){
 	log.log('Post login');
 
 	if(req.session.isAuthen === true){
+		lg(' already authen');
 		res.json({
 			msg: 'You already logged in. please refresh your page.',
 			isErr: true,
@@ -73,7 +57,13 @@ router.post('/login', async function(req, res){
 			userName = result.Name;
 			userType = result.AccType;
 			userId = result.Id;
-			returnTo = req.session.returnTo || '/home';
+			if(req.session.isGetLogin){
+
+				returnTo = req.session.returnTo || '/home';
+			}
+			else{
+				returnTo = null;
+			}
 
 			lg(returnTo);
 			
@@ -114,6 +104,31 @@ router.post('/login', async function(req, res){
 
 
 	})
+
+router.get('/login', function(req, res){
+	log.log('Get login');
+
+	if(!req.session.isAuthen){
+		log.log('go to login');
+		
+		req.session.isGetLogin = true;
+
+		// render login page
+		res.render('authen/login.html', {
+			// layout: 'simple.html',
+			isLayoutSimple: true,
+			isLoginRequired: true,
+		});
+	}
+	else{
+		log.log('already login');
+		// already login
+		let url = req.headers.referer || '../home';
+		res.redirect(url);
+
+	}
+})
+
 
 router.post('/logout', function(req, res){
 	log.log('post logout');

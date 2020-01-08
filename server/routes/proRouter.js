@@ -34,6 +34,7 @@ router.post('/upload', restrict.authenSeller, async function(req, res){
 		ImageFolder: '/images/products',
 		PriceStep: req.body.stepPriceInput,
 		Description: req.body.descriptionInput,
+		IsRestrictBidder: (req.body.allowAllBidInput === 'on')?0:1,
 	};
 	lg(productRecord);
 	const result = await proModel.add(productRecord);
@@ -230,6 +231,7 @@ router.post('/bid', restrict.authen, async function(req, res){
 		result.redirect = req.headers.referer || '../home';
 	}
 	res.json(result);
+
 })
 
 

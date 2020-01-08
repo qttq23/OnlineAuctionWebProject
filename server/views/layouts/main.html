@@ -290,6 +290,16 @@
 	<script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
 
 
+	<!-- override alert -->
+	<script type="text/javascript">
+		function alert(msg){
+			Swal.fire(
+				'Error',
+				msg,
+				'error'
+				);
+		}
+	</script>
 
 	<!-- hide catagories -->
 	<script type="text/javascript">
@@ -350,6 +360,7 @@
 
 		function showLoginDialog () {
 
+
 			Swal.fire({
 				
 				// title: 'Log in',
@@ -385,15 +396,15 @@
 
 					// post to server
 					$.ajax({
-						method: "post",
+						type: "POST",
 						url: '/authen/login',
 						data: { username: result.value[0], password: result.value[1]},
-						
+						dataType: 'json',
 
 					})
 					.done(function(json) {
-						if(json.isErr){
-
+						if(json.isErr === true){
+			
 							if(json.isAlreadyLogin){
 								// already login
 								isAuthen = true;
@@ -409,6 +420,7 @@
 								});
 							}
 							else{
+			
 
 								// login failed
 								isAuthen = false;
@@ -417,34 +429,38 @@
 									'Log in failed!',
 									json.msg,
 									'error'
-									).then(()=>{
-										showLoginDialog();
-									});	
-								};
+									)
+								.then(()=>{
+									showLoginDialog();
+								});	
 
 
+
+
+							}
+						}
+						else{ 
+							// login success
+							isAuthen = true;
+							userId = json.userId;
+
+							// show menu for user functions
+							userType = `${json.userType}`;
+
+
+							// so many div to update after login :(
+							// ---> solution: re-load page instead of updating each div manually
+							if(json.returnTo){
+				
+								window.location.href = json.returnTo;
 							}
 							else{
-								// login success
-								isAuthen = true;
-								userId = json.userId;
-
-								// show menu for user functions
-								userType = `${json.userType}`;
-								
-
-								// so many div to update after login :(
-								// ---> solution: re-load page instead of updating each div manually
-								if(json.returnTo){
-									window.location.href = json.returnTo;
-								}
-								else{
-
-									window.location.href = window.location.href;
-								}
-
+				
+								window.location.href = window.location.href;
 							}
-						});
+
+						}
+					});
 
 
 
