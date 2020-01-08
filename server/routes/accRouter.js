@@ -260,7 +260,76 @@ router.post('/commentrate/add', restrict.authen, async function(req, res){
 	const toId = req.body.toId;
 	const point = req.body.point;
 	const comment = req.body.comment;
-	const result = await accModel.addRate(fromId, toId, point, comment);
+	const proId = req.body.proId;
+	const result = await accModel.addRate(fromId, toId, point, comment, proId);
+	lg(result);
+
+	// show
+	res.json(result);
+})
+
+
+router.get('/postlist', restrict.authenSeller, async function(req, res){
+	
+
+	lg('GET postlist');
+	lg(req.query);
+
+	// get products
+	const numPro = config.NumProOnPage;
+	const offset = (req.query.page - 1)*numPro;
+	const userId = req.session.account.Id;
+	const results = await accModel.postList(userId, numPro, offset);
+	lg(results);
+
+	// show
+	res.render('acc/postlist.html', {
+
+		total: results.total,
+		onPage: config.NumProOnPage,
+		isEmpty: results.list.length === 0,
+
+		proList: results.list,
+		page: req.query.page,
+		isInWatchList: false,
+	});
+})
+
+router.get('/finishlist', restrict.authenSeller, async function(req, res){
+	
+
+	lg('GET postlist');
+	lg(req.query);
+
+	// get products
+	const numPro = config.NumProOnPage;
+	const offset = (req.query.page - 1)*numPro;
+	const userId = req.session.account.Id;
+	const results = await accModel.finishList(userId, numPro, offset);
+	lg(results);
+
+	// show
+	res.render('acc/finishlist.html', {
+
+		total: results.total,
+		onPage: config.NumProOnPage,
+		isEmpty: results.list.length === 0,
+
+		proList: results.list,
+		page: req.query.page,
+		isInWatchList: false,
+	});
+})
+
+router.post('/finishlist/remove', restrict.authenSeller, async function(req, res){
+	lg('POST /finishlist/remove');
+	lg(req.body);
+	lg(req.session.account);
+
+	// get products
+	const acc = req.session.account;
+	const proId = req.body.proId;
+	const result = await accModel.removeFinish(acc, proId);
 	lg(result);
 
 	// show

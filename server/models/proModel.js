@@ -550,6 +550,47 @@ module.exports = {
 		return db.update(table, {Id: id}, {Description: description});
 	},
 
+	bidders: async (proId)=>{
+		lg(proId);
+		let sql = 
+		`
+		select DISTINCT(b.BidderId), b.IsBanned, acc.Name
+		from bidderproduct b, account acc
+		where b.ProId = ${proId} and b.BidderId = acc.Id
+		`;
+
+		const results = await db.query(sql);
+
+		return results;
+	},
+
+	updateBidders: async (proId, bidders)=>{
+
+		if(!bidders){
+			return {isOk: false};
+		}
+		
+		for(let i = 0; i < bidders.length; i++){
+
+			let idx = {
+				BidderId: bidders[i].BidderId,
+				ProId: proId
+			};
+			let setx ={
+				IsBanned: (bidders[i].isBanned==='true')?1:0
+			};
+			let sql = `
+			update bidderproduct 
+			set IsBanned=${setx.IsBanned}
+			where BidderId=${idx.BidderId} and ProId=${idx.ProId}
+			`;
+			let result = await db.query(sql);
+
+		}
+
+		return {isOk: true};
+	}
+
 }
 
 

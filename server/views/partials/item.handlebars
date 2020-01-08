@@ -7,7 +7,7 @@
 		src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 	</a>
 
-	<div class="card-body h-25">
+	<div class="card-body h-50">
 
 		<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
 			<h5 class="card-title">{{shortenName Name}}</h5>
@@ -15,15 +15,20 @@
 
 		<dl class="row">
 
-			<dd class="col-sm-8" title="Price to win instantly">
-				<i class="fas fa-shopping-cart"></i> Win price
-			</dd>
-			<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-				{{#if EndPrice}}
-				{{cashConvert EndPrice}}
-				{{else}}
-				<i class="fas fa-ban" title="Not set"></i>
-				{{/if}}
+			
+
+			<dd class="col-12 d-flex flex-row justify-content-between">
+
+				<span title="Price to win instantly">
+					<i class="fas fa-shopping-cart"></i> Win price
+				</span>
+				<span class="text-sm-right" title="Price to win instantly">
+					{{#if EndPrice}}
+					{{cashConvert EndPrice}}
+					{{else}}
+					<i class="fas fa-ban" title="Not set"></i>
+					{{/if}}
+				</span>
 			</dd>
 
 			<dd class="col-12 d-flex flex-row justify-content-between" title="{{#ifeq parent.userId BidderId}}You are the one who bid highest price{{else}}The highest price paying bidder{{/ifeq}}">
@@ -52,7 +57,7 @@
 
 			<dd class="col">
 				<div class="badge badge-light badge-lg" title="Number of turns made">
-					{{Turn}} turns
+					{{#if Turn}}{{Turn}}{{else}}0{{/if}} turns
 				</div>
 			</dd>
 		</dl>
@@ -61,7 +66,7 @@
 	</div>
 
 	<!-- list of buttons -->
-	<div class="buttons ">
+	<div class="buttons">
 		<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"  id="btnForItem_{{Id}}"><i class="fas fa-heart"></i>
 		</button>
 

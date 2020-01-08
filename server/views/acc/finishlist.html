@@ -43,74 +43,16 @@
 
 			{{#each this.proList}}
 			<div class="col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" id="item{{Id}}">
-
-					<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top h-100"
-						src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
-					</a>
-
-					<div class="card-body h-25">
-
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
-							<h5 class="card-title">{{shortenName Name}}</h5>
-						</a>
-
-						<dl class="row">
-
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
-							</dd>
-
-							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
-
-								<span class="text-wrap text-left">
-									<i class="far fa-user"></i> {{maskenName BidderName}}
-								</span>
-								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
-							</dd>
+				{{> item parent=..}}
 
 
+				<div class="buttonsChild d-flex flex-row">
+					<button class="rateCommentBtn btn btn-primary w-50 mr-2" title="Rate and comment" onclick="rateComment(this)" value="0" id="btnFor_{{BidderName}}_{{BidderId}}">Rate winner</button>
 
-							<dd class="col-12 d-flex flex-row justify-content-between">
-
-								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
-								</span>
-								<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
-									<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
-								</span>
-							</dd>
+					<button class="cancelDownvoteBtn btn btn-danger w-50" title="Close and down vote winner" onclick="cancelDownvote(this)" value="0" id="btnDiscardFor_{{BidderName}}_{{BidderId}}">Discard</button>
 
 
-
-							<dd class="col">
-								<div class="badge badge-light badge-lg" title="Number of turns made">
-									{{Turn}} turns
-								</div>
-							</dd>
-						</dl>
-
-
-					</div>
-
-					<!-- list of buttons -->
-					<div class="buttons ">
-
-						<button class="rateCommentBtn btn btn-primary w-100" title="Rate and comment" onclick="rateComment(this)" value="0" id="btnFor_{{OwnerName}}_{{OwnerId}}">Rate Seller</button>
-
-
-					</div>
-
-
-				</div> 
+				</div>
 			</div>
 			{{/each}}
 			{{/if}}
@@ -129,6 +71,14 @@
 
 
 {{#section 'js'}}
+
+<!-- onload -->
+<script type="text/javascript">
+	$(()=>{
+		$('.buttons').html('');
+		$('.buttonsChild').appendTo(".buttons");
+	})
+</script>
 
 <!-- pagination -->
 <script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
@@ -166,7 +116,7 @@
 <!-- hight light current menu item -->
 <script type="text/javascript">
 
-	$('.wonListMenu').css('background-color', '#329AD6');
+	$('.finishListMenu').css('background-color', '#329AD6');
 
 
 </script>
@@ -355,12 +305,23 @@
 
 <!-- rate and comment -->
 <script type="text/javascript">
+
+	var bidderName = '';
+	var bidderId = '';
 	function rateComment(button){
 
 
 		let tokens = ($(button).attr('id')).split('_');
-		let ownerName = tokens[1];
-		let ownerId = tokens[2];
+		bidderName = tokens[1];
+		bidderId = tokens[2];
+
+		if(!bidderId || bidderId === ''){
+			return Swal.fire(
+				'Cannot rate',
+				'No bidder to rate',
+				'error'
+				);
+		}
 
 		let htl = 
 		'<div class="mb-3">' +
@@ -374,7 +335,7 @@
 			// title: 'rate comment',
 			html:
 
-			`<h1>Rate ${ownerName}</h1>`+
+			`<h1>Rate ${bidderName}</h1>`+
 
 			'<div class="d-flex flex-column align-items-start">' +
 
@@ -398,21 +359,21 @@
 				document.getElementById('swal-input3').checked,
 				]
 			}
-		}).then((result) => {
+		})
+		.then((result) => {
 			if(result.value){
-				// Swal.fire(JSON.stringify(result.value));
-				// console.log(result.value);
-
 				
-
 				// send to server
+				let itemDiv = $(button).parent('.buttonsChild').parent('.buttons').parent('.item');
+				let proId = itemDiv.attr('id').replace('item', '');
 				$.ajax({
 					method: 'post',
 					url: '/acc/commentrate/add',
 					data: {
-						toId: ownerId,
+						toId: bidderId,
 						comment: result.value[1],
 						point: (result.value[0]===true)?1:-1,
+						proId: proId
 					}
 				})
 				.then(function(json){
@@ -432,7 +393,149 @@
 					}
 				});
 			}
+		});
+	}
+</script>
+
+
+<!-- cancel and remove product -->
+<script type="text/javascript">
+	
+	function cancelDownvote(button){
+
+		let tokens = ($(button).attr('id')).split('_');
+		bidderName = tokens[1];
+		bidderId = tokens[2];
+
+		if(!bidderId || bidderId === ''){
+			return Swal.fire(
+				'Cannot discard',
+				'No bidder to downvote',
+				'error'
+				);
+		}
+
+		var htl = '<div class="mb-3"><div class="custom-control custom-radio"><input type="radio" class="custom-control-input" id="swal-input1" name="defaultExampleRadios" disabled>  <label class="custom-control-label" for="swal-input1">+1 <i class="fas fa-thumbs-up"></i></label>'+
+		'</div><div class="custom-control custom-radio">  <input type="radio" class="custom-control-input" id="swal-input3" name="defaultExampleRadios" checked>  <label class="custom-control-label" for="swal-input3">-1 <i class="fas fa-thumbs-down"></i></label></div></div>';
+
+
+		Swal.fire({
+
+			// title: 'rate comment',
+			html:
+
+			`<h1>Discard this product and down vote ${bidderName}</h1>`+
+
+			'<div class="d-flex flex-column align-items-start">' +
+
+			'<div>Point</div>'+
+			// '<input id="swal-input1" class="swal2-input">' +
+			htl+
+
+			'<div>Comment</div>'+
+			// '<input id="swal-input2" class="swal2-input" type="password">' +
+			'<textarea id="swal-input2" class="swal2-input" style="height:200px;" readonly>Winner does not pay</textarea>'+
+
+			'</div>',
+
+			showCancelButton: true,
+			confirmButtonText:
+			'<i class="fas fa-check"></i> Yes',
+
+			preConfirm: () => {
+
+				return [
+				document.getElementById('swal-input1').checked,
+				document.getElementById('swal-input2').value,
+				document.getElementById('swal-input3').checked,
+				]
+			}
+
+		}).then((result) => {
+			if(result.value){
+
+
+				// send rate to server
+				let itemDiv = $(button).parent('.buttonsChild').parent('.buttons').parent('.item');
+				let proId = itemDiv.attr('id').replace('item', '');
+				$.ajax({
+					method: 'post',
+					url: '/acc/commentrate/add',
+					data: {
+						toId: bidderId,
+						comment: result.value[1],
+						point: (result.value[0]===true)?1:-1,
+						proId: proId
+					}
+				})
+				.then(function(json){
+					if(json.isOk){
+
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: 'Rate and comment are sent',
+							showConfirmButton: false,
+							timer: 1300,
+							toast: true
+						});
+
+						// remove
+						let itemDiv = $(button).parent('.buttonsChild').parent('.buttons').parent('.item');
+						let proId = itemDiv.attr('id').replace('item', '');
+						$.ajax({
+							method: 'post',
+							url: '/acc/finishlist/remove',
+							data: {
+								proId: proId
+							}
+						})
+						.then(function(json){
+							if(isOk === true){
+								removeCanceledProduct(button);
+							}
+							else{
+								alert(json.msg);
+							}
+						});
+
+						
+					}
+					else{
+						alert(json.msg);
+					}
+				});
+			}
 		})
+	}
+
+
+	var listOfCanceledProducts = [];
+
+	function removeCanceledProduct(button){
+
+
+		// discard notification
+		Swal.fire({
+			position: 'bottom-start',
+			icon: 'error',
+			title: 'Product is discarded',
+			showConfirmButton: false,
+			timer: 1300,
+			toast: true
+		});
+
+
+
+		// display removing
+
+		var itemDiv = $(button).parent('.buttonsChild').parent('.buttons').parent('.item');
+		itemDiv.attr('class', '');
+		itemDiv.css('display', 'none');
+
+		listOfCanceledProducts.push(button);
+
+
 	}
 </script>
 {{/section}}

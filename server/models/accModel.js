@@ -401,13 +401,14 @@ module.exports = {
 	},
 
 
-	addRate: async (fromId, toId, point, comment)=>{
+	addRate: async (fromId, toId, point, comment, proId)=>{
 
 		let record = {
 			FromId: fromId,
 			ToId: toId,
 			Point: point,
-			Message: comment
+			Message: comment,
+			ProId: proId
 		};
 		const result = await db.save('commentrate', record);
 
@@ -492,6 +493,189 @@ module.exports = {
 
 		return {isOk: false, msg: 'Send upgrade request failed.'};
 
+	},
+
+	postList: async (accId, numPro, offset)=>{
+
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (select DISTINCT pro.*
+		from product as pro
+		where pro.OwnerId = ${accId} and TIMESTAMPDIFF(SECOND,pro.EndTime,CURRENT_TIMESTAMP()) < 0
+
+		) as sortedPro
+		left join
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		where b2.IsBanned = 0
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		const results = await db.query(sql);
+
+		// ok
+		if(results != null && results.length > 0){
+
+			// refine output
+			let list =[];
+			let count = 0;
+			for(let i = offset; i < results.length; i++){
+				if(count < numPro){
+
+					list.push(results[i]);
+					count++;
+				}
+				else{
+					break;
+				}
+			}
+
+			return {
+				total: results.length,
+				list: list,
+			};
+		}
+
+		//search fails
+		return {
+			total: 0,
+			list: [],
+		};
+
+	},
+
+	finishList: async (accId, numPro, offset)=>{
+
+		let sql = `
+		select t2.*, owner.Name as OwnerName, owner.Point as OwnerPoint, bidder.Name as BidderName, bidder.Point as BidderPoint
+		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
+		from (select DISTINCT pro.*
+		from product as pro
+		where pro.OwnerId = ${accId} and TIMESTAMPDIFF(SECOND,pro.EndTime,CURRENT_TIMESTAMP()) >= 0
+
+		) as sortedPro
+		left join
+		(
+		select tt1.*, tt2.Turn 
+		FROM (
+		SELECT *
+		from bidderproduct b3
+		where b3.Price >= all(
+		select b1.Price 
+		from bidderproduct as b1 
+		where b1.ProId = b3.ProId and b1.IsBanned = 0) and b3.IsBanned = 0
+
+		group by b3.ProId
+		) as tt1,
+		(
+		select  b2.ProId, count(b2.BidderId) as Turn
+		from bidderproduct b2
+		where b2.IsBanned = 0
+		GROUP by b2.ProId
+		) as tt2
+		where tt1.ProId = tt2.ProId
+		) as b
+		on sortedPro.Id = b.ProId and b.isBanned = 0
+		) as t2
+		left join
+		account as bidder on t2.BidderId = bidder.Id
+		left join 
+		account as owner on t2.OwnerId = owner.Id
+
+		
+		`;
+
+		const results = await db.query(sql);
+
+		// ok
+		if(results != null && results.length > 0){
+
+			// refine output
+			let list =[];
+			let count = 0;
+			for(let i = offset; i < results.length; i++){
+				if(count < numPro){
+
+					list.push(results[i]);
+					count++;
+				}
+				else{
+					break;
+				}
+			}
+
+			return {
+				total: results.length,
+				list: list,
+			};
+		}
+
+		//search fails
+		return {
+			total: 0,
+			list: [],
+		};
+
+	},
+
+	// not done...
+	removeFinish: async (acc, proId)=>{
+		
+		// check if account own this product
+		let pro = await db.query(`select * from product where Id = ${proId}`);
+		if(pro.length === 0 || +acc.Id != pro[0].OwnerId){
+
+			return {isOk: false, msg: 'You do not own this product or product does not exist.'};
+		}
+
+		// remove from bidderproduct
+		let sql = `
+		DELETE FROM bidderproduct 
+		WHERE ProId = ${proId}
+		`;
+		const result = await db.query(sql);
+
+		// remove from watchlist
+		let sql1 = `
+		DELETE FROM watchlist 
+		WHERE ProId = ${proId}
+		`;
+		const result1 = await db.query(sql1);
+
+
+		// remove product
+		let sql2 = `
+		DELETE FROM product 
+		WHERE Id = ${proId}
+		`;
+		const result2 = await db.query(sql2);
+
+		return {isOk: true, msg: 'Remove product successfully.'};
 	}
 
 }

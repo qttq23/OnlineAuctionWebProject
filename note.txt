@@ -1,0 +1,43 @@
+irous12345
+irous12345678
+
+irousirous
+irousirous
+
+
+update menu for each user type
+
+
+
+buithang12345
+buithang12345A
+
+re-test signup
+
+re-test comment and rate seller
+
+consider table with no primary key
+
+consider user type with all routers
+
+
+consider update total number of products for each catagory when upload done
+
+consider 10 minutes before product ends
+
+update item product card (winprice) for all view use item pro card
+
+replace {{> item}} for all view use item product card
+
+consider int length for large price (maybe int(20))
+
+
+consider instant buy product for view Finish products of bidder
+
+consider bid for already finish product
+
+
+
+
+
+

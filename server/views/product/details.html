@@ -8,6 +8,8 @@
 	<div class="card-body">
 		<div class="card mb-3" style="border: none;">
 			<div class="row no-gutters">
+
+				<!-- images -->
 				<div class="col-md-8 ">
 
 					<!-- list of images -->
@@ -43,7 +45,7 @@
 
 						<button class="historyBtn btn btn-light" onclick="viewHistory()"><i class="fas fa-history"></i> History</button>
 
-						<button class="blockBidderBtn btn btn-light" onclick="blockBidder()" title="Block bidder"><i class="fas fa-ban"></i> <i class="far fa-user"></i></button>
+						<button class="blockBidderBtn btn btn-light {{#ifeq userId product.OwnerId}}{{else}}d-none{{/ifeq}}" onclick="blockBidder()" title="Block bidder"><i class="fas fa-ban"></i> <i class="far fa-user"></i></button>
 					</div>
 
 				</div>
@@ -149,74 +151,7 @@
 		<div class="relatedProductContainer row flex-nowrap overflow-hidden" id="nearEndProDiv">
 			{{#each this.relatedList}}
 			<div class="col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" id="item{{Id}}">
-
-					<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top h-100"
-						src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
-					</a>
-
-					<div class="card-body h-25">
-
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
-							<h5 class="card-title">{{shortenName Name}}</h5>
-						</a>
-
-						<dl class="row">
-
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
-							</dd>
-
-							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
-								
-								<span class="text-wrap text-left">
-									<i class="far fa-user"></i> {{maskenName BidderName}}
-								</span>
-								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
-							</dd>
-
-
-
-							<dd class="col-12 d-flex flex-row justify-content-between">
-
-								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
-								</span>
-								<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
-									<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
-								</span>
-							</dd>
-
-
-
-							<dd class="col">
-								<div class="badge badge-light badge-lg" title="Number of turns made">
-									{{Turn}} turns
-								</div>
-							</dd>
-						</dl>
-
-
-					</div>
-
-					<!-- list of buttons -->
-					<div class="buttons ">
-						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0"><i class="fas fa-heart"></i>
-						</button>
-
-
-					</div>
-
-
-				</div> 
+				{{> item parent=..}}
 			</div>
 
 			{{/each}}
@@ -397,7 +332,7 @@
 
 			IsRestrictBidder: {{this.product.IsRestrictBidder}},
 			PriceStep: {{this.product.PriceStep}},
-			Max_Price: {{this.product.Max_Price}},
+			Max_Price: '{{this.product.Max_Price}}',
 
 		};
 
@@ -626,15 +561,31 @@
 					url: '/product/description/update',
 					data: {
 						proId: {{this.product.Id}},
+						ownerId: {{this.product.OwnerId}},
 						description: totalDescription
 					}
 				})
 				.then(function(json){
 					if(json.isOk === true){
 						$('.productDescription').html(totalDescription);
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: 'Add description successfully.',
+							showConfirmButton: false,
+							timer: 1000,
+							toast: true
+						});
 					}	
 					else{
-						alert(json.msg);
+						Swal.fire({
+							position: 'center',
+							icon: 'error',
+							title: json.msg,
+							showConfirmButton: false,
+							timer: 2000,
+							toast: true
+						});
 					}
 				})
 
@@ -668,5 +619,177 @@
 
 
 </script>
+
+
+<!-- block bidder -->
+<script type="text/javascript">
+
+	var blockedBidders = [];
+
+
+
+
+
+	function blockBidder(){
+		// get list of bidders
+		// get from server
+		$.ajax({
+			method: 'get',
+			url: '/product/bidders?proId={{this.product.Id}}',
+			
+		})
+		.then(function(json){
+			
+
+
+
+			blockedBidders = json.bidders;
+			let trHtml = '';
+			for(var i = 0; i < blockedBidders.length; i++){
+
+				let isChecked = '';
+				if(blockedBidders[i].IsBanned){
+					isChecked = 'checked';
+				}
+
+				trHtml += `
+				<tr>
+
+				<td>${blockedBidders[i].Name}</td>
+				<td><div class="custom-control custom-switch">
+				<input type="checkbox" class="custom-control-input" id="customSwitch${i}" ${isChecked}>
+				<label class="custom-control-label" for="customSwitch${i}"></label>
+				</div></td>
+
+				</tr>
+				`;
+			}
+
+			var tableHtml = 
+			`<div class="row">` + 
+			`<div class="col-sm-12">
+			<table class="historyTable table">
+			<thead>
+			<tr>
+
+
+			<th scope="col">Bidder</th>
+			<th>Block</th>
+
+			</tr>
+			</thead>
+
+			<tbody id="blockedBidderTableBody">
+			` +
+			trHtml +
+
+			`</tbody>
+			</table>
+			</div>` +
+
+			`</div>`;
+
+			Swal.fire({
+				title: 'Blocked bidders',
+				html: tableHtml,
+				preConfirm: () => {
+
+					let result = [];
+
+					for(var i = 0; i < blockedBidders.length; i++){
+						blockedBidders[i].isBanned = $(`#customSwitch${i}`).prop('checked');
+						result.push(blockedBidders[i]);
+					}
+
+					return result;
+
+
+				}
+			})
+			.then((result)=>{
+				if(result.value){
+					// alert(result.value.length);
+
+					// post to server
+					$.ajax({
+						method: 'post',
+						url: '/product/bidders/update',
+						data: {
+							proId: {{this.product.Id}},
+							ownerId: {{this.product.OwnerId}},
+							bidderList: result.value,
+						}
+					})
+					.then(function(json){
+						if(json.isOk === true){
+							window.location.href = window.location.href;
+						}	
+						else{
+							alert(json.msg);
+
+						}
+					});
+
+				}
+				
+
+
+			});
+
+
+
+			
+		});
+
+	}
+
+
+
+
+
+
+	function addBlockedBidder(){
+		let bname = $('.blockedBidderInputDiv input').val();
+		blockedBidders.push(bname);
+
+		// re make html
+		let trHtml = '';
+		for(var i = 0; i < blockedBidders.length; i++){
+			trHtml += `
+			<tr>
+
+			<td>${blockedBidders[i]}</td>
+
+			</tr>
+			`;
+		}
+		// add to body of table
+		$('#blockedBidderTableBody').html(trHtml);
+
+	}
+
+	function removeBlockedBidder(){
+		let bname = $('.blockedBidderInputDiv input').val();
+		var pos = blockedBidders.indexOf(bname);
+		blockedBidders.splice(pos, 1);
+
+		// re make html
+		let trHtml = '';
+		for(var i = 0; i < blockedBidders.length; i++){
+			trHtml += `
+			<tr>
+
+			<td>${blockedBidders[i]}</td>
+
+			</tr>
+			`;
+		}
+		// add to body of table
+		$('#blockedBidderTableBody').html(trHtml);
+
+	}
+</script>
+
+
 
 {{/section}}

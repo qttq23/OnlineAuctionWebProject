@@ -199,7 +199,7 @@ router.get('/details', async function(req, res){
 
 })
 
-router.post('/price', async function(req, res){
+router.post('/price', restrict.authen, async function(req, res){
 
 	lg('query price:');
 	lg(req.body);
@@ -214,7 +214,7 @@ router.post('/price', async function(req, res){
 	res.json(result);
 })
 
-router.post('/bid', async function(req, res){
+router.post('/bid', restrict.authen, async function(req, res){
 	lg('bid price');
 	lg(req.body);
 
@@ -245,16 +245,51 @@ router.get('/history', async function(req, res){
 
 })
 
-router.post('/description/update', async function(req, res){
+router.post('/description/update', restrict.authenSeller, async function(req, res){
 	lg('POST description/update');
-	lg(req.body);
+	// lg(req.body);
 
-	const result = await proModel.updateDescription(req.body.proId, req.body.description);
-	lg(result);
-	if(result.affectedRows > 0){
+	if(req.session.account.Id === +req.body.ownerId){
+		const result = await proModel.updateDescription(req.body.proId, req.body.description);
+		lg(result);
+		if(result.affectedRows > 0){
 
-		return res.json({isOk: true, msg: "update description successfully."});
+			return res.json({isOk: true, msg: "update description successfully."});
+		}
 	}
+	
 	return res.json({isOk: false, msg: "update description failed."});
 })
 
+
+router.get('/bidders', restrict.authenSeller, async function(req, res){
+
+	lg('GET bidders');
+	lg(req.query);
+
+	const results = await proModel.bidders(req.query.proId);
+	lg(results);
+
+	if(results.length > 0){
+		return res.json({isOk: true, bidders: results});
+	}
+
+	return res.json({isOk: false, bidders: []});
+
+})
+
+router.post('/bidders/update', restrict.authenSeller, async function(req, res){
+	lg('POST bidders/update');
+	lg(req.body);
+
+	if(req.session.account.Id === +req.body.ownerId){
+		const result = await proModel.updateBidders(req.body.proId, req.body.bidderList);
+		lg(result);
+		if(result.isOk){
+
+			return res.json({isOk: true, msg: "update successfully."});
+		}
+	}
+	
+	return res.json({isOk: false, msg: "update bidders failed."});
+})
