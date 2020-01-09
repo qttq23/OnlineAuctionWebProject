@@ -63,32 +63,10 @@ async function highestPriceEvent(bidder){
 	return lg('The highest price bidder at the moment is : ' + bidder);
 }
 
-async function getHighestBidder(userId, proId){
-
-	let sql = `
-	select * 
-	from bidderproduct
-	where ProId=${proId} 
-	and Price >= all(select Price from bidderproduct where ProId = ${proId} and IsBanned = 0)
-	and IsBanned = 0
-	group by BidderId
-	order by DateCreate asc
-	`;
-	let bidders = await db.query(sql);
-	let bidder;
-	if(bidders.length > 0 && bidders[0].BidderId !== +userId){
-		bidder = bidders[0];
-		lg('have current highest bidder: ' + bidder.BidderId);
-	}
-	else{
-		bidder = null;
-	}
-
-	return bidder;
-}
 
 
-module.exports = {
+
+var self = module.exports = {
 
 	all: ()=>{ 
 		return db.load(table)
@@ -481,6 +459,19 @@ module.exports = {
 			pro.Max_Price = pro.StartPrice;
 		}
 
+		// check if product is already win
+		let prod = await db.query(`
+			select *
+			from product p 
+			where p.Id = ${pro.Id}
+			`);
+		if(prod.length > 0 && prod[0].WinnerId > 0 && prod[0].CurrentPrice > 0){
+			// this mean product is already win and emails already sent
+			// no need to send email any more
+			// no need to bid any more
+			return {isOk: false, msg: "The product was already finished. Can't bid any more."};
+		}
+
 		// check if product require point to bid
 		if(pro.IsRestrictBidder === '1'){
 
@@ -518,6 +509,7 @@ module.exports = {
 			}
 		}
 		else{
+
 			// no restrict
 			// allowed
 			// calc price
@@ -558,8 +550,11 @@ module.exports = {
 			// still available
 			lg('product available');
 
+
+
 			// get the current highest bidder
-			let bidder = await getHighestBidder(userId, pro.Id);
+			let bidder = await self.getHighestBidder(userId, pro.Id);
+			let bidderx = bidder;
 
 			// if same price
 			let isBidAdvance = false;
@@ -683,6 +678,98 @@ module.exports = {
 
 
 			// return when done
+			sql = `
+			select a.*
+			from product as p, account as a
+			where p.Id = ${pro.Id} and p.OwnerId = a.Id
+			`;
+			let ownerx = await db.query(sql);
+
+			sql = `
+			select a.*
+			from account as a
+			where a.Id = ${userId}
+			`;
+			let userx = await db.query(sql);
+
+
+
+			sendEmail(
+				ownerx[0].Email,
+				`[Auction web - product #${pro.Id}] Bidder bids`,
+				`Recently a bidder has bidded successfully.`);
+
+			sendEmail(
+				userx[0].Email,
+				`[Auction web - product #${pro.Id}] Congratulations`,
+				`You has bidded successfully. The current price of product is updated.`);
+
+			if(bidderx){
+				sql = `
+				select a.*
+				from account as a
+				where a.Id = ${bidderx.BidderId}
+				`;
+				let preBidder = await db.query(sql);
+
+				sendEmail(
+					preBidder[0].Email,
+					`[Auction web - product #${pro.Id}] Another bidder has bidded`,
+					`One bidder has recently bidded on the product you are highest bidder. Let's check it out.`);
+			}
+
+			//##################
+
+			// if product can be bought instantly
+			if(+pro.IsInstantBought === 1){
+
+				let highest = await self.getHighestBidder(null, pro.Id);
+
+				if(highest && +highest.Price >= +pro.EndPrice){
+					// this bidder win this product
+					// product ends
+					lg('product ended by instant price');
+
+					// update product table: winner id, current price
+					let recordx = {
+						WinnerId: highest.BidderId,
+						CurrentPrice: highest.Price
+					};
+					await db.update('product', {Id: pro.Id}, recordx);
+
+					// send email
+					// send email owner
+					let owner = await db.query(`
+						select a.*
+						from product as p, account as a
+						where p.Id = ${pro.Id} and p.OwnerId = a.Id
+						`);
+					sendEmail(
+						owner[0].Email,
+						`[Auction web - product #${pro.Id}] Product finished.`,
+						`Your product #${pro.Id} has just been finished. Let's check it out.`);
+
+					// send email win bidder
+					let bidder = await db.query(`
+						select a.*
+						from account as a
+						where a.Id = ${highest.BidderId}
+						`);
+					sendEmail(
+						bidder[0].Email,
+						`[Auction web - product #${pro.Id}] Congratulations. Buy instantly.`,
+						`Your product #${pro.Id} has just been finished and you bought instantly. Let's check it out.`
+						);
+
+
+
+
+				}
+			}
+
+
+			//##################
+
 			return {isOk: true, msg: "Bid success."};
 		}
 		else{
@@ -776,7 +863,7 @@ module.exports = {
 		}
 
 		// get highest bidder
-		let bidder1 = getHighestBidder(null, proId);
+		let bidder1 = await self.getHighestBidder(null, proId);
 
 
 		for(let i = 0; i < bidders.length; i++){
@@ -795,10 +882,22 @@ module.exports = {
 			`;
 			let result = await db.query(sql);
 
+			// send email
+			let target = await db.query(`
+				select a.*
+				from account as a
+				where a.Id = ${bidders[i].BidderId}
+				`);
+			let status = (bidders[i].isBanned==='true')?'banned':'un-banned';
+			sendEmail(
+				target[0].Email,
+				`[Auction web - product #${proId}] You are ${status}`,
+				`Owner has recently ${status} you from product #${proId}. Let's check it out.`);
+
 		}
 
 		// get highest bidder
-		let bidder2 = getHighestBidder(null, proId);
+		let bidder2 = await self.getHighestBidder(null, proId);
 		lg(bidder1.BidderId);
 		lg(bidder2.BidderId);
 		if(bidder1.BidderId != bidder2.BidderId){
@@ -806,6 +905,30 @@ module.exports = {
 		}
 
 		return {isOk: true};
+	},
+
+	getHighestBidder: async(userId, proId)=>{
+
+		let sql = `
+		select * 
+		from bidderproduct
+		where ProId=${proId} 
+		and Price >= all(select Price from bidderproduct where ProId = ${proId} and IsBanned = 0)
+		and IsBanned = 0
+		group by BidderId
+		order by DateCreate asc
+		`;
+		let bidders = await db.query(sql);
+		let bidder=null;
+		if(bidders.length > 0 && bidders[0].BidderId !== +userId){
+			bidder = bidders[0];
+			lg('have current highest bidder: ' + bidder.BidderId);
+		}
+		else{
+			bidder = null;
+		}
+
+		return bidder;
 	}
 
 }

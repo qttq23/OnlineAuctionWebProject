@@ -3,6 +3,9 @@ global.log = require('./utils/myLog.js');
 global.lg = ((object)=>{
 	log.log(object);
 })
+global.sendEmail = ((toEmail, subject, content)=>{
+	log.sendEmail(toEmail, subject, content);
+})
 
 global.projectPath = __dirname;
 
@@ -182,6 +185,102 @@ app.engine('html', expHbs({
 })
 );
 app.set('view engine', 'html');
+
+
+// set timer to track all product's end time
+async function trackAllProducts(){
+
+	let db = require('./utils/db');
+	let sql = `
+	select p.*, TIMESTAMPDIFF(SECOND,CURRENT_TIMESTAMP(),p.EndTime) as EndTimeSecs
+	from product as p
+	where TIMESTAMPDIFF(SECOND,CURRENT_TIMESTAMP(),p.EndTime) > 0
+	order by p.EndTime ASC
+	`;
+	let results = await db.query(sql);
+	lg(results.length);
+
+	// set timer
+	for(let i = 0; i < results.length; i++){
+
+		const timeoutObj = setTimeout(async() => {
+			lg('timeout ' + results[i].Id);
+
+			// check if product is already win
+			let prod = await db.query(`
+				select *
+				from product p 
+				where p.Id = ${results[i].Id}
+				`);
+			if(prod.length > 0 && prod[0].WinnerId > 0 && prod[0].CurrentPrice > 0){
+				// this mean product is already win and emails already sent
+				// no need to send email any more
+				// no need to bid any more
+				return {isOk: false, msg: "The product was already finished. Can't bid any more."};
+			}
+
+
+			
+
+			// send email win bidder
+			let bidderx = await require('./models/proModel.js').getHighestBidder(null, results[i].Id);
+			if(bidderx){
+				lg(bidderx.BidderId);
+
+				// need to update the winner
+				// update product table: winner id, current price
+				let recordx = {
+					WinnerId: bidderx.BidderId,
+					CurrentPrice: bidderx.Price
+				};
+				await db.update('product', {Id: results[i].Id}, recordx);
+
+				let bidder = await db.query(`
+					select a.*
+					from account as a
+					where a.Id = ${bidderx.BidderId}
+					`);
+				sendEmail(
+					bidder[0].Email,
+					`[Auction web - product #${results[i].Id}] Congratulations. You win this product.`,
+					`Your product #${results[i].Id} has just been finished and you are the highest bidder. Let's check it out.`
+					);
+
+
+				// send email owner
+				let owner = await db.query(`
+					select a.*
+					from account as a
+					where a.Id = ${results[i].OwnerId}
+					`);
+				sendEmail(
+					owner[0].Email,
+					`[Auction web - product #${results[i].Id}] Product finished.`,
+					`Your product #${results[i].Id} has just been finished. Let's check it out.`);
+			}
+			else{
+				// send email owner
+				let owner = await db.query(`
+					select a.*
+					from account as a
+					where a.Id = ${results[i].OwnerId}
+					`);
+				sendEmail(
+					owner[0].Email,
+					`[Auction web - product #${results[i].Id}] Product finished.`,
+					`Your product #${results[i].Id} has just been finished. Nobody bought. Let's check it out.`);
+			}
+			
+
+
+
+		}, (+results[i].EndTimeSecs)*1000);
+	}
+}
+setTimeout(()=>{
+	trackAllProducts();
+
+}, 1000);
 
 
 

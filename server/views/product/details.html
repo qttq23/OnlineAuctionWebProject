@@ -335,6 +335,8 @@
 			Max_Price: '{{this.product.Max_Price}}',
 			StartPrice: '{{this.product.StartPrice}}',
 
+			IsInstantBought: {{this.product.IsInstantBought}},
+			EndPrice: {{this.product.EndPrice}}
 		};
 
 		let endTime = '{{this.product.EndTime}}';
@@ -714,8 +716,13 @@
 					let result = [];
 
 					for(var i = 0; i < blockedBidders.length; i++){
-						blockedBidders[i].isBanned = $(`#customSwitch${i}`).prop('checked');
-						result.push(blockedBidders[i]);
+						if(($(`#customSwitch${i}`).prop('checked') === true && blockedBidders[i].IsBanned === 0)
+							||($(`#customSwitch${i}`).prop('checked') === false && blockedBidders[i].IsBanned === 1))
+						{
+
+							blockedBidders[i].isBanned = $(`#customSwitch${i}`).prop('checked');
+							result.push(blockedBidders[i]);
+						}
 					}
 
 					return result;
@@ -724,7 +731,7 @@
 				}
 			})
 			.then((result)=>{
-				if(result.value){
+				if(result.value && result.value.length > 0){
 					// alert(result.value.length);
 
 					// post to server

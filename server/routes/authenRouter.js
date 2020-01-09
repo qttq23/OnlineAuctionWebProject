@@ -84,26 +84,19 @@ router.post('/login', async function(req, res){
 
 
 
-		// let obj = { 
-			// 	msg: await (()=>msg)(),
-			// 	isErr: await (()=>isErr)(),
-			// 	userName: await(()=>userName)(),
-			// 	userType: await(()=>userType)(),
-			// 	returnTo: await(()=>returnTo)(),
-			// };
-			let obj = { 
-				msg: msg,
-				isErr: isErr,
-				userName: userName,
-				userType: userType,
-				userId: userId,
-				returnTo: returnTo,
-			};		
-			res.json(obj);
-		}
+		let obj = { 
+			msg: msg,
+			isErr: isErr,
+			userName: userName,
+			userType: userType,
+			userId: userId,
+			returnTo: returnTo,
+		};		
+		res.json(obj);
+	}
 
 
-	})
+})
 
 router.get('/login', function(req, res){
 	log.log('Get login');
