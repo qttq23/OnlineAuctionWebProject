@@ -411,8 +411,19 @@ module.exports = {
 			ProId: proId
 		};
 		const result = await db.save('commentrate', record);
+		lg(result);
 
 		if(result.affectedRows >= 1){
+
+			// also update point for table 'account'
+			let pointx = await db.query(`
+				select count(*) as countLike
+				from commentrate 
+				where ToId=${toId} and Point=1`);
+			lg(pointx);
+
+			await db.update('account', {Id: toId}, {Point: pointx[0].countLike});
+
 			return {isOk: true, msg: "Comment and rate successfully."};
 		}
 
@@ -420,11 +431,11 @@ module.exports = {
 
 	},
 
-	listRate: async (acc)=>{
+	listRate: async (accId)=>{
 		let sql =`
 		select c.*, a1.Name as FromUserName
 		from commentrate as c, account a1
-		where c.ToId = ${acc.Id}
+		where c.ToId = ${accId}
 		and c.FromId = a1.Id
 		order by c.DateCreate asc
 		`;
@@ -432,7 +443,7 @@ module.exports = {
 		let sql2 =`
 		select count(*) as numLike
 		from commentrate as c, account a1
-		where c.ToId = ${acc.Id}
+		where c.ToId = ${accId}
 		and c.FromId = a1.Id
 		and c.Point = 1
 		`;
@@ -576,7 +587,8 @@ module.exports = {
 		from (select sortedPro.*, b.Turn, b.Price as Max_Price, b.BidderId
 		from (select DISTINCT pro.*
 		from product as pro
-		where pro.OwnerId = ${accId} and TIMESTAMPDIFF(SECOND,pro.EndTime,CURRENT_TIMESTAMP()) >= 0
+		where pro.OwnerId = ${accId} and (TIMESTAMPDIFF(SECOND,pro.EndTime,CURRENT_TIMESTAMP()) >= 0
+		or (pro.WinnerId > 0 && pro.CurrentPrice > 0))
 
 		) as sortedPro
 		left join

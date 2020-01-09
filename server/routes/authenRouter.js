@@ -60,6 +60,7 @@ router.post('/login', async function(req, res){
 			if(req.session.isGetLogin){
 
 				returnTo = req.session.returnTo || '/home';
+				req.session.isGetLogin = null;
 			}
 			else{
 				returnTo = null;
@@ -307,5 +308,4 @@ router.post('/signupActive', async function(req, res){
 })
 
 
-router.get('/signupSuccess')
 

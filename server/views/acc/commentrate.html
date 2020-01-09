@@ -10,7 +10,7 @@
 <div class="card">
 
 	<div class="card-header">
-		Comments and rates
+		{{#if target}}User: {{target.Name}} - {{/if}} Comments and rates
 	</div>
 
 	<!-- comments and rates list -->
@@ -22,15 +22,20 @@
 		<div class="commentContainer d-flex flex-column-reverse">
 			{{#each this.list}}
 			<div class="commentCard card mt-2 mb-2">
+
 				<div class="card-header">
+
 					<ul class="list-unstyled d-flex flex-column flex-sm-row justify-content-between mb-0 ml-0">
-						<li><i class="fas fa-user"></i> {{FromUserName}} <span class="badge {{#ifeq Point 1}}badge-success{{else}}badge-danger{{/ifeq}}">{{ratePointConvert Point}}</span></li>
-						<li>{{dmyConvert DateCreate}}</li>
+
+						<li>
+							<i class="fas fa-user"></i> {{FromUserName}} 
+							<span class="badge {{#ifeq Point 1}}badge-success{{else}}badge-danger{{/ifeq}}">{{ratePointConvert Point}}</span>
+						</li>
+						<li><a href="/product/details?id={{ProId}}">{{dmyConvert DateCreate}}</a></li>
 					</ul>
 
 				</div>
-				<div class="card-body">
-				{{Message}}</div>
+				<div class="card-body">{{Message}}</div>
 			</div>
 			{{/each}}
 

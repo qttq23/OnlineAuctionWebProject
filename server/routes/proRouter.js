@@ -235,7 +235,7 @@ router.post('/bid', restrict.authen, async function(req, res){
 })
 
 
-router.get('/history', async function(req, res){
+router.get('/history', restrict.authen, async function(req, res){
 	lg('GET bid history');
 	lg(req.query);
 

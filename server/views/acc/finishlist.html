@@ -75,8 +75,15 @@
 <!-- onload -->
 <script type="text/javascript">
 	$(()=>{
-		$('.buttons').html('');
-		$('.buttonsChild').appendTo(".buttons");
+		// $('.buttons').html('');
+		// $('.buttonsChild').appendTo(".buttons");
+
+
+		{{#each this.proList}}
+		$('#item{{Id}} .buttons').html('');
+		$('#item{{Id}}').siblings('.buttonsChild').appendTo($('#item{{Id}} .buttons'));
+		{{/each}}
+
 	})
 </script>
 

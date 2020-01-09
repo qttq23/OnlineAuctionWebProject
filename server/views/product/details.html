@@ -43,7 +43,7 @@
 
 						<button class="addWatchListBtn btn btn-light" title="Add to watch list" onclick="addToWatchList(this)" value="0" id="btnForItem_{{this.product.Id}}"><i class="fas fa-heart"></i> Like</button>
 
-						<button class="historyBtn btn btn-light" onclick="viewHistory()"><i class="fas fa-history"></i> History</button>
+						<button class="historyBtn btn btn-light " onclick="viewHistory()" {{#if userId}}{{else}}disabled{{/if}}><i class="fas fa-history"></i> History</button>
 
 						<button class="blockBidderBtn btn btn-light {{#ifeq userId product.OwnerId}}{{else}}d-none{{/ifeq}}" onclick="blockBidder()" title="Block bidder"><i class="fas fa-ban"></i> <i class="far fa-user"></i></button>
 					</div>
@@ -78,7 +78,7 @@
 									<i class="fas fa-gavel"></i> Seller	
 								</dt>
 								<dd class="col-sm-8 text-sm-right">
-									{{maskenName this.product.OwnerName}}, <a href="#" title="Go to details of points">{{ratePointConvert this.product.OwnerPoint}}</a>
+									{{maskenName this.product.OwnerName}}, <a {{#ifeq userId this.product.BidderId}}href="/acc/commentrate?userId={{this.product.OwnerId}}" title="Go to details of points" {{/ifeq}}>{{ratePointConvert this.product.OwnerPoint}}</a>
 								</dd>
 
 
@@ -87,7 +87,7 @@
 									<i class="far fa-user"></i> Bidder
 								</dt>
 								<dd class="col-sm-7 text-sm-right">
-									{{maskenName this.product.BidderName}}, <a href="#" title="Go to details of points">{{ratePointConvert this.product.BidderPoint}}</a>
+									{{maskenName this.product.BidderName}}, <a {{#ifeq userId this.product.OwnerId}}href="/acc/commentrate?userId={{this.product.BidderId}}"  title="Go to details of points" {{/ifeq}}>{{ratePointConvert this.product.BidderPoint}}</a>
 								</dd>
 
 								<dt class="col-sm-5">
@@ -336,7 +336,7 @@
 			StartPrice: '{{this.product.StartPrice}}',
 
 			IsInstantBought: {{this.product.IsInstantBought}},
-			EndPrice: {{this.product.EndPrice}}
+			EndPrice: '{{this.product.EndPrice}}'
 		};
 
 		let endTime = '{{this.product.EndTime}}';
@@ -395,7 +395,7 @@
 								console.log($('.swal3-input').prop('checked'));
 								if($('.swal3-input').prop('checked') === true){
 									pro.AutoMaxPrice = $('#swal-input-price').val();
-							
+
 								}
 								else{
 									price = $('#swal-input-price').val();
@@ -463,7 +463,12 @@
 				'Login required!',
 				'You need to login to use this function',
 				'info'
-				);
+				)
+			.then(()=>{
+				showLoginDialog();
+			});
+
+
 
 		}
 
@@ -491,44 +496,49 @@
 
 		})
 		.done(function(json){
+			if(json){
 
-			var trHtml = '';
-			for(var i = 0; i < json.history.length; i++){
-				let dateCreate_converted = dmyhmsConvert(json.history[i].DateCreate);
-				let price_converted = cashConvert(json.history[i].Price);
-				let name_masked = maskenName(json.history[i].BidderName);
-				trHtml += `
+				var trHtml = '';
+				for(var i = 0; i < json.history.length; i++){
+					let dateCreate_converted = dmyhmsConvert(json.history[i].DateCreate);
+					let price_converted = cashConvert(json.history[i].Price);
+					let name_masked = maskenName(json.history[i].BidderName);
+					trHtml += `
+					<tr>
+					<td>${dateCreate_converted}</td>
+					<td>${name_masked}</td>
+					<td>${price_converted}</td>
+					</tr>
+					`;
+				}
+
+				var tableHtml = `
+				<table class="historyTable table">
+				<thead>
 				<tr>
-				<td>${dateCreate_converted}</td>
-				<td>${name_masked}</td>
-				<td>${price_converted}</td>
+
+				<th scope="col">Time</th>
+				<th scope="col">Bidder</th>
+				<th scope="col">Price</th>
 				</tr>
-				`;
+				</thead>
+
+				<tbody>
+				` +
+				trHtml +
+
+				`</tbody>
+				</table>`;
+
+				Swal.fire(
+					'History',
+					tableHtml,
+					// 'success'
+					);
+
 			}
 
-			var tableHtml = `
-			<table class="historyTable table">
-			<thead>
-			<tr>
-
-			<th scope="col">Time</th>
-			<th scope="col">Bidder</th>
-			<th scope="col">Price</th>
-			</tr>
-			</thead>
-
-			<tbody>
-			` +
-			trHtml +
-
-			`</tbody>
-			</table>`;
-
-			Swal.fire(
-				'History',
-				tableHtml,
-				// 'success'
-				);
+			
 		})
 
 

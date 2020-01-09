@@ -235,16 +235,28 @@ router.post('/upgrade/request', restrict.authen, async function(req, res){
 
 router.get('/commentrate', restrict.authen, async function(req, res){
 	lg('GET /commentrate');
-
+	lg(req.query);
 	
-	let acc = req.session.account;
-	const results = await accModel.listRate(acc);
+	// let acc = req.session.account;
+	// const results = await accModel.listRate(acc);
+	// lg(results);
+
+	let accId = req.query.userId;
+	const results = await accModel.listRate(accId);
 	lg(results);
+
+	let target = null;
+	if(req.session.account.Id != +accId){
+		target = await accModel.single({Id:accId});
+	}
+	lg(target);
 
 	res.render('acc/commentrate.html',{
 		total: results.list.length,
 		numLike: results.numLike,
-		list: results.list
+		list: results.list,
+
+		target: target
 	});
 
 })

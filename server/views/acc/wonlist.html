@@ -43,74 +43,17 @@
 
 			{{#each this.proList}}
 			<div class="col col-sm-4 mt-2 mb-2">
-				<div class="item card h-100" id="item{{Id}}">
+				{{> item parent=..}}
 
-					<a class="h-50" href="/product/details?id={{Id}}" title="go to product details">
-						<img class="card-img-top h-100"
-						src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
-					</a>
+				<!-- list of buttons -->
+				<div class="buttonsChild ">
 
-					<div class="card-body h-25">
-
-						<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
-							<h5 class="card-title">{{shortenName Name}}</h5>
-						</a>
-
-						<dl class="row">
-
-							<dd class="col-sm-8" title="Price to win instantly">
-								<i class="fas fa-shopping-cart"></i> Win price
-							</dd>
-							<dd class="col-sm-4 text-sm-right" title="Price to win instantly">
-								{{#if EndPrice}}
-								{{cashConvert EndPrice}}
-								{{else}}
-								<i class="fas fa-ban" title="Not set"></i>
-								{{/if}}
-							</dd>
-
-							<dd class="col-12 d-flex flex-row justify-content-between" title="The highest price paying bidder">
-
-								<span class="text-wrap text-left">
-									<i class="far fa-user"></i> {{maskenName BidderName}}
-								</span>
-								<span class="text-wrap text-right">{{cashConvert Max_Price}}</span>
-							</dd>
+					<button class="rateCommentBtn btn btn-primary w-100" title="Rate and comment" onclick="rateComment(this)" value="0" id="btnFor_{{OwnerName}}_{{OwnerId}}">Rate Seller</button>
 
 
-
-							<dd class="col-12 d-flex flex-row justify-content-between">
-
-								<span class="badge badge-secondary text-wrap" title="The date product was uploaded">
-									<i class="fas fa-play"></i> {{dmyConvert StartTime}}
-								</span>
-								<span class="badge badge-primary text-sm-right text-wrap endTimeBadge" title="Time left">
-									<i class="fas fa-hourglass-start"></i> <span>{{relativeDateTimeConvert EndTime}}</span>
-								</span>
-							</dd>
+				</div>
 
 
-
-							<dd class="col">
-								<div class="badge badge-light badge-lg" title="Number of turns made">
-									{{Turn}} turns
-								</div>
-							</dd>
-						</dl>
-
-
-					</div>
-
-					<!-- list of buttons -->
-					<div class="buttons ">
-
-						<button class="rateCommentBtn btn btn-primary w-100" title="Rate and comment" onclick="rateComment(this)" value="0" id="btnFor_{{OwnerName}}_{{OwnerId}}">Rate Seller</button>
-
-
-					</div>
-
-
-				</div> 
 			</div>
 			{{/each}}
 			{{/if}}
@@ -129,6 +72,21 @@
 
 
 {{#section 'js'}}
+
+<!-- onload -->
+<script type="text/javascript">
+	$(()=>{
+		// $('.buttons').html('');
+		// $('.buttonsChild').appendTo(".buttons");
+
+
+		{{#each this.proList}}
+		$('#item{{Id}} .buttons').html('');
+		$('#item{{Id}}').siblings('.buttonsChild').appendTo($('#item{{Id}} .buttons'));
+		{{/each}}
+
+	})
+</script>
 
 <!-- pagination -->
 <script type="text/javascript" src="/flaviusmatis-simplePagination.js-e32c66e/flaviusmatis-simplePagination.js-e32c66e/jquery.simplePagination.js"></script>
@@ -352,15 +310,25 @@
 	}
 </script>
 
-
 <!-- rate and comment -->
 <script type="text/javascript">
+
+	var bidderName = '';
+	var bidderId = '';
 	function rateComment(button){
 
 
 		let tokens = ($(button).attr('id')).split('_');
-		let ownerName = tokens[1];
-		let ownerId = tokens[2];
+		bidderName = tokens[1];
+		bidderId = tokens[2];
+
+		if(!bidderId || bidderId === ''){
+			return Swal.fire(
+				'Cannot rate',
+				'No bidder to rate',
+				'error'
+				);
+		}
 
 		let htl = 
 		'<div class="mb-3">' +
@@ -374,7 +342,7 @@
 			// title: 'rate comment',
 			html:
 
-			`<h1>Rate ${ownerName}</h1>`+
+			`<h1>Rate ${bidderName}</h1>`+
 
 			'<div class="d-flex flex-column align-items-start">' +
 
@@ -398,21 +366,21 @@
 				document.getElementById('swal-input3').checked,
 				]
 			}
-		}).then((result) => {
+		})
+		.then((result) => {
 			if(result.value){
-				// Swal.fire(JSON.stringify(result.value));
-				// console.log(result.value);
-
 				
-
 				// send to server
+				let itemDiv = $(button).parent('.buttonsChild').parent('.buttons').parent('.item');
+				let proId = itemDiv.attr('id').replace('item', '');
 				$.ajax({
 					method: 'post',
 					url: '/acc/commentrate/add',
 					data: {
-						toId: ownerId,
+						toId: bidderId,
 						comment: result.value[1],
 						point: (result.value[0]===true)?1:-1,
+						proId: proId
 					}
 				})
 				.then(function(json){
@@ -432,7 +400,7 @@
 					}
 				});
 			}
-		})
+		});
 	}
 </script>
 {{/section}}

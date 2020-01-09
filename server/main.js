@@ -176,6 +176,9 @@ app.engine('html', expHbs({
 		},
 
 		percentConvert: function(part, total){
+			if(!total || total == 0){
+				return '0 %';
+			}
 			return '' + Math.round(part/total*100) + '%';
 		}
 
@@ -186,6 +189,111 @@ app.engine('html', expHbs({
 );
 app.set('view engine', 'html');
 
+
+async function productEndTimeEventHandler(product){
+
+	let db = require('./utils/db');
+	lg('timeout ' + product.Id);
+
+	// check if product is already win
+	let prod = await db.query(`
+		select *
+		from product p 
+		where p.Id = ${product.Id}
+		`);
+	if(prod.length > 0 && prod[0].WinnerId > 0 && prod[0].CurrentPrice > 0){
+		// this mean product is already win and emails already sent
+		// no need to send email any more
+		// no need to bid any more
+		return {isOk: false, msg: "The product was already finished. Can't bid any more."};
+	}
+
+	// ########################
+	// check if product is bidded 5 minutes before
+	let secs = 5 * 60;
+	let extendSecs = 10 * 60;
+	let nearestBids = await db.query(`
+		select *
+		from bidderproduct b
+		where b.ProId=${product.Id}
+		and TIMESTAMPDIFF(SECOND,b.DateCreate,CURRENT_TIMESTAMP()) <= ${secs}
+		`);
+	if(nearestBids.length > 0){
+		lg('product is recently bidded.');
+		// this means product was bidded recently
+		// extend time for it
+
+		// save table
+		secs = +moment().unix() + extendSecs;
+		let extDatetime = moment(secs, 'X').format('YYYY-MM-DD HH:mm:ss');
+		// lg(secs);
+		lg(extDatetime);
+		let resx = await db.query(`
+			update product
+			set EndTime='${extDatetime}'
+			where Id=${product.Id}`);
+		lg(resx);
+
+		// re-set timer
+		setTimeout(productEndTimeEventHandler, extendSecs * 1000, product);
+		lg('set new timeout');
+		return;
+	}
+
+	// ########################
+
+	// send email win bidder
+	let bidderx = await require('./models/proModel.js').getHighestBidder(null, product.Id);
+	if(bidderx){
+		lg(bidderx.BidderId);
+
+		// need to update the winner
+		// update product table: winner id, current price
+		let recordx = {
+			WinnerId: bidderx.BidderId,
+			CurrentPrice: bidderx.Price
+		};
+		await db.update('product', {Id: product.Id}, recordx);
+
+		let bidder = await db.query(`
+			select a.*
+			from account as a
+			where a.Id = ${bidderx.BidderId}
+			`);
+		sendEmail(
+			bidder[0].Email,
+			`[Auction web - product #${product.Id}] Congratulations. You win this product.`,
+			`Your product #${product.Id} has just been finished and you are the highest bidder. Let's check it out.`
+			);
+
+
+		// send email owner
+		let owner = await db.query(`
+			select a.*
+			from account as a
+			where a.Id = ${product.OwnerId}
+			`);
+		sendEmail(
+			owner[0].Email,
+			`[Auction web - product #${product.Id}] Product finished.`,
+			`Your product #${product.Id} has just been finished. Let's check it out.`);
+	}
+	else{
+		// send email owner
+		let owner = await db.query(`
+			select a.*
+			from account as a
+			where a.Id = ${product.OwnerId}
+			`);
+		sendEmail(
+			owner[0].Email,
+			`[Auction web - product #${product.Id}] Product finished.`,
+			`Your product #${product.Id} has just been finished. Nobody bought. Let's check it out.`);
+	}
+
+
+
+}
 
 // set timer to track all product's end time
 async function trackAllProducts(){
@@ -203,80 +311,20 @@ async function trackAllProducts(){
 	// set timer
 	for(let i = 0; i < results.length; i++){
 
-		const timeoutObj = setTimeout(async() => {
-			lg('timeout ' + results[i].Id);
-
-			// check if product is already win
-			let prod = await db.query(`
-				select *
-				from product p 
-				where p.Id = ${results[i].Id}
-				`);
-			if(prod.length > 0 && prod[0].WinnerId > 0 && prod[0].CurrentPrice > 0){
-				// this mean product is already win and emails already sent
-				// no need to send email any more
-				// no need to bid any more
-				return {isOk: false, msg: "The product was already finished. Can't bid any more."};
-			}
-
-
-			
-
-			// send email win bidder
-			let bidderx = await require('./models/proModel.js').getHighestBidder(null, results[i].Id);
-			if(bidderx){
-				lg(bidderx.BidderId);
-
-				// need to update the winner
-				// update product table: winner id, current price
-				let recordx = {
-					WinnerId: bidderx.BidderId,
-					CurrentPrice: bidderx.Price
-				};
-				await db.update('product', {Id: results[i].Id}, recordx);
-
-				let bidder = await db.query(`
-					select a.*
-					from account as a
-					where a.Id = ${bidderx.BidderId}
-					`);
-				sendEmail(
-					bidder[0].Email,
-					`[Auction web - product #${results[i].Id}] Congratulations. You win this product.`,
-					`Your product #${results[i].Id} has just been finished and you are the highest bidder. Let's check it out.`
-					);
-
-
-				// send email owner
-				let owner = await db.query(`
-					select a.*
-					from account as a
-					where a.Id = ${results[i].OwnerId}
-					`);
-				sendEmail(
-					owner[0].Email,
-					`[Auction web - product #${results[i].Id}] Product finished.`,
-					`Your product #${results[i].Id} has just been finished. Let's check it out.`);
-			}
-			else{
-				// send email owner
-				let owner = await db.query(`
-					select a.*
-					from account as a
-					where a.Id = ${results[i].OwnerId}
-					`);
-				sendEmail(
-					owner[0].Email,
-					`[Auction web - product #${results[i].Id}] Product finished.`,
-					`Your product #${results[i].Id} has just been finished. Nobody bought. Let's check it out.`);
-			}
+		// const timeoutObj = setTimeout(async() => {
 			
 
 
+		// }, (+results[i].EndTimeSecs)*1000);
 
-		}, (+results[i].EndTimeSecs)*1000);
+		const timeoutObj = setTimeout(
+			productEndTimeEventHandler, 
+			(+results[i].EndTimeSecs)*1000,
+			results[i]
+			);		
 	}
 }
+
 setTimeout(()=>{
 	trackAllProducts();
 

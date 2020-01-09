@@ -16,23 +16,23 @@ re-test signup
 
 re-test comment and rate seller
 
-consider table with no primary key
+* consider table with no primary key #
 
-consider user type with all routers
+* consider user type with all routers #
 
 
-consider update total number of products for each catagory when upload done
 
-consider 10 minutes before product ends
 
-update item product card (winprice) for all view use item pro card
+* consider 10 minutes before product ends #
 
-replace {{> item}} for all view use item product card
+* update item product card (winprice) for all view use item pro card #
+
+* replace {{> item}} for all view use item product card #
 
 consider int length for large price (maybe int(20))
 
 
-consider instant buy product for view Finish products of bidder
+* consider winnerid, instant buy product for view Finish products of bidder #
 
 consider bid for already finish product
 
@@ -42,10 +42,20 @@ system must mark product finished when product is out of date and product is bid
 
 remove white space when check email same
 
-view user point from another user
+* view user point from another user #
 
 
-consider extend time for products
+* consider extend time for products #
+
+* relative time for start time and end time in view details #
+
+* get account point wrong if use just table 'account' #
+
+* retest get commentrate #
+
+* fix fisnish product view #
+
+* fix wonlist view #
 
 set ban for all bidderproducts when ban a user
 
@@ -57,5 +67,12 @@ re-test ban/unban user
 
 
 
-
+edit 9/1/2020:
+- authenRouter: delete get singupSuccess
+- proRouter: get history, add restrict authen 
+- watchlist.html, wonlist.html: replace 'item card' with the item template
+- accModel.js: update condition for checking end product
+- accModel: listRate accept accId instead of acc, accRouter: use query param instead of session,
+details.html: edit link to bidder, owner id
+- accModel: listrate, add target account
 
