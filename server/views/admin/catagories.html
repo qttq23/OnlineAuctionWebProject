@@ -69,7 +69,7 @@
 <!-- hight light current menu item -->
 <script type="text/javascript">
 
-	$('.manaUserMenu').css('background-color', '#329AD6');
+	$('.manaCataMenu').css('background-color', '#329AD6');
 
 
 </script>
@@ -109,6 +109,7 @@
 
 			// confirm
 			let cataName = $(button).parent('td').siblings('.nameDiv').html();
+
 			Swal.fire({
 				position: 'center',
 				icon: 'warning',
@@ -205,7 +206,7 @@
 				ccHtml += `
 				<tr>
 				<td>${cata.Id}</td>
-				<td>${cata.Name}</td>
+				<td class="nameDiv">${cata.Name}</td>
 				<td>${cata.CountPro}</td>
 				<td>
 				<a class="btn btn-primary" href="/admin/catagories/details?catId=${cata.Id}" title="View and edit catagory">
@@ -223,6 +224,14 @@
 				`;
 
 				$('.catagoriesContainer').html(ccHtml);
+
+				// add to catalist
+				listCata.push({
+					Id: cata.Id,
+					Name: cata.Name,
+					DateCreate: cata.DateCreate,
+					CountPro: cata.CountPro
+				});
 
 			}
 			else{

@@ -87,7 +87,7 @@
 									<i class="far fa-user"></i> Bidder
 								</dt>
 								<dd class="col-sm-7 text-sm-right">
-									{{maskenName this.product.BidderName}}, <a {{#ifeq userId this.product.OwnerId}}href="/acc/commentrate?userId={{this.product.BidderId}}"  title="Go to details of points" {{/ifeq}}>{{ratePointConvert this.product.BidderPoint}}</a>
+									{{maskenName this.product.BidderName}}, <a {{#ifeq userId this.product.OwnerId}}{{#if this.product.BidderId}} href="/acc/commentrate?userId={{this.product.BidderId}}"  title="Go to details of points" {{/if}}{{/ifeq}}>{{ratePointConvert this.product.BidderPoint}}</a>
 								</dd>
 
 								<dt class="col-sm-5">
@@ -105,6 +105,12 @@
 								<dd class="col-sm-7 text-sm-right">
 									{{relativeDateTimeConvert this.product.EndTime}}
 								</dd>
+
+
+								<dt class="col-sm-12">
+									<a href="/product?catId={{this.product.CatId}}&page=1">Go to catagory</a>
+								</dt>
+								
 
 
 
@@ -335,7 +341,7 @@
 			Max_Price: '{{this.product.Max_Price}}',
 			StartPrice: '{{this.product.StartPrice}}',
 
-			IsInstantBought: {{this.product.IsInstantBought}},
+			IsInstantBought: '{{this.product.IsInstantBought}}',
 			EndPrice: '{{this.product.EndPrice}}'
 		};
 

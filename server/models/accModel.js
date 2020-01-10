@@ -334,8 +334,9 @@ module.exports = {
 		from (select DISTINCT pro.*
 		from product as pro, bidderproduct as bid
 		where bid.BidderId = ${accId} and bid.ProId = pro.Id 
-		and bid.isBanned = 0 and bid.isWin = 1
-
+		and bid.isBanned = 0
+		and pro.WinnerId > 0 and pro.CurrentPrice > 0
+		
 		) as sortedPro
 		left join
 		(

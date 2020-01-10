@@ -493,7 +493,19 @@ var self = module.exports = {
 				if((likes/total * 100) > 80){
 					// allowed
 					// calc price
-					let newPrice = +pro.Max_Price + +pro.PriceStep;
+
+					//
+					let bidder = await self.getHighestBidder(null, pro.Id);
+					let newPrice;
+					if(bidder){
+						newPrice = +bidder.Price + +pro.PriceStep;
+					}
+					else{
+
+						newPrice = +pro.StartPrice + +pro.PriceStep;
+					}
+
+					//
 					return {isOk: true, newPrice: newPrice};
 
 				}
@@ -513,7 +525,19 @@ var self = module.exports = {
 			// no restrict
 			// allowed
 			// calc price
-			let newPrice = +pro.Max_Price + +pro.PriceStep;
+			//
+			let bidder = await self.getHighestBidder(null, pro.Id);
+			lg(bidder);
+			let newPrice;
+			if(bidder){
+				newPrice = +bidder.Price + +pro.PriceStep;
+			}
+			else{
+
+				newPrice = +pro.StartPrice + +pro.PriceStep;
+			}
+
+			//
 			return {isOk: true, newPrice: newPrice};
 		}
 	},
@@ -811,6 +835,7 @@ var self = module.exports = {
 			if(p1 < p2){
 				return {isOk: false, msg: "The win price mustn't be less than total of start price and step price."};
 			}
+			product.IsInstantBought = 1;
 		}
 
 		// check end time > current time
@@ -898,9 +923,9 @@ var self = module.exports = {
 
 		// get highest bidder
 		let bidder2 = await self.getHighestBidder(null, proId);
-		lg(bidder1.BidderId);
-		lg(bidder2.BidderId);
-		if(bidder1.BidderId != bidder2.BidderId){
+		lg(bidder1);
+		lg(bidder2);
+		if(bidder1 && bidder2 && bidder1.BidderId != bidder2.BidderId){
 			highestPriceEvent(bidder2.BidderId);
 		}
 

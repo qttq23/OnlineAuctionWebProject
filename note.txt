@@ -5,7 +5,7 @@ irousirous
 irousirous
 
 
-update menu for each user type
+update menu for each user type #
 
 
 
@@ -57,6 +57,20 @@ remove white space when check email same
 
 * fix wonlist view #
 
+* check if product IsAutoExtend main.js #
+
+* set bid for all products #
+
+* add a new game gear record  #
+
+* consider isRestrictbidder #
+
+* new uploaded product is different #
+
+* display more than 4 images
+
+* number of product for view wonlist, bidlist, postlist,...
+
 set ban for all bidderproducts when ban a user
 
 
@@ -76,3 +90,19 @@ edit 9/1/2020:
 details.html: edit link to bidder, owner id
 - accModel: listrate, add target account
 
+10/1
+- modify get bid price to get the highest price instead of the price client pass to.
+- fix go to cmt rate of empty bidder at view details
+- fix color of carousel in upload view
+
+
+# tableplus: click a cell, input 68, out of sell, and 68 disappear
+
+irousirous
+irousirous
+
+thangseller
+irous12345678
+
+irous12345
+irous12345678

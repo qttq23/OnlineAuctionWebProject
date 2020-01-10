@@ -44,10 +44,10 @@
 
 								<!-- Left and right controls -->
 								<a class="carousel-control-prev" href="#productImgContainer" data-slide="prev">
-									<span class="carousel-control-prev-icon"></span>
+									<i class="fas fa-chevron-left"></i>
 								</a>
 								<a class="carousel-control-next" href="#productImgContainer" data-slide="next">
-									<span class="carousel-control-next-icon"></span>
+									<i class="fas fa-chevron-right"></i>
 								</a>
 
 							</div>
@@ -87,12 +87,12 @@
 
 									<div class="cataDiv form-group">
 										<label for="cataInput">Catagory</label>
-				
+										
 										<select class="form-control" id="cataInput" name="cataInput">
 											{{#each this.cataList}}
 											<option value="{{Id}}">{{Name}}</option>
 											{{/each}}
-										
+											
 										</select>
 									</div>
 
@@ -143,7 +143,7 @@
 									</div>
 
 									<div class="allowAllBidDiv form-group form-check">
-										<input type="checkbox" class="form-check-input" id="autoExtendTimeInput" name="allowAllBidInput">
+										<input type="checkbox" class="form-check-input" id="autoExtendTimeInput" name="allowAllBidInput" checked>
 										<label class="form-check-label" for="allowAllBidInput" title="Allow all bidders can bid this product without point restriction.">Allow all bidders to bid</label>
 									</div>
 
@@ -200,12 +200,42 @@
 
 	$(()=>{
 
+		imgIndicatorHtml = '';
+		imgSliderHtml = '';
+		for(var i=0; i < imgNum; i++){
+			let temp = i + 1;
+			if(temp == 1){
+				imgIndicatorHtml += 
+				`<li data-target="#productImgContainer" data-slide-to="${temp}" class="active"></li>`;
+
+				imgSliderHtml +=
+				`<div class="carousel-item active">
+				<img id="img${i}" class="img-fluid" src="${imgList[i]}" alt="" style="height: 400px">
+				</div>`;
+			}
+			else{
+
+				imgIndicatorHtml += 
+				`<li data-target="#productImgContainer" data-slide-to="${temp}"></li>`;
+
+				imgSliderHtml +=
+				`<div class="carousel-item ">
+				<img id="img${i}" class="img-fluid" src="${imgList[i]}" alt="" style="height: 400px">
+				</div>`;
+			}
+
+		} 
+		$('#productImgIndicator').html(imgIndicatorHtml);
+		$('#productImgSlider').html(imgSliderHtml); 
 
 
-		updateImagesDiv();
 
+		// set color for indicators and left, right navigation buttons
+		$('#productImgIndicator li').css('background-color', 'gray');
+		$('.carousel-control-prev i').css('color', 'gray');
+		$('.carousel-control-next i').css('color', 'gray');
 
-
+		// updateImagesDiv();
 	});
 
 	function updateImagesDiv(){
@@ -236,6 +266,8 @@
 		} 
 		$('#productImgIndicator').html(imgIndicatorHtml);
 		$('#productImgSlider').html(imgSliderHtml); 
+
+		
 	}
 
 	// select button browse
@@ -367,15 +399,15 @@
 		// check instant price
 		// if(!checkEmpty($('#instantPriceInput').val())){
 
-		// }
+			// }
 
-		$('#overalError').html('');
-		return true;
-	}
+			$('#overalError').html('');
+			return true;
+		}
 
-</script>
+	</script>
 
 
 
-{{/section}}
+	{{/section}}
 

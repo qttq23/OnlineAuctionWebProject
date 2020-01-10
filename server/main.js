@@ -48,7 +48,7 @@ app.use(express.urlencoded({
 app.use(expSession(
 {
 	secret: 'keyboard cat', 
-	cookie: { maxAge: 60000*60 },
+	cookie: { maxAge: 60000*600 },
 	resave: false,
 	saveUninitialized: true,
 })
@@ -180,6 +180,20 @@ app.engine('html', expHbs({
 				return '0 %';
 			}
 			return '' + Math.round(part/total*100) + '%';
+		},
+
+		isNew: function(datetime){
+			lg('this is new');
+			let a = moment();
+			let b = moment(datetime);
+			let diff = a.diff(b, 'seconds');
+			lg(diff);
+			// console.log(diff);
+			if(diff > 0 && diff < 10 *60){
+				return '';
+			}
+
+			return 'invisible';
 		}
 
 
@@ -218,7 +232,7 @@ async function productEndTimeEventHandler(product){
 		where b.ProId=${product.Id}
 		and TIMESTAMPDIFF(SECOND,b.DateCreate,CURRENT_TIMESTAMP()) <= ${secs}
 		`);
-	if(nearestBids.length > 0){
+	if(product.IsAutoExtend > 0 && nearestBids.length > 0){
 		lg('product is recently bidded.');
 		// this means product was bidded recently
 		// extend time for it

@@ -7,7 +7,7 @@
 		src="/images/products/{{Id}}/1.jpg" alt="Image of product {{Name}}">
 	</a>
 
-	<div class="card-body h-50">
+	<div class="card-body h-25">
 
 		<a class="linkToItemDetails" href="/product/details?id={{Id}}" title="go to product details: {{Name}}">
 			<h5 class="card-title">{{shortenName Name}}</h5>
@@ -54,13 +54,19 @@
 			</dd>
 
 
+			<dd class="col-12 d-flex flex-row justify-content-between">
 
-			<dd class="col">
-				<div class="badge badge-light badge-lg" title="Number of turns made">
+				<span class="badge badge-light badge-lg" title="Number of turns made">
 					{{#if Turn}}{{Turn}}{{else}}0{{/if}} turns
-				</div>
+				</span>
+
+		
+				<span class="badge badge-success badge-pill {{isNew StartTime}}" title="New uploaded product">
+					new
+				</span>
 			</dd>
 		</dl>
+
 
 
 	</div>
