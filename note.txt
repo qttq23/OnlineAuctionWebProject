@@ -71,6 +71,8 @@ remove white space when check email same
 
 * number of product for view wonlist, bidlist, postlist,...
 
+* convert images to jpg
+
 set ban for all bidderproducts when ban a user
 
 
@@ -94,9 +96,12 @@ details.html: edit link to bidder, owner id
 - modify get bid price to get the highest price instead of the price client pass to.
 - fix go to cmt rate of empty bidder at view details
 - fix color of carousel in upload view
+- fix wonlist
 
-
-# tableplus: click a cell, input 68, out of sell, and 68 disappear
+# tableplus: 
+click a cell, input 68, out of sell, and 68 disappear, 
+sometimes, input data to a cell and data disappears even lose focus or already press enter
+when run a s
 
 irousirous
 irousirous

@@ -4,23 +4,26 @@
 # Online Auction Web Project
 
 # requirement
-- up to date browser (Google chrome is suggested, others are not tested)
+- up-to-date browser (Google chrome or Microsoft Edge is suggested, others are not tested)
 
-# to run:
-- go to 'src' folder and double click to 'homepage.html'
+# to run on window
+- open command prompt in folder 'server' and type:
+r.bat
 
-or
-- open command prompt in this folder 'webProject' and type:
-start src/homepage.html
+or:
 
-# notes: upload images just work if choose images on folder 'src/images/'
+npm start
+
+- open browser and go to url: 
+localhost:3000
+
+# notes
+this app use port 3000, if any other apps are using this port, the server will not run.
 
 # folders:
-docs: documents
-src: source code
-revision: all versions of this web app.
+docs: related documents
+server: source code
 screenshots: some images of web screen
 
 # github:
 https://github.com/qttq23/OnlineAuctionWebProject.git
-

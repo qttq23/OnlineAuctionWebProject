@@ -335,7 +335,7 @@ module.exports = {
 		from product as pro, bidderproduct as bid
 		where bid.BidderId = ${accId} and bid.ProId = pro.Id 
 		and bid.isBanned = 0
-		and pro.WinnerId > 0 and pro.CurrentPrice > 0
+		and pro.WinnerId = ${accId}
 		
 		) as sortedPro
 		left join
